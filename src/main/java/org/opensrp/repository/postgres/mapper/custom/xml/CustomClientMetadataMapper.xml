@@ -236,7 +236,7 @@
 		<if test="clientBean.attributes != null" >
 			<trim prefix="and (" suffix=")" >			 
 			 <foreach collection="clientBean.attributes"  index="key" item="value" separator=" or " >
-        			json -> 'attributes' ->> #{key,jdbcType=VARCHAR} = #{value,jdbcType=VARCHAR}
+        			json -> 'attributes' ->> #{key,jdbcType=VARCHAR} = ilike #{value,jdbcType=VARCHAR}
     			</foreach>
     			</trim>
 		</if>
@@ -329,7 +329,7 @@
 				<if test="clientBean.attributes != null" >
 					<trim prefix="and (" suffix=")" >			 
 					 <foreach collection="clientBean.attributes"  index="key" item="value" separator=" or " >
-		        			json -> 'attributes' ->> #{key,jdbcType=VARCHAR} = #{value,jdbcType=VARCHAR}
+		        			json -> 'attributes' ->> #{key,jdbcType=VARCHAR} = ilike #{value,jdbcType=VARCHAR}
 		    			</foreach>
 		    			</trim>
 				</if>
