@@ -2,7 +2,7 @@
 TRUNCATE TABLE team.practitioner_details CASCADE;
 
 -- insert data
-INSERT INTO team.practitioner_details (id, practitioner_id, created_date, email, enabled, first_name, gender, identifier, last_name, mobile, modified_date, uuid, creator, parent_user_id, enable_sim_print, ss_no, app_version, is_resync, on_maternity_leave) VALUES(1, 1, NULL, '', true, 'test', 'Male', '123456', 'SK', '01912773007', NULL, '1111111111', NULL, NULL, true, NULL, '1.3', '', false);
+INSERT INTO team.practitioner_details (id, practitioner_id, created_date, email, enabled, first_name, gender, identifier, last_name, mobile, modified_date, uuid, creator, parent_user_id, enable_sim_print, ss_no, app_version, is_resync, on_maternity_leave) VALUES(1, 1, NULL, '', true, 'test', 'Male', '123456', 'SK', '01912773007', NULL, '1111111111', NULL, NULL, true, NULL, '1.3', '', false),
 (2, 2, NULL, '', true, 'test', 'Male', '123456', 'SS', '01912773007', NULL, '1111111111', NULL, NULL, true, NULL, '1.3', '', false);
 
 --clear data
@@ -11,11 +11,11 @@ TRUNCATE TABLE core.location_tag CASCADE;
 -- insert data
 INSERT INTO core.location_tag (id,name,active,description) VALUES
 (1,'Country',TRUE,'0'),
-(2,'Division',TRUE,'1');
-(3,'District',TRUE,'2');
-(4,'City Corporation Upazila',TRUE,'3');
-(5,'Pourasabha',TRUE,'4');
-(6,'Union Ward',TRUE,'5');
+(2,'Division',TRUE,'1'),
+(3,'District',TRUE,'2'),
+(4,'City Corporation Upazila',TRUE,'3'),
+(5,'Pourasabha',TRUE,'4'),
+(6,'Union Ward',TRUE,'5'),
 (7,'Village',TRUE,'6');
 
 --clear data
@@ -51,8 +51,25 @@ INSERT INTO core.location (id, json) VALUES (7, '{"id": "3740","locationTags":[{
 INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id, uuid, status, server_version,name) VALUES (7, 7, '3740', 'Intervention Unit', '3739', '41587456-b7c8-4c4e-b433-23a786f742fcb', 'ACTIVE', 1542378347104,'NOT POURASABHA:9268');
 
 
+--clear data
+TRUNCATE TABLE core.location_tag_map CASCADE;
 
+-- insert data
+INSERT INTO core.location_tag_map (location_id, location_tag_id) VALUES(1, 1),(2, 2),(3, 3),(4, 4),(5, 5),(6, 6),(7, 7);
 
+--clear data
+TRUNCATE TABLE team.practitioner_group;
+
+-- insert data
+
+INSERT INTO team.practitioner_group (practitioner_id, practitioner_group_id) VALUES(1, 28),(2, 29);
+
+--clear data
+TRUNCATE TABLE team.practitioner_catchment_area;
+
+-- insert data
+INSERT INTO team.practitioner_catchment_area (id, created_date, location_id, parent_location_id, modified_date, practitioner_id) VALUES(1, NULL, 7, 6, NULL, 1);
+INSERT INTO team.practitioner_catchment_area (id, created_date, location_id, parent_location_id, modified_date, practitioner_id) VALUES(2, NULL, 7, 6, NULL, 2);
 
 
 
