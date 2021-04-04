@@ -10,12 +10,12 @@
 		<result column="last_name" jdbcType="VARCHAR" property="lastName"/>
 		<result column="loc_tag_name" jdbcType="VARCHAR" property="locationTagName"/>
 		<result column="username" jdbcType="VARCHAR" property="username"/>
-		<result column="locationName" jdbcType="VARCHAR" property="locationName"/>
+		<result column="location_name" jdbcType="VARCHAR" property="locationName"/>
 		<result column="code" jdbcType="VARCHAR" property="code"/>
 	</resultMap>
     <select id="selectPractitionerLocationsByChildGroup" parameterType="map"
 			resultMap="customQueryLocationTreeMap">
-		select * from core.get_location_tree(#{memberId}, #{childRoleId});
+		select * from core.get_location_tree(#{practitionerId}, #{childGroupId});
 	</select>
 
     
