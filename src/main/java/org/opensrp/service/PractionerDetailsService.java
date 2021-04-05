@@ -18,12 +18,15 @@ public class PractionerDetailsService {
 	@Autowired
 	private PractitionerDetailsRepositoryImpl practitionerDetailsRepositoryImpl;
 	
-	public List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId) {
+	public List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId,
+	                                                                        int assignedLocationTagId) {
 		
-		return practitionerDetailsRepositoryImpl.findPractitionerLocationsByChildGroup(practitionerId, childGroupId);
+		return practitionerDetailsRepositoryImpl.findPractitionerLocationsByChildGroup(practitionerId, childGroupId,
+		    assignedLocationTagId);
 	}
 	
-	public JSONArray convertLocationTreeToJSON(List<PractitionerLocation> practitionerLocations, Boolean enable, String fullName)
+	public JSONArray convertLocationTreeToJSON(List<PractitionerLocation> practitionerLocations, Boolean enable,
+	                                           String fullName)
 	    throws JSONException {
 		JSONArray locationTree = new JSONArray();
 		

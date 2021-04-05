@@ -9,6 +9,7 @@ import org.opensrp.repository.postgres.mapper.PractitionerDetailsMapper;
 public interface CustomPractitionerDetailsMapper extends PractitionerDetailsMapper {
 	
 	List<PractitionerLocation> selectPractitionerLocationsByChildGroup(@Param("practitionerId") int practitionerId,
-	                                                                   @Param("childGroupId") int childGroupId);
+	                                                                   @Param("childGroupId") int childGroupId,
+	                                                                   @Param("assignedLocationTagId") int assignedLocationTagId);
 	
 }

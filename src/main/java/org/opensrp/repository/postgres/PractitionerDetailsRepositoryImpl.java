@@ -15,9 +15,11 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 	private CustomPractitionerDetailsMapper customPractitionerDetailsMapper;
 	
 	@Override
-	public List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId) {
+	public List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId,
+	                                                                        int assignedLocationTagId) {
 		
-		return customPractitionerDetailsMapper.selectPractitionerLocationsByChildGroup(practitionerId, childGroupId);
+		return customPractitionerDetailsMapper.selectPractitionerLocationsByChildGroup(practitionerId, childGroupId,
+		    assignedLocationTagId);
 	}
 	
 }

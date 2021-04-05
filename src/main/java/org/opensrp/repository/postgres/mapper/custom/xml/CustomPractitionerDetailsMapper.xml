@@ -15,7 +15,7 @@
 	</resultMap>
     <select id="selectPractitionerLocationsByChildGroup" parameterType="map"
 			resultMap="customQueryLocationTreeMap">
-		select * from core.get_location_tree(#{practitionerId}, #{childGroupId});
+		select * from core.get_location_tree(#{practitionerId}, #{childGroupId}, #{assignedLocationTagId});
 	</select>
 
     

@@ -6,5 +6,6 @@ import org.opensrp.domain.PractitionerLocation;
 
 public interface PractitionerDetailsRepository {
 	
-	List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId);
+	List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId,
+	                                                                 int assignedLocationTagId);
 }

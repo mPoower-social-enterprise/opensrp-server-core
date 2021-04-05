@@ -5,6 +5,7 @@ TRUNCATE TABLE team.practitioner CASCADE;
 INSERT INTO team.practitioner (id, identifier, active, name, user_id, username) VALUES
 (1,'p1-identifier',TRUE,'first practitioner','1','p1'),
 (2,'p2-identifier',TRUE,'second practitioner','2','p2');
+
 --clear data
 TRUNCATE TABLE team.practitioner_details CASCADE;
 
