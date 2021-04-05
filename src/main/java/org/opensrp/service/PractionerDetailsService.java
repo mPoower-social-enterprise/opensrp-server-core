@@ -9,26 +9,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.opensrp.domain.PractitionerLocation;
 import org.opensrp.domain.postgres.PractitionerDetails;
-import org.opensrp.repository.postgres.PractitionerDetailsRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.opensrp.repository.PractitionerDetailsRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PractionerDetailsService {
 	
-	@Autowired
-	private PractitionerDetailsRepositoryImpl practitionerDetailsRepositoryImpl;
+	private PractitionerDetailsRepository practitionerDetailsRepository;
+	
+	public PractitionerDetailsRepository getPractitionerDetailsRepository() {
+		return practitionerDetailsRepository;
+	}
+	
+	public void setPractitionerDetailsRepository(PractitionerDetailsRepository practitionerDetailsRepository) {
+		this.practitionerDetailsRepository = practitionerDetailsRepository;
+	}
 	
 	public List<PractitionerLocation> findPractitionerLocationsByChildGroup(int practitionerId, int childGroupId,
 	                                                                        int assignedLocationTagId) {
 		
-		return practitionerDetailsRepositoryImpl.findPractitionerLocationsByChildGroup(practitionerId, childGroupId,
+		return getPractitionerDetailsRepository().findPractitionerLocationsByChildGroup(practitionerId, childGroupId,
 		    assignedLocationTagId);
 	}
 	
 	public PractitionerDetails findPractitionerDetailsByUsername(String username) {
 		
-		return practitionerDetailsRepositoryImpl.findPractitionerDetailsByUsername(username);
+		return getPractitionerDetailsRepository().findPractitionerDetailsByUsername(username);
 	}
 	
 	public JSONArray convertLocationTreeToJSON(List<PractitionerLocation> practitionerLocations, Boolean enable,
