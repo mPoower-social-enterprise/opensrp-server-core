@@ -8,6 +8,7 @@
       This element was generated on Thu Mar 25 11:29:40 BDT 2021.
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="practitioner_id" jdbcType="INTEGER" property="practitionerId" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="enabled" jdbcType="BIT" property="enabled" />

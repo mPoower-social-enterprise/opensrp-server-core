@@ -3,6 +3,7 @@ package org.opensrp.repository.postgres;
 import java.util.List;
 
 import org.opensrp.domain.PractitionerLocation;
+import org.opensrp.domain.postgres.PractitionerDetails;
 import org.opensrp.repository.PractitionerDetailsRepository;
 import org.opensrp.repository.postgres.mapper.custom.CustomPractitionerDetailsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,12 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 		
 		return customPractitionerDetailsMapper.selectPractitionerLocationsByChildGroup(practitionerId, childGroupId,
 		    assignedLocationTagId);
+	}
+	
+	@Override
+	public PractitionerDetails findPractitionerDetailsByUsername(String username) {
+		
+		return customPractitionerDetailsMapper.selectPractitionerDetailsByUsername(username);
 	}
 	
 }

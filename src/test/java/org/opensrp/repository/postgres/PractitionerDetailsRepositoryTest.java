@@ -5,6 +5,7 @@ package org.opensrp.repository.postgres;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensrp.domain.PractitionerLocation;
+import org.opensrp.domain.postgres.PractitionerDetails;
 import org.opensrp.repository.PractitionerDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,4 +57,19 @@ public class PractitionerDetailsRepositoryTest extends BaseRepositoryTest {
 		
 	}
 	
+	@Test
+	public void testfindPractitionerDetailsByUsername() {
+		PractitionerDetails practitionerDetails = practitionerDetailsRepository.findPractitionerDetailsByUsername("p1");
+		assertNotNull(practitionerDetails);
+		assertEquals("test", practitionerDetails.getFirstName());
+		assertEquals("1", practitionerDetails.getPractitionerId().toString());
+		assertEquals("01912773007", practitionerDetails.getMobile());
+	}
+	
+	@Test
+	public void testShouldReturnNullFindPractitionerDetailsByUsername() {
+		PractitionerDetails practitionerDetails = practitionerDetailsRepository.findPractitionerDetailsByUsername(null);
+		assertNull(practitionerDetails);
+		
+	}
 }

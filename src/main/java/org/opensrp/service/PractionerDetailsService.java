@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.opensrp.domain.PractitionerLocation;
+import org.opensrp.domain.postgres.PractitionerDetails;
 import org.opensrp.repository.postgres.PractitionerDetailsRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,11 @@ public class PractionerDetailsService {
 		
 		return practitionerDetailsRepositoryImpl.findPractitionerLocationsByChildGroup(practitionerId, childGroupId,
 		    assignedLocationTagId);
+	}
+	
+	public PractitionerDetails findPractitionerDetailsByUsername(String username) {
+		
+		return practitionerDetailsRepositoryImpl.findPractitionerDetailsByUsername(username);
 	}
 	
 	public JSONArray convertLocationTreeToJSON(List<PractitionerLocation> practitionerLocations, Boolean enable,
