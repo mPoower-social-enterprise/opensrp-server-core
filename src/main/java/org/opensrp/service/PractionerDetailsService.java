@@ -50,12 +50,11 @@ public class PractionerDetailsService {
 		int counter = 0, limit = 0;
 		String username = "";
 		
-		for (PractitionerLocation practitionerLoation : practitionerLocations) {
+		for (PractitionerLocation practitionerLocation : practitionerLocations) {
 			counter++;
 			limit++;
-			if (map.get(practitionerLoation.getUsername()) == null || !map.get(practitionerLoation.getUsername())) {
+			if (map.get(practitionerLocation.getUsername()) == null || !map.get(practitionerLocation.getUsername())) {
 				if (counter > 1) {
-					fullLocation = setEmptyValues(fullLocation);
 					locations.put(fullLocation);
 					object.put("username", username.trim());
 					object.put("locations", locations);
@@ -67,31 +66,21 @@ public class PractionerDetailsService {
 					fullLocation = new JSONObject();
 					counter = 1;
 				}
-				map.put(practitionerLoation.getUsername(), true);
+				map.put(practitionerLocation.getUsername(), true);
 			}
 			
-			username = practitionerLoation.getFirstName();
-			
-			if (practitionerLoation.getLocationTagName().equalsIgnoreCase("country")) {
-				if (counter > 1) {
-					fullLocation = setEmptyValues(fullLocation);
-					locations.put(fullLocation);
-					fullLocation = new JSONObject();
-				}
-			}
-			
-			String[] names = practitionerLoation.getLocationName().split(":");
+			username = practitionerLocation.getFirstName();
+			String[] names = practitionerLocation.getLocationName().split(":");
 			String locationName = names[0];
 			
 			JSONObject location = new JSONObject();
-			location.put("code", practitionerLoation.getCode().trim());
-			location.put("id", practitionerLoation.getId());
+			location.put("code", practitionerLocation.getCode().trim());
+			location.put("id", practitionerLocation.getId());
 			location.put("name", locationName.trim());
-			String name = practitionerLoation.getLocationTagName().toLowerCase().replaceAll(" ", "_");
+			String name = practitionerLocation.getLocationTagName().toLowerCase().replaceAll(" ", "_");
 			fullLocation.put(name, location);
 			
 			if (limit == practitionerLocations.size()) {
-				fullLocation = setEmptyValues(fullLocation);
 				locations.put(fullLocation);
 				object.put("username", username.trim());
 				object.put("locations", locations);
@@ -105,36 +94,4 @@ public class PractionerDetailsService {
 		return locationTree;
 	}
 	
-	private JSONObject setEmptyValues(JSONObject fullLocation) throws JSONException {
-		if (!fullLocation.has("country")) {
-			fullLocation.put("country", getLocationProperty());
-		}
-		if (!fullLocation.has("division")) {
-			fullLocation.put("division", getLocationProperty());
-		}
-		if (!fullLocation.has("district")) {
-			fullLocation.put("district", getLocationProperty());
-		}
-		if (!fullLocation.has("city_corporation_upazila")) {
-			fullLocation.put("city_corporation_upazila", getLocationProperty());
-		}
-		if (!fullLocation.has("pourasabha")) {
-			fullLocation.put("pourasabha", getLocationProperty());
-		}
-		if (!fullLocation.has("union_ward")) {
-			fullLocation.put("union_ward", getLocationProperty());
-		}
-		if (!fullLocation.has("village")) {
-			fullLocation.put("village", getLocationProperty());
-		}
-		return fullLocation;
-	}
-	
-	private JSONObject getLocationProperty() throws JSONException {
-		JSONObject property = new JSONObject();
-		property.put("name", "");
-		property.put("id", 0);
-		property.put("code", "00");
-		return property;
-	}
 }
