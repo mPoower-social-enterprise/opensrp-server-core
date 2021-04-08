@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMetadataMapper">
+		
+	<sql id="Base_Column_List">
+		c.id, c.json
+	</sql>
+	
+	<sql id="Base_Table_List">
+		from core.client_metadata cm
+		join core.client c on cm.client_id = c.id
+	</sql>
+	
+	<sql id="Join_With_Event_Meta_Data_Table">		
+		join core.event_metadata em on cm.base_entity_id = em.base_entity_id
+	</sql>
+	<select id="selectClientIdByBaseEntityId"
+		resultType="Integer">
+		select client_id
+		from core.client_metadata${postfix} cm
+		where cm.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} and cm.date_deleted is null limit 1
+	</select>
+	
+	<select id="selectClientByClientId"
+		resultMap="org.opensrp.repository.postgres.mapper.ClientMapper.BaseResultMap">
+		select
+		c.id, c.json
+		from core.client${postfix} c
+		where c.id = #{clientId} limit 1
+	</select>
+
+</mapper>
