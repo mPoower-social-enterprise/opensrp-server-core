@@ -15,7 +15,6 @@ import org.opensrp.domain.postgres.ClientMetadataExample;
 import org.opensrp.domain.postgres.ClientMetadataExample.Criteria;
 import org.opensrp.domain.postgres.MhealthClientMetadata;
 import org.opensrp.repository.MhealthClientsRepository;
-import org.opensrp.repository.postgres.mapper.custom.CustomClientMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomClientMetadataMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMetadataMapper;
 import org.smartregister.domain.Address;
@@ -37,9 +36,6 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	
 	@Autowired
 	private CustomClientMetadataMapper clientMetadataMapper;
-	
-	@Autowired
-	private CustomClientMapper clientMapper;
 	
 	@Autowired
 	private CustomMhealthClientMetadataMapper customMhealthClientMetadataMapper;

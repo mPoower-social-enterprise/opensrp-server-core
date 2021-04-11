@@ -22,9 +22,9 @@ public class MhealthClientService {
 		}
 		
 		try {
-			Integer clientId = mhealthClientsRepository.findClientIdByBaseEntityId(client.getBaseEntityId(), table);
+			Integer clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), table);
 			if (clientId != null) {
-				Client c = mhealthClientsRepository.findClientByClientId(clientId, table);
+				Client c = findClientByClientId(clientId, table);
 				if (c != null) {
 					client.setRevision(c.getRevision());
 					client.setId(c.getId());
@@ -47,5 +47,16 @@ public class MhealthClientService {
 		}
 		
 		return client;
+	}
+	
+	public Integer findClientIdByBaseEntityId(String baseEntityId, String postfix) {
+		
+		return mhealthClientsRepository.findClientIdByBaseEntityId(baseEntityId, postfix);
+	}
+	
+	public Client findClientByClientId(Integer clientId, String postfix) {
+		
+		return mhealthClientsRepository.findClientByClientId(clientId, postfix);
+		
 	}
 }
