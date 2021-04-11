@@ -19,14 +19,17 @@ public interface MhealthClientsRepository {
 	 * 
 	 * @param entity to add
 	 */
-	void add(Client entity, String table, String district, String division, String branch, String village);
+	void add(Client entity, String postfix, String district, String division, String branch, String village);
 	
 	/**
 	 * Update entity
 	 * 
 	 * @param entity to update
 	 */
-	void update(Client entity, String table, String district, String division, String branch, String village);
+	
+	Long retrievePrimaryKey(Client t, String postfix);
+	
+	void update(Client entity, String postfix, String district, String division, String branch, String village);
 	
 	Integer findClientIdByBaseEntityId(String baseEntityId, String postfix);
 	
@@ -36,4 +39,5 @@ public interface MhealthClientsRepository {
 	
 	void update(Client entity, boolean allowArchived, String table, String district, String division, String branch,
 	            String village);
+	
 }
