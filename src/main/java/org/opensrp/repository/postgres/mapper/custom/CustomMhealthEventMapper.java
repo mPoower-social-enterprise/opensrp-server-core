@@ -5,9 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.opensrp.domain.postgres.Event;
 import org.opensrp.domain.postgres.MhealthEvent;
-import org.opensrp.repository.postgres.mapper.EventMetadataMapper;
 
-public interface CustomMhealthEventMapper extends EventMetadataMapper {
+public interface CustomMhealthEventMapper {
 	
 	Event selectByDocumentId(@Param("documentId") String documentId, @Param("postfix") String postfix);
 	

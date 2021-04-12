@@ -1,9 +1,8 @@
 package org.opensrp.repository.postgres.mapper.custom;
 
 import org.opensrp.domain.postgres.MhealthClientMetadata;
-import org.opensrp.repository.postgres.mapper.ClientMetadataMapper;
 
-public interface CustomMhealthClientMetadataMapper extends ClientMetadataMapper {
+public interface CustomMhealthClientMetadataMapper {
 	
 	int insertSelective(MhealthClientMetadata record);
 	

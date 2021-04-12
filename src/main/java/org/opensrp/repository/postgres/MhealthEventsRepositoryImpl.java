@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository("mhealthEventsRepositoryPostgres")
+@Repository
 public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> implements MhealthEventsRepository {
 	
 	@Autowired
@@ -179,7 +179,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 			criteria.andDateDeletedIsNull();
 		}
 		
-		return customMhealthEventMetadataMapper.selectPrimaryKey(eventMetadataExample, postfix);
+		return customMhealthEventMetadataMapper.selectPrimaryKey(documentId, postfix);
 		
 	}
 	

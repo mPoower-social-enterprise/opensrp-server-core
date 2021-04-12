@@ -187,22 +187,12 @@
 	    where id = #{id,jdbcType=BIGINT}
     </update>    
   
-	<select id="selectByDocumentId" parameterType="java.lang.String"
-		resultMap="BaseEventResultMap">
-		select
-		<include refid="Base_Event_Column_List" />
-		from core.event_metadata em
-		join core.event e on em.event_id = e.id
-		where em.document_id = #{documentId,jdbcType=VARCHAR} and em.date_deleted is null
-	</select>
 	
-	<select id="selectPrimaryKey" parameterType="org.opensrp.domain.postgres.EventMetadataExample"
-		resultType="java.lang.Long">
+	
+	<select id="selectPrimaryKey" resultType="java.lang.Long">
 		select event_id
 		from core.event_metadata${postfix} em
-		<if test="_parameter != null">
-			<include refid="Event_Example_Where_Clause" />
-		</if>
+		where em.document_id=#{documentId,jdbcType=VARCHAR}
 	</select>
 
 	

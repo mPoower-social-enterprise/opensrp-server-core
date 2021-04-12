@@ -4,9 +4,8 @@ import org.apache.ibatis.annotations.Param;
 import org.opensrp.domain.postgres.Client;
 import org.opensrp.domain.postgres.MhealthClient;
 import org.opensrp.domain.postgres.MhealthClientMetadata;
-import org.opensrp.repository.postgres.mapper.ClientMetadataMapper;
 
-public interface CustomMhealthClientMapper extends ClientMetadataMapper {
+public interface CustomMhealthClientMapper {
 	
 	Integer selectClientIdByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfi);
 	

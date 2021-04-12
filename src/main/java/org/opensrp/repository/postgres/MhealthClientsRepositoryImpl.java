@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository("clientsRepositoryPostgres")
+@Repository
 public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> implements MhealthClientsRepository {
 	
 	private static Logger logger = LogManager.getLogger(MhealthClientsRepositoryImpl.class.toString());

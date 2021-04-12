@@ -74,10 +74,8 @@
 			</if>
 			<if test="json != null">
 				json,
-			</if>
-			<if test="serverVersion != null">
-				server_version,
-			</if>
+			</if>			
+			server_version,			
 			<if test="baseEntityId != null">
 				base_entity_id,
 			</if>

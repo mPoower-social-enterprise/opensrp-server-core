@@ -1,13 +1,11 @@
 package org.opensrp.repository.postgres.mapper.custom;
 
 import org.apache.ibatis.annotations.Param;
-import org.opensrp.domain.postgres.EventMetadataExample;
 import org.opensrp.domain.postgres.MhealthEventMetadata;
-import org.opensrp.repository.postgres.mapper.EventMetadataMapper;
 
-public interface CustomMhealthEventMetadataMapper extends EventMetadataMapper {
+public interface CustomMhealthEventMetadataMapper {
 	
-	Long selectPrimaryKey(EventMetadataExample eventMetadataExample, @Param("postfix") String postfix);
+	Long selectPrimaryKey(@Param("documentId") String documentId, @Param("postfix") String postfix);
 	
 	int insertSelective(MhealthEventMetadata record);
 	
