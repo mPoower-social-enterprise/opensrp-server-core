@@ -16,15 +16,15 @@ public class MhealthClientService {
 		this.mhealthClientsRepository = mhealthClientsRepository;
 	}
 	
-	public Client addOrUpdate(Client client, String table, String district, String division, String branch, String village) {
+	public Client addOrUpdate(Client client, String district, String division, String branch) {
 		if (client.getBaseEntityId() == null) {
 			throw new RuntimeException("No baseEntityId");
 		}
-		
+		String postfix = "_" + district;
 		try {
-			Integer clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), table);
+			Integer clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), postfix);
 			if (clientId != null) {
-				Client c = findClientByClientId(clientId, table);
+				Client c = findClientByClientId(clientId, postfix);
 				if (c != null) {
 					client.setRevision(c.getRevision());
 					client.setId(c.getId());
@@ -32,14 +32,14 @@ public class MhealthClientService {
 					client.setDateCreated(c.getDateCreated());
 					client.setServerVersion(System.currentTimeMillis());
 					client.addIdentifier("OPENMRS_UUID", c.getIdentifier("OPENMRS_UUID"));
-					mhealthClientsRepository.update(client, table, district, division, branch, village);
+					mhealthClientsRepository.update(client, postfix, district, division, branch);
 				}
 				
 			} else {
 				client.setServerVersion(System.currentTimeMillis());
 				client.setDateCreated(DateTime.now());
 				
-				mhealthClientsRepository.add(client, table, district, division, branch, village);
+				mhealthClientsRepository.add(client, postfix, district, division, branch);
 			}
 		}
 		catch (Exception e) {

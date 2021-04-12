@@ -16,6 +16,7 @@ import org.opensrp.domain.postgres.ClientMetadataExample.Criteria;
 import org.opensrp.domain.postgres.MhealthClientMetadata;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.opensrp.repository.postgres.mapper.custom.CustomClientMetadataMapper;
+import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMetadataMapper;
 import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
@@ -38,6 +39,9 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	private CustomClientMetadataMapper clientMetadataMapper;
 	
 	@Autowired
+	private CustomMhealthClientMapper customMhealthClientMapper;
+	
+	@Autowired
 	private CustomMhealthClientMetadataMapper customMhealthClientMetadataMapper;
 	
 	@Override
@@ -55,7 +59,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	
 	@Override
 	@Transactional
-	public void add(Client entity, String postfix, String district, String division, String branch, String village) {
+	public void add(Client entity, String postfix, String district, String division, String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			return;
 		}
@@ -85,7 +89,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			}
 		}
 		
-		int rowsAffected = customMhealthClientMetadataMapper.insertSelectiveAndSetId(pgClient);
+		int rowsAffected = customMhealthClientMapper.insertSelectiveAndSetId(pgClient);
 		if (rowsAffected < 1 || pgClient.getId() == null) {
 			throw new IllegalStateException();
 		}
@@ -102,25 +106,25 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	}
 	
 	private void updateServerVersion(org.opensrp.domain.postgres.MhealthClient pgClient, Client entity, String postfix) {
-		long serverVersion = customMhealthClientMetadataMapper.selectServerVersionByPrimaryKey(pgClient.getId(), postfix);
+		long serverVersion = customMhealthClientMapper.selectServerVersionByPrimaryKey(pgClient.getId(), postfix);
 		entity.setServerVersion(serverVersion);
 		pgClient.setJson(entity);
 		pgClient.setServerVersion(null);
-		int rowsAffected = customMhealthClientMetadataMapper.updateByPrimaryKeySelective(pgClient);
+		int rowsAffected = customMhealthClientMapper.updateByPrimaryKeySelective(pgClient);
 		if (rowsAffected < 1) {
 			throw new IllegalStateException();
 		}
 	}
 	
 	@Override
-	public void update(Client entity, String postfix, String district, String division, String branch, String village) {
-		update(entity, false, postfix, district, division, branch, village);
+	public void update(Client entity, String postfix, String district, String division, String branch) {
+		update(entity, false, postfix, district, division, branch);
 	}
 	
 	@Transactional
 	@Override
-	public void update(Client entity, boolean allowArchived, String postfix, String district, String division, String branch,
-	                   String village) {
+	public void update(Client entity, boolean allowArchived, String postfix, String district, String division,
+	                   String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			return;
 		}
@@ -147,7 +151,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 				pgClient.setVillage(addressFields.get("address8"));
 			}
 		}
-		int rowsAffected = customMhealthClientMetadataMapper.updateByPrimaryKeyAndGenerateServerVersion(pgClient);
+		int rowsAffected = customMhealthClientMapper.updateByPrimaryKeyAndGenerateServerVersion(pgClient);
 		if (rowsAffected < 1) {
 			throw new IllegalStateException();
 		}
@@ -321,7 +325,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			criteria.andDateDeletedIsNull();
 		}
 		
-		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMetadataMapper.selectOne(baseEntityId, postfix);
+		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMapper.selectOne(baseEntityId, postfix);
 		if (pgClient == null) {
 			return null;
 		}
@@ -339,14 +343,13 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	@Override
 	public Integer findClientIdByBaseEntityId(String baseEntityId, String postfix) {
 		
-		return customMhealthClientMetadataMapper.selectClientIdByBaseEntityId(baseEntityId, postfix);
+		return customMhealthClientMapper.selectClientIdByBaseEntityId(baseEntityId, postfix);
 	}
 	
 	@Override
 	public Client findClientByClientId(Integer clientId, String postfix) {
 		
-		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMetadataMapper.selectClientByClientId(clientId,
-		    postfix);
+		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMapper.selectClientByClientId(clientId, postfix);
 		if (pgClient != null) {
 			return convert(pgClient);
 		}

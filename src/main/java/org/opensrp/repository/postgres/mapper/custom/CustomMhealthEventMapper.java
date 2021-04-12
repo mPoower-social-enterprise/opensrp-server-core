@@ -1,5 +1,7 @@
 package org.opensrp.repository.postgres.mapper.custom;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.opensrp.domain.postgres.Event;
 import org.opensrp.domain.postgres.MhealthEvent;
@@ -21,4 +23,12 @@ public interface CustomMhealthEventMapper extends EventMetadataMapper {
 	
 	Event selectEventByEventId(@Param("eventId") Integer eventId, @Param("postfix") String postfix);
 	
+	List<org.smartregister.domain.Event> selectByVillageIds(@Param("providerId") String providerId,
+	                                                        @Param("villageIds") List<Long> villageIds,
+	                                                        @Param("serverVersion") long serverVersion,
+	                                                        @Param("limit") int limit, @Param("postfix") String postfix);
+	
+	List<org.smartregister.domain.Event> selectByProvider(@Param("serverVersion") long serverVersion,
+	                                                      @Param("providerId") String providerId, @Param("limit") int limit,
+	                                                      @Param("postfix") String postfix);
 }

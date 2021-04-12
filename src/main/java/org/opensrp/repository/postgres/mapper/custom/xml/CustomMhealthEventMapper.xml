@@ -151,5 +151,36 @@
 		from core.event${postfix} e
 		where e.id = #{eventId} limit 1
     </select>
+    
+    <select id="selectByVillageIds"
+			resultMap="BaseEventResultMap">
+		select e.id,e.json
+		FROM core.event${postfix} e , core.event_metadata${postfix} em where e.id=em.event_id
+		and em.server_version::BIGINT >= #{serverVersion,jdbcType=BIGINT}  and
+		em.base_entity_id=any(
+		select base_entity_id from core.client_metadata${postfix}
+		where
+
+		<if test="villageIds != null">
+			village_id=any(array
+			<foreach close="]" collection="villageIds" item="listItem" open="[" separator=",">
+				#{listItem}
+			</foreach>
+			)
+		</if>
+		)
+		order by em.server_version asc
+		LIMIT #{limit}
+
+	</select>
+    <select id="selectByProvider" resultMap="BaseEventResultMap">
+        with em as (
+            select event_id from core.event_metadata${postfix} em
+                where em.provider_id=#{providerId,jdbcType=VARCHAR}
+                and em.server_version::BIGINT >= #{serverVersion,jdbcType=BIGINT}
+        )
+        select e.id,e.json from core.event${postfix} e 
+        where e.id=any(select event_id from em ) order by e.server_version asc
+    </select>
 
 </mapper>

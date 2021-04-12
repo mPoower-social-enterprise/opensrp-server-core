@@ -1,5 +1,6 @@
 package org.opensrp.repository.postgres;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository("eventsRepositoryPostgres")
+@Repository("mhealthEventsRepositoryPostgres")
 public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> implements MhealthEventsRepository {
 	
 	@Autowired
@@ -41,7 +42,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	
 	@Transactional
 	@Override
-	public void add(Event entity, String postfix, String district, String division, String branch, String village) {
+	public void add(Event entity, String postfix, String district, String division, String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			return;
 		}
@@ -62,7 +63,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		pgEvent.setDistrict(district);
 		pgEvent.setDivision(division);
 		pgEvent.setBranch(branch);
-		pgEvent.setVillage(village);
+		pgEvent.setVillage("");
 		pgEvent.setProviderId(entity.getProviderId());
 		pgEvent.setBaseEntityId(entity.getBaseEntityId());
 		pgEvent.setFormSubmissionId(entity.getFormSubmissionId());
@@ -80,7 +81,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 			eventMetadata.setDistrict(district);
 			eventMetadata.setDivision(division);
 			eventMetadata.setBranch(branch);
-			eventMetadata.setVillage(village);
+			eventMetadata.setVillage("");
 			customMhealthEventMetadataMapper.insertSelective(eventMetadata);
 		}
 		
@@ -98,14 +99,14 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	}
 	
 	@Override
-	public void update(Event entity, String postfix, String district, String division, String branch, String village) {
-		update(entity, false, postfix, district, division, branch, village);
+	public void update(Event entity, String postfix, String district, String division, String branch) {
+		update(entity, false, postfix, district, division, branch);
 	}
 	
 	@Transactional
 	@Override
-	public void update(Event entity, boolean allowArchived, String postfix, String district, String division, String branch,
-	                   String village) {
+	public void update(Event entity, boolean allowArchived, String postfix, String district, String division,
+	                   String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			throw new IllegalStateException();
 		}
@@ -124,7 +125,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		pgEvent.setDistrict(district);
 		pgEvent.setDivision(division);
 		pgEvent.setBranch(branch);
-		pgEvent.setVillage(village);
+		pgEvent.setVillage("");
 		pgEvent.setProviderId(entity.getProviderId());
 		pgEvent.setBaseEntityId(entity.getBaseEntityId());
 		pgEvent.setFormSubmissionId(entity.getFormSubmissionId());
@@ -151,7 +152,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		eventMetadata.setDistrict(district);
 		eventMetadata.setDivision(division);
 		eventMetadata.setBranch(branch);
-		eventMetadata.setVillage(village);
+		eventMetadata.setVillage("");
 		customMhealthEventMetadataMapper.updateByPrimaryKey(eventMetadata);
 		
 	}
@@ -270,6 +271,19 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	protected Object retrievePrimaryKey(Event t) {
 		
 		return null;
+	}
+	
+	@Override
+	public List<Event> findByVillageIds(String providerId, List<Long> villageIds, long serverVersion, int limit,
+	                                    String postfix) {
+		
+		return customMhealthEventMapper.selectByVillageIds(providerId, villageIds, serverVersion, limit, postfix);
+	}
+	
+	@Override
+	public List<Event> findByProvider(long serverVersion, String providerId, int limit, String postfix) {
+		
+		return customMhealthEventMapper.selectByProvider(serverVersion, providerId, limit, postfix);
 	}
 	
 }
