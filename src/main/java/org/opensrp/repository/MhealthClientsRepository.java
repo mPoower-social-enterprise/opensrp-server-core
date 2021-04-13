@@ -2,6 +2,7 @@ package org.opensrp.repository;
 
 import java.util.List;
 
+import org.opensrp.domain.postgres.ClientMetadata;
 import org.smartregister.domain.Client;
 
 public interface MhealthClientsRepository {
@@ -10,16 +11,17 @@ public interface MhealthClientsRepository {
 	
 	void add(Client entity, String postfix, String district, String division, String branch);
 	
-	Long retrievePrimaryKey(Client t, String postfix);
-	
 	void update(Client entity, String postfix, String district, String division, String branch);
 	
-	Integer findClientIdByBaseEntityId(String baseEntityId, String postfix);
+	Long findClientIdByBaseEntityId(String baseEntityId, String postfix);
 	
-	Client findClientByClientId(Integer clientId, String postfix);
+	Client findClientByClientId(Long clientId, String postfix);
 	
 	List<Client> convert(List<org.opensrp.domain.postgres.Client> clients);
 	
+	Client findByBaseEntityId(String baseEntityId, String postfix);
+	
 	void update(Client entity, boolean allowArchived, String table, String district, String division, String branch);
 	
+	ClientMetadata findByClientId(Long clientId, String postfix);
 }

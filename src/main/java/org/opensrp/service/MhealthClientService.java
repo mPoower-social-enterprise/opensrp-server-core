@@ -22,7 +22,7 @@ public class MhealthClientService {
 		}
 		String postfix = "_" + district;
 		try {
-			Integer clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), postfix);
+			Long clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), postfix);
 			if (clientId != null) {
 				Client c = findClientByClientId(clientId, postfix);
 				if (c != null) {
@@ -49,12 +49,12 @@ public class MhealthClientService {
 		return client;
 	}
 	
-	public Integer findClientIdByBaseEntityId(String baseEntityId, String postfix) {
+	public Long findClientIdByBaseEntityId(String baseEntityId, String postfix) {
 		
 		return mhealthClientsRepository.findClientIdByBaseEntityId(baseEntityId, postfix);
 	}
 	
-	public Client findClientByClientId(Integer clientId, String postfix) {
+	public Client findClientByClientId(Long clientId, String postfix) {
 		
 		return mhealthClientsRepository.findClientByClientId(clientId, postfix);
 		

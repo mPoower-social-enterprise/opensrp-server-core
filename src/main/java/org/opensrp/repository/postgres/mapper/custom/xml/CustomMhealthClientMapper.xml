@@ -120,9 +120,9 @@
 	
   
 	<select id="selectClientIdByBaseEntityId"
-		resultType="Integer">
-		select client_id
-		from core.client_metadata${postfix} cm
+		resultType="java.lang.Long">
+		select id
+		from core.client${postfix} cm
 		where cm.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} and cm.date_deleted is null limit 1
 	</select>
 	
@@ -133,9 +133,16 @@
 		from core.client${postfix} c
 		where c.id = #{clientId} limit 1
 	</select>
-		<select id="selectServerVersionByPrimaryKey"
+    <select id="selectServerVersionByPrimaryKey"
 		parameterType="java.lang.Long" resultType="long">
 		select server_version from core.client where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectByBaseEntityId"
+		resultMap="org.opensrp.repository.postgres.mapper.ClientMapper.BaseResultMap">
+		select
+		c.id, c.json
+		from core.client${postfix} c
+		where c.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} limit 1
 	</select>
 
 </mapper>

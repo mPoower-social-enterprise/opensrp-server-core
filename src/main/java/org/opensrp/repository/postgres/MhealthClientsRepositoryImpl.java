@@ -33,7 +33,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	@Value("#{opensrp['address.type']}")
 	private String addressType;
 	
-	public static String RESIDENCE = "residence";
+	public static String RESIDENCE = "usual_residence";
 	
 	@Autowired
 	private CustomClientMetadataMapper clientMetadataMapper;
@@ -46,15 +46,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	
 	@Override
 	public Client get(String id) {
-		if (StringUtils.isBlank(id)) {
-			return null;
-		}
-		
-		org.opensrp.domain.postgres.Client pgClient = clientMetadataMapper.selectByDocumentId(id);
-		if (pgClient == null) {
-			return null;
-		}
-		return convert(pgClient);
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
@@ -63,8 +55,8 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		if (entity == null || entity.getBaseEntityId() == null) {
 			return;
 		}
-		
-		if (retrievePrimaryKey(entity) != null) { // Client already added
+		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), postfix);
+		if (id != null) { // Client already added
 			return;
 		}
 		
@@ -129,7 +121,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			return;
 		}
 		
-		Long id = retrievePrimaryKey(entity, allowArchived, postfix);
+		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), postfix);
 		if (id == null) { // Client not added
 			throw new IllegalStateException();
 		}
@@ -169,7 +161,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		if (!allowArchived) {
 			criteria.andDateDeletedIsNull();
 		}
-		ClientMetadata metadata = clientMetadataMapper.selectByExample(clientMetadataExample).get(0);
+		ClientMetadata metadata = findByClientId(id, postfix);
 		clientMetadata.setId(metadata.getId());
 		clientMetadata.setDateCreated(metadata.getDateCreated());
 		clientMetadata.setDistrict(district);
@@ -228,7 +220,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			Address requiredAddress = new Address();
 			
 			for (Address address : client.getAddresses()) {
-				if (address.getAddressType().equalsIgnoreCase(this.addressType)) {
+				if (address.getAddressType().equalsIgnoreCase(RESIDENCE)) {
 					requiredAddress = address;
 					break;
 				}
@@ -301,53 +293,18 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	}
 	
 	@Override
-	public Long retrievePrimaryKey(Client entity, String postfix) {
-		return retrievePrimaryKey(entity, false, postfix);
-	}
-	
-	/**
-	 * @param entity
-	 * @param allowArchived
-	 * @return
-	 */
-	private Long retrievePrimaryKey(Client entity, boolean allowArchived, String postfix) {
-		Object uniqueId = getUniqueField(entity);
-		if (uniqueId == null) {
-			return null;
-		}
-		
-		String baseEntityId = uniqueId.toString();
-		
-		ClientMetadataExample clientMetadataExample = new ClientMetadataExample();
-		Criteria criteria = clientMetadataExample.createCriteria();
-		criteria.andBaseEntityIdEqualTo(baseEntityId);
-		if (!allowArchived) {
-			criteria.andDateDeletedIsNull();
-		}
-		
-		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMapper.selectOne(baseEntityId, postfix);
-		if (pgClient == null) {
-			return null;
-		}
-		return pgClient.getId();
-	}
-	
-	@Override
 	protected Object getUniqueField(Client t) {
-		if (t == null) {
-			return null;
-		}
-		return t.getBaseEntityId();
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public Integer findClientIdByBaseEntityId(String baseEntityId, String postfix) {
+	public Long findClientIdByBaseEntityId(String baseEntityId, String postfix) {
 		
 		return customMhealthClientMapper.selectClientIdByBaseEntityId(baseEntityId, postfix);
 	}
 	
 	@Override
-	public Client findClientByClientId(Integer clientId, String postfix) {
+	public Client findClientByClientId(Long clientId, String postfix) {
 		
 		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMapper.selectClientByClientId(clientId, postfix);
 		if (pgClient != null) {
@@ -366,7 +323,22 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	
 	@Override
 	protected Object retrievePrimaryKey(Client t) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public Client findByBaseEntityId(String baseEntityId, String postfix) {
+		org.opensrp.domain.postgres.Client pgClient = customMhealthClientMapper.selectByBaseEntityId(baseEntityId, postfix);
+		if (pgClient != null) {
+			return convert(pgClient);
+		}
 		return null;
+	}
+	
+	@Override
+	public ClientMetadata findByClientId(Long clientId, String postfix) {
+		
+		return customMhealthClientMetadataMapper.selectByClientId(clientId, postfix);
 	}
 	
 }

@@ -7,9 +7,9 @@ import org.opensrp.domain.postgres.MhealthClientMetadata;
 
 public interface CustomMhealthClientMapper {
 	
-	Integer selectClientIdByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfi);
+	Long selectClientIdByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfi);
 	
-	Client selectClientByClientId(@Param("clientId") Integer clientId, @Param("postfix") String postfix);
+	Client selectClientByClientId(@Param("clientId") Long clientId, @Param("postfix") String postfix);
 	
 	int insertSelectiveAndSetId(MhealthClient record);
 	
@@ -26,4 +26,6 @@ public interface CustomMhealthClientMapper {
 	int updateByPrimaryKeySelective(MhealthClient record);
 	
 	Long selectServerVersionByPrimaryKey(@Param("id") Long id, @Param("postfix") String postfix);
+	
+	Client selectByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfix);
 }
