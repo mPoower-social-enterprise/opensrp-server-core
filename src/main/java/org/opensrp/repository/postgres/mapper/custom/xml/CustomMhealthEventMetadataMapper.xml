@@ -179,7 +179,7 @@
 	    date_created = #{dateCreated,jdbcType=TIMESTAMP},
 	    date_edited = #{dateEdited,jdbcType=TIMESTAMP},
 	    date_deleted = #{dateDeleted,jdbcType=TIMESTAMP},
-	    plan_identifier = #{planIdentifier,jdbcType=VARCHAR}
+	    plan_identifier = #{planIdentifier,jdbcType=VARCHAR},
 	    district = #{district,jdbcType=VARCHAR},
 	    division = #{division,jdbcType=VARCHAR},
 	    branch = #{branch,jdbcType=VARCHAR},

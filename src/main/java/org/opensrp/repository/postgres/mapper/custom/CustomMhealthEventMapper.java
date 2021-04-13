@@ -18,16 +18,20 @@ public interface CustomMhealthEventMapper {
 	
 	int updateByPrimaryKeyAndGenerateServerVersion(MhealthEvent record);
 	
-	Integer selectEventIdByFormSubmissionId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String table);
+	Integer selectEventIdByFormSubmissionId(@Param("formSubmissionId") String formSubmissionId,
+	                                        @Param("postfix") String table);
 	
-	Event selectEventByEventId(@Param("eventId") Integer eventId, @Param("postfix") String postfix);
+	Event selectEventByEventId(@Param("eventId") Long eventId, @Param("postfix") String postfix);
 	
-	List<org.smartregister.domain.Event> selectByVillageIds(@Param("providerId") String providerId,
-	                                                        @Param("villageIds") List<Long> villageIds,
-	                                                        @Param("serverVersion") long serverVersion,
-	                                                        @Param("limit") int limit, @Param("postfix") String postfix);
+	List<Event> selectByVillageIds(@Param("providerId") String providerId, @Param("villageIds") List<Long> villageIds,
+	                               @Param("serverVersion") long serverVersion, @Param("limit") int limit,
+	                               @Param("postfix") String postfix);
 	
 	List<org.smartregister.domain.Event> selectByProvider(@Param("serverVersion") long serverVersion,
 	                                                      @Param("providerId") String providerId, @Param("limit") int limit,
 	                                                      @Param("postfix") String postfix);
+	
+	Event selectByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfix);
+	
+	Event selectByFormSubmissionId(@Param("formSubmissionId") String formSubmissionId, @Param("postfix") String postfix);
 }

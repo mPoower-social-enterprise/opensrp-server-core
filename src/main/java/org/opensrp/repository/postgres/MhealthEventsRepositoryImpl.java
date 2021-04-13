@@ -1,5 +1,6 @@
 package org.opensrp.repository.postgres;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -251,13 +252,13 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	}
 	
 	@Override
-	public Integer findEventIdByFormSubmissionId(String baseEntityId, String postfix) {
+	public Integer findEventIdByFormSubmissionId(String formSubmissionId, String postfix) {
 		
-		return customMhealthEventMapper.selectEventIdByFormSubmissionId(baseEntityId, postfix);
+		return customMhealthEventMapper.selectEventIdByFormSubmissionId(formSubmissionId, postfix);
 	}
 	
 	@Override
-	public Event findEventByEventId(Integer eventId, String postfix) {
+	public Event findEventByEventId(Long eventId, String postfix) {
 		org.opensrp.domain.postgres.Event pgEvent = customMhealthEventMapper.selectEventByEventId(eventId, postfix);
 		if (pgEvent != null) {
 			return convert(pgEvent);
@@ -273,17 +274,47 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		return null;
 	}
 	
+	private List<Event> convert(List<org.opensrp.domain.postgres.Event> events) {
+		if (events == null || events.isEmpty()) {
+			return new ArrayList<>();
+		}
+		
+		List<Event> convertedEvents = new ArrayList<>();
+		for (org.opensrp.domain.postgres.Event event : events) {
+			Event convertedEvent = convert(event);
+			if (convertedEvent != null) {
+				convertedEvents.add(convertedEvent);
+			}
+		}
+		
+		return convertedEvents;
+	}
+	
 	@Override
 	public List<Event> findByVillageIds(String providerId, List<Long> villageIds, long serverVersion, int limit,
 	                                    String postfix) {
-		
-		return customMhealthEventMapper.selectByVillageIds(providerId, villageIds, serverVersion, limit, postfix);
+		List<org.opensrp.domain.postgres.Event> events = customMhealthEventMapper.selectByVillageIds(providerId, villageIds,
+		    serverVersion, limit, postfix);
+		return convert(events);
 	}
 	
 	@Override
 	public List<Event> findByProvider(long serverVersion, String providerId, int limit, String postfix) {
 		
 		return customMhealthEventMapper.selectByProvider(serverVersion, providerId, limit, postfix);
+	}
+	
+	@Override
+	public Event findByBaseEntityId(String baseEntityId, String postfix) {
+		org.opensrp.domain.postgres.Event event = customMhealthEventMapper.selectByBaseEntityId(baseEntityId, postfix);
+		return convert(event);
+	}
+	
+	@Override
+	public Event findByFormSubmissionId(String formSubmissionId, String postfix) {
+		org.opensrp.domain.postgres.Event event = customMhealthEventMapper.selectByFormSubmissionId(formSubmissionId,
+		    postfix);
+		return convert(event);
 	}
 	
 }

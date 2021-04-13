@@ -3,26 +3,21 @@
 <mapper
 	namespace="org.opensrp.repository.postgres.mapper.custom.CustomMhealthEventMapper">
 
-	<resultMap id="BaseEventResultMap" type="org.opensrp.domain.postgres.Event">
-		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="json" jdbcType="OTHER" property="json"
-			typeHandler="org.opensrp.repository.postgres.handler.EventTypeHandler" />
-	</resultMap>
+	
+    <sql id="Base_Column_List">    
+        id, json, date_deleted, server_version
+    </sql>
 
-	<sql id="Base_Event_Column_List">
-		id, json
-	</sql>
-
-	<select id="selectByDocumentId" parameterType="java.lang.String"
-		resultMap="BaseEventResultMap">
+    <select id="selectByDocumentId" parameterType="java.lang.String"
+		resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
 		select
-		<include refid="Base_Event_Column_List" />
-		from core.event${postfix}
+		<include refid="Base_Column_List" />
+		from core.event${postfix} 
 		WHERE json ->> 'id' = #{documentId,jdbcType=VARCHAR} and date_deleted is null
-	</select>
+    </select>
 
 
-	<insert id="insertSelectiveAndSetId" parameterType="org.opensrp.domain.postgres.MhealthEvent"
+    <insert id="insertSelectiveAndSetId" parameterType="org.opensrp.domain.postgres.MhealthEvent"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		insert into core.event
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -114,9 +109,9 @@
 	</select>
 	
     <select id="selectByIdentifier" parameterType="java.lang.String"
-		resultMap="BaseEventResultMap">
+		resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
 		select
-		<include refid="Base_Event_Column_List" />
+		<include refid="Base_Column_List" />
 		from core.event
 		join jsonb_each_text(core.event.json ->
 		'identifiers') j
@@ -145,16 +140,16 @@
 		from core.event_metadata${postfix} em
 		where em.form_submission_id = #{formSubmissionId,jdbcType=VARCHAR} and em.date_deleted is null limit 1
     </select>
-    <select id="selectEventByEventId" resultMap="BaseEventResultMap">
+    <select id="selectEventByEventId" resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
 		select
-		e.id, e.json
+		<include refid="Base_Column_List" />
 		from core.event${postfix} e
 		where e.id = #{eventId} limit 1
     </select>
     
     <select id="selectByVillageIds"
-			resultMap="BaseEventResultMap">
-		select e.id,e.json
+			resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
+		select <include refid="Base_Column_List" />
 		FROM core.event${postfix} e , core.event_metadata${postfix} em where e.id=em.event_id
 		and em.server_version::BIGINT >= #{serverVersion,jdbcType=BIGINT}  and
 		em.base_entity_id=any(
@@ -173,7 +168,7 @@
 		LIMIT #{limit}
 
 	</select>
-    <select id="selectByProvider" resultMap="BaseEventResultMap">
+    <select id="selectByProvider" resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
         with em as (
             select event_id from core.event_metadata${postfix} em
                 where em.provider_id=#{providerId,jdbcType=VARCHAR}
@@ -182,5 +177,19 @@
         select e.id,e.json from core.event${postfix} e 
         where e.id=any(select event_id from em ) order by e.server_version asc
     </select>
+    <select id="selectByBaseEntityId"
+		resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from core.event${postfix} e
+		where e.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} limit 1
+	</select>
+	<select id="selectByFormSubmissionId"
+		resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from core.event${postfix} e
+		where e.form_submission_id = #{formSubmissionId,jdbcType=VARCHAR} limit 1
+	</select>
 
 </mapper>
