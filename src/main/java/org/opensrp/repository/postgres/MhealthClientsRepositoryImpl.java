@@ -15,7 +15,6 @@ import org.opensrp.domain.postgres.ClientMetadataExample;
 import org.opensrp.domain.postgres.ClientMetadataExample.Criteria;
 import org.opensrp.domain.postgres.MhealthClientMetadata;
 import org.opensrp.repository.MhealthClientsRepository;
-import org.opensrp.repository.postgres.mapper.custom.CustomClientMetadataMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMetadataMapper;
 import org.smartregister.domain.Address;
@@ -36,9 +35,6 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	public static String RESIDENCE = "usual_residence";
 	
 	@Autowired
-	private CustomClientMetadataMapper clientMetadataMapper;
-	
-	@Autowired
 	private CustomMhealthClientMapper customMhealthClientMapper;
 	
 	@Autowired
@@ -53,11 +49,11 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	@Transactional
 	public void add(Client entity, String postfix, String district, String division, String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
-			return;
+			throw new IllegalArgumentException("Not a valid Client");
 		}
 		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), postfix);
-		if (id != null) { // Client already added
-			return;
+		if (id != null) { // Client already added			
+			throw new IllegalArgumentException("Client exists");
 		}
 		
 		if (entity.getId() == null || entity.getId().isEmpty())
@@ -118,7 +114,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	public void update(Client entity, boolean allowArchived, String postfix, String district, String division,
 	                   String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
-			return;
+			throw new IllegalArgumentException("Not a valid Client");
 		}
 		
 		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), postfix);
@@ -339,6 +335,14 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	public ClientMetadata findByClientId(Long clientId, String postfix) {
 		
 		return customMhealthClientMetadataMapper.selectByClientId(clientId, postfix);
+	}
+	
+	@Override
+	public List<Client> findByBaseEntityIds(List<String> baseEntityIds, String postfix) {
+		List<org.opensrp.domain.postgres.Client> clients = customMhealthClientMapper.selectByBaseEntityIds(baseEntityIds,
+		    postfix);
+		return convert(clients);
+		
 	}
 	
 }

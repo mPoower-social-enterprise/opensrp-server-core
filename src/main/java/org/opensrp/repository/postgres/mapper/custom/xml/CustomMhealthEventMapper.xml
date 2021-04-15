@@ -5,14 +5,14 @@
 
 	
     <sql id="Base_Column_List">    
-        id, json, date_deleted, server_version
+        e.id, e.json, e.date_deleted, e.server_version
     </sql>
 
     <select id="selectByDocumentId" parameterType="java.lang.String"
 		resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from core.event${postfix} 
+		from core.event${postfix} e
 		WHERE json ->> 'id' = #{documentId,jdbcType=VARCHAR} and date_deleted is null
     </select>
 
@@ -112,7 +112,7 @@
 		resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from core.event
+		from core.event e
 		join jsonb_each_text(core.event.json ->
 		'identifiers') j
 		on true
@@ -135,10 +135,16 @@
     where id = #{id,jdbcType=BIGINT}
     </update>
     <select id="selectEventIdByFormSubmissionId" 
-		resultType="Integer">
+		resultType="java.lang.Long">
 		select event_id
 		from core.event_metadata${postfix} em
 		where em.form_submission_id = #{formSubmissionId,jdbcType=VARCHAR} and em.date_deleted is null limit 1
+    </select>
+    <select id="selectEventIdByDocumentId" 
+		resultType="java.lang.Long">
+		select event_id
+		from core.event_metadata${postfix} em
+		where em.document_id = #{documentId,jdbcType=VARCHAR} and em.date_deleted is null limit 1
     </select>
     <select id="selectEventByEventId" resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
 		select

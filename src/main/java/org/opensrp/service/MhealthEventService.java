@@ -20,7 +20,7 @@ public class MhealthEventService {
 	public synchronized Event addorUpdateEvent(Event event, String username, String district, String division,
 	                                           String branch) {
 		String postfix = "_" + district;
-		Integer eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), postfix);
+		Long eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), postfix);
 		
 		if (eventId != null) {
 			Event existingEvent = findEventByEventId(eventId, postfix);
@@ -38,12 +38,12 @@ public class MhealthEventService {
 		return event;
 	}
 	
-	public Integer findEventIdByFormSubmissionId(String baseEntityId, String postfix) {
+	public Long findEventIdByFormSubmissionId(String baseEntityId, String postfix) {
 		
 		return mhealthEventsRepository.findEventIdByFormSubmissionId(baseEntityId, postfix);
 	}
 	
-	public Event findEventByEventId(Integer eventId, String postfix) {
+	public Event findEventByEventId(Long eventId, String postfix) {
 		
 		return mhealthEventsRepository.findEventByEventId(eventId, postfix);
 	}

@@ -4,11 +4,9 @@
 	namespace="org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMapper">
 		
 	
-	
-	<sql id="Base_Column_List">
-		c.id, c.json
-	</sql>
-	
+    <sql id="Base_Column_List">    
+        c.id, c.json, c.date_deleted, c.server_version
+    </sql>	
 	<sql id="Base_Table_List">
 		from core.client_metadata${postfix} cm
 		join core.client${postfix} c on cm.client_id = c.id
@@ -129,7 +127,7 @@
 	<select id="selectClientByClientId"
 		resultMap="org.opensrp.repository.postgres.mapper.ClientMapper.BaseResultMap">
 		select
-		c.id, c.json
+		<include refid="Base_Column_List" />
 		from core.client${postfix} c
 		where c.id = #{clientId} limit 1
 	</select>
@@ -140,9 +138,25 @@
     <select id="selectByBaseEntityId"
 		resultMap="org.opensrp.repository.postgres.mapper.ClientMapper.BaseResultMap">
 		select
-		c.id, c.json
+		<include refid="Base_Column_List" />
 		from core.client${postfix} c
 		where c.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} limit 1
 	</select>
+    <select id="selectByBaseEntityIds"
+			resultMap="org.opensrp.repository.postgres.mapper.ClientMapper.BaseResultMap">
+		select <include refid="Base_Column_List" />
+		FROM core.client${postfix} c
+		where
+		<if test="baseEntityIds != null">
+			c.base_entity_id=any(array
+			<foreach close="]" collection="baseEntityIds" item="listItem" open="[" separator=",">
+				#{listItem}
+			</foreach>
+			)
+		</if>		
+		order by c.server_version asc
+		
+
+	</select>	
 
 </mapper>

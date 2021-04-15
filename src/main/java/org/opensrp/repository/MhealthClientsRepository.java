@@ -21,6 +21,8 @@ public interface MhealthClientsRepository {
 	
 	Client findByBaseEntityId(String baseEntityId, String postfix);
 	
+	List<Client> findByBaseEntityIds(List<String> baseEntityIds, String postfix);
+	
 	void update(Client entity, boolean allowArchived, String table, String district, String division, String branch);
 	
 	ClientMetadata findByClientId(Long clientId, String postfix);

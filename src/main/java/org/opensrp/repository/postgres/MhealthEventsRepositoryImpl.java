@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opensrp.common.AllConstants;
 import org.opensrp.domain.postgres.EventMetadataExample;
 import org.opensrp.domain.postgres.EventMetadataExample.Criteria;
 import org.opensrp.domain.postgres.MhealthEvent;
 import org.opensrp.domain.postgres.MhealthEventMetadata;
 import org.opensrp.repository.MhealthEventsRepository;
-import org.opensrp.repository.postgres.mapper.custom.CustomEventMetadataMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthEventMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthEventMetadataMapper;
 import org.smartregister.domain.Event;
@@ -22,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> implements MhealthEventsRepository {
 	
-	@Autowired
-	private CustomEventMetadataMapper eventMetadataMapper;
+	public static int DEFAULT_FETCH_SIZE = 100;
 	
 	@Autowired
 	private CustomMhealthEventMapper customMhealthEventMapper;
@@ -33,22 +30,17 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	
 	@Override
 	public Event get(String id, String postfix) {
-		if (StringUtils.isBlank(id)) {
-			return null;
-		}
-		org.opensrp.domain.postgres.Event pgEvent = eventMetadataMapper.selectByDocumentId(id);
-		
-		return convert(pgEvent);
+		throw new UnsupportedOperationException();
 	}
 	
 	@Transactional
 	@Override
 	public void add(Event entity, String postfix, String district, String division, String branch) {
 		if (entity == null || entity.getBaseEntityId() == null) {
-			return;
+			throw new IllegalArgumentException("Not a valid Event");
 		}
-		
-		if (retrievePrimaryKey(entity) != null) { // Event already added
+		Long id = retrievePrimaryKey(entity, false, postfix);
+		if (id != null) { // Event already added			
 			throw new IllegalArgumentException("Event exists");
 		}
 		
@@ -149,7 +141,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		if (!allowArchived) {
 			criteria.andDateDeletedIsNull();
 		}
-		eventMetadata.setId(eventMetadataMapper.selectByExample(eventMetadataExample).get(0).getId());
+		eventMetadata.setId(customMhealthEventMetadataMapper.selectEventMetadataIdByEventId(id, postfix));
 		eventMetadata.setDistrict(district);
 		eventMetadata.setDivision(division);
 		eventMetadata.setBranch(branch);
@@ -158,29 +150,13 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		
 	}
 	
-	/**
-	 * Get the primary key of an event
-	 * 
-	 * @param event
-	 * @param allowArchived
-	 * @return the promary key
-	 */
 	private Long retrievePrimaryKey(Event event, boolean allowArchived, String postfix) {
 		Object uniqueId = getUniqueField(event);
 		if (uniqueId == null) {
 			return null;
 		}
-		
 		String documentId = uniqueId.toString();
-		
-		EventMetadataExample eventMetadataExample = new EventMetadataExample();
-		Criteria criteria = eventMetadataExample.createCriteria();
-		criteria.andDocumentIdEqualTo(documentId);
-		if (!allowArchived) {
-			criteria.andDateDeletedIsNull();
-		}
-		
-		return customMhealthEventMetadataMapper.selectPrimaryKey(documentId, postfix);
+		return customMhealthEventMapper.selectEventIdByDocumentId(documentId, postfix);
 		
 	}
 	
@@ -197,7 +173,6 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		return t.getId();
 	}
 	
-	// Private Methods
 	private Event convert(org.opensrp.domain.postgres.Event event) {
 		if (event == null || event.getJson() == null || !(event.getJson() instanceof Event)) {
 			return null;
@@ -213,7 +188,6 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		org.opensrp.domain.postgres.MhealthEvent pgEvent = new org.opensrp.domain.postgres.MhealthEvent();
 		pgEvent.setId(primaryKey);
 		pgEvent.setJson(event);
-		
 		return pgEvent;
 	}
 	
@@ -252,8 +226,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	}
 	
 	@Override
-	public Integer findEventIdByFormSubmissionId(String formSubmissionId, String postfix) {
-		
+	public Long findEventIdByFormSubmissionId(String formSubmissionId, String postfix) {
 		return customMhealthEventMapper.selectEventIdByFormSubmissionId(formSubmissionId, postfix);
 	}
 	
@@ -270,7 +243,6 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	
 	@Override
 	protected Object retrievePrimaryKey(Event t) {
-		
 		return null;
 	}
 	
@@ -286,7 +258,6 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 				convertedEvents.add(convertedEvent);
 			}
 		}
-		
 		return convertedEvents;
 	}
 	
@@ -294,13 +265,12 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	public List<Event> findByVillageIds(String providerId, List<Long> villageIds, long serverVersion, int limit,
 	                                    String postfix) {
 		List<org.opensrp.domain.postgres.Event> events = customMhealthEventMapper.selectByVillageIds(providerId, villageIds,
-		    serverVersion, limit, postfix);
+		    serverVersion, DEFAULT_FETCH_SIZE, postfix);
 		return convert(events);
 	}
 	
 	@Override
 	public List<Event> findByProvider(long serverVersion, String providerId, int limit, String postfix) {
-		
 		return customMhealthEventMapper.selectByProvider(serverVersion, providerId, limit, postfix);
 	}
 	

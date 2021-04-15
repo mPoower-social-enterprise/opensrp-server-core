@@ -5,7 +5,7 @@ import org.opensrp.domain.postgres.MhealthEventMetadata;
 
 public interface CustomMhealthEventMetadataMapper {
 	
-	Long selectPrimaryKey(@Param("documentId") String documentId, @Param("postfix") String postfix);
+	Long selectEventMetadataIdByEventId(@Param("eventId") Long eventId, @Param("postfix") String postfix);
 	
 	int insertSelective(MhealthEventMetadata record);
 	

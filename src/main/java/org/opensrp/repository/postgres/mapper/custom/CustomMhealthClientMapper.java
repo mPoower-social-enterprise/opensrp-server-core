@@ -1,5 +1,7 @@
 package org.opensrp.repository.postgres.mapper.custom;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.opensrp.domain.postgres.Client;
 import org.opensrp.domain.postgres.MhealthClient;
@@ -28,4 +30,6 @@ public interface CustomMhealthClientMapper {
 	Long selectServerVersionByPrimaryKey(@Param("id") Long id, @Param("postfix") String postfix);
 	
 	Client selectByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfix);
+	
+	List<Client> selectByBaseEntityIds(@Param("baseEntityIds") List<String> baseEntityIds, @Param("postfix") String postfix);
 }

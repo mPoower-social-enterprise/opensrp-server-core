@@ -6,7 +6,7 @@ import org.smartregister.domain.Event;
 
 public interface MhealthEventsRepository {
 	
-	Integer findEventIdByFormSubmissionId(String formSubmissionId, String table);
+	Long findEventIdByFormSubmissionId(String formSubmissionId, String table);
 	
 	Event findEventByEventId(Long eventId, String postfix);
 	

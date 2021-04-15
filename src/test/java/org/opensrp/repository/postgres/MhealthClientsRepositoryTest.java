@@ -44,6 +44,22 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		assertEquals("233864-8", savedClient.getIdentifier("ZEIR_ID"));
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldThrowIIllegalArgumentExceptionTestDuplicateRecordAdd() {
+		addClient();
+		addClient();
+		
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldThrowIIllegalArgumentExceptionTestAdd() {
+		String district = "234";
+		String postfix = "";
+		String division = "233";
+		String branch = "34";
+		mhealthClientsRepository.add(null, postfix, district, division, branch);
+	}
+	
 	@Test
 	public void testShouldUpdate() {
 		Client client = new Client("f67823b0-378e-4a35-93fc-bb00def74e2f").withBirthdate(new DateTime("2017-03-31"), true)
@@ -88,6 +104,49 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldThrowIIllegalArgumentExceptionExceptionTestUpdate() {
+		String district = "234";
+		String postfix = "";
+		String division = "233";
+		String branch = "34";
+		mhealthClientsRepository.update(null, postfix, district, division, branch);
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void shouldThrowIllegalStateExceptionExceptionTestUpdate() {
+		Client client = new Client("f67823b0-378e-4a35-93fc-bb00def74e2f").withBirthdate(new DateTime("2017-03-31"), true)
+		        .withGender("Male").withFirstName("xobili").withLastName("mbangwa");
+		List<Address> addresses = new ArrayList<Address>();
+		Address address = new Address();
+		address.setCountry("BBANGLADESH");
+		address.setAddressType("usual_residence");
+		address.setCityVillage("VILLAGE");
+		address.setStateProvince("DIVISION");
+		address.setCountyDistrict("DISTRICT");
+		
+		Map<String, String> addressFields = new HashMap<>();
+		addressFields.put("address1", "wARD");
+		addressFields.put("address2", "UPAZILA");
+		addressFields.put("address3", "POURASAVA");
+		addressFields.put("address8", "2345");
+		address.setAddressFields(addressFields);
+		addresses.add(address);
+		Map<String, List<String>> relationships = new HashMap<>();
+		List<String> relationalIds = new ArrayList<>();
+		relationalIds.add("23333");
+		relationships.put("family", relationalIds);
+		client.setAddresses(addresses);
+		client.setRelationships(relationships);
+		client.setServerVersion(0);
+		client.withIdentifier("ZEIR_ID", "233864-8").withAttribute("Home_Facility", "Linda");
+		String district = "234";
+		String postfix = "";
+		String division = "233";
+		String branch = "34";
+		mhealthClientsRepository.update(client, postfix, district, division, branch);
+	}
+	
 	@Test
 	public void shouldTesFindByClientIdAndFindClientIdByBaseEntityId() {
 		Client client = addClient();
@@ -115,6 +174,18 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		Long id = mhealthClientsRepository.findClientIdByBaseEntityId(client.getBaseEntityId(), postfix);
 		assertNotNull(id);
+		
+	}
+	
+	@Test
+	public void shouldTestFindByBaseEntityIdss() {
+		addClient();
+		String postfix = "";
+		List<String> baseEntitiIds = new ArrayList<>();
+		baseEntitiIds.add("f67823b0-378e-4a35-93fc-bb00def74e2f");
+		List<Client> clients = mhealthClientsRepository.findByBaseEntityIds(baseEntitiIds, postfix);
+		assertNotNull(clients);
+		assertEquals(1, clients.size());
 		
 	}
 	

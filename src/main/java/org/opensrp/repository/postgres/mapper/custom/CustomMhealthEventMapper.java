@@ -18,8 +18,9 @@ public interface CustomMhealthEventMapper {
 	
 	int updateByPrimaryKeyAndGenerateServerVersion(MhealthEvent record);
 	
-	Integer selectEventIdByFormSubmissionId(@Param("formSubmissionId") String formSubmissionId,
-	                                        @Param("postfix") String table);
+	Long selectEventIdByFormSubmissionId(@Param("formSubmissionId") String formSubmissionId, @Param("postfix") String table);
+	
+	Long selectEventIdByDocumentId(@Param("documentId") String documentId, @Param("postfix") String table);
 	
 	Event selectEventByEventId(@Param("eventId") Long eventId, @Param("postfix") String postfix);
 	
