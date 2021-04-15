@@ -2,9 +2,11 @@ package org.opensrp.service;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.opensrp.repository.MhealthEventsRepository;
 import org.smartregister.domain.Event;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,14 +14,17 @@ public class MhealthEventService {
 	
 	private MhealthEventsRepository mhealthEventsRepository;
 	
+	@Autowired
 	public MhealthEventService(MhealthEventsRepository mhealthEventsRepository) {
-		super();
 		this.mhealthEventsRepository = mhealthEventsRepository;
 	}
 	
 	public synchronized Event addorUpdateEvent(Event event, String username, String district, String division,
 	                                           String branch) {
-		String postfix = "_" + district;
+		String postfix = "";
+		if (!StringUtils.isBlank(district)) {
+			postfix = "_" + district;
+		}
 		Long eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), postfix);
 		
 		if (eventId != null) {
@@ -59,4 +64,7 @@ public class MhealthEventService {
 		return mhealthEventsRepository.findByProvider(serverVersion, providerId, limit, postfix);
 	}
 	
+	public Event findByFormSubmissionId(String formSubmissionId, String postfix) {
+		return mhealthEventsRepository.findByFormSubmissionId(formSubmissionId, postfix);
+	}
 }
