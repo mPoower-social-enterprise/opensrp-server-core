@@ -180,7 +180,7 @@
                 where em.provider_id=#{providerId,jdbcType=VARCHAR}
                 and em.server_version::BIGINT >= #{serverVersion,jdbcType=BIGINT}
         )
-        select e.id,e.json from core.event${postfix} e 
+        select e.id,e.json,e.server_version from core.event${postfix} e 
         where e.id=any(select event_id from em ) order by e.server_version asc
     </select>
     <select id="selectByBaseEntityId"

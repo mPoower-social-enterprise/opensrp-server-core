@@ -271,7 +271,9 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	
 	@Override
 	public List<Event> findByProvider(long serverVersion, String providerId, int limit, String postfix) {
-		return customMhealthEventMapper.selectByProvider(serverVersion, providerId, limit, postfix);
+		List<org.opensrp.domain.postgres.Event> events = customMhealthEventMapper.selectByProvider(serverVersion, providerId,
+		    limit, postfix);
+		return convert(events);
 	}
 	
 	@Override

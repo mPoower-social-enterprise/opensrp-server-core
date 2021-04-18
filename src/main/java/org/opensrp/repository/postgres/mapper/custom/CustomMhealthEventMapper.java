@@ -28,9 +28,8 @@ public interface CustomMhealthEventMapper {
 	                               @Param("serverVersion") long serverVersion, @Param("limit") int limit,
 	                               @Param("postfix") String postfix);
 	
-	List<org.smartregister.domain.Event> selectByProvider(@Param("serverVersion") long serverVersion,
-	                                                      @Param("providerId") String providerId, @Param("limit") int limit,
-	                                                      @Param("postfix") String postfix);
+	List<Event> selectByProvider(@Param("serverVersion") long serverVersion, @Param("providerId") String providerId,
+	                             @Param("limit") int limit, @Param("postfix") String postfix);
 	
 	Event selectByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfix);
 	

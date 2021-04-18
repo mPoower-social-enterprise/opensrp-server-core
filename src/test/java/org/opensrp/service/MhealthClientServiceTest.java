@@ -95,6 +95,25 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
+	public void testShouldReturnIllegalArgumentExceptionForNUllClientAddorUpdate() {
+		String district = "234";
+		
+		String division = "233";
+		String branch = "34";
+		mhealthClientService.addOrUpdate(null, district, division, branch);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testShouldReturnIllegalArgumentExceptionForEmptyBaseEntityIdClientAddorUpdate() {
+		String district = "234";
+		Client client = new Client(null).withBirthdate(new DateTime("2017-03-31"), true).withGender("Male")
+		        .withFirstName("xobili").withLastName("mbangwa");
+		String division = "233";
+		String branch = "34";
+		mhealthClientService.addOrUpdate(client, district, division, branch);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIIllegalArgumentExceptionTestAdd() {
 		String district = "234";
 		String postfix = "";
@@ -108,6 +127,17 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		addClient();
 		String postfix = "";
 		Client c = mhealthClientService.findByBaseEntityId("f67823b0-378e-4a35-93fc-bb00def74e2f", postfix);
+		assertNotNull(c);
+		assertEquals("xobili", c.getFirstName());
+		assertEquals("233864-8", c.getIdentifier("ZEIR_ID"));
+	}
+	
+	@Test
+	public void testFindClientByClientId() {
+		addClient();
+		String postfix = "";
+		Long clientId = mhealthClientService.findClientIdByBaseEntityId("f67823b0-378e-4a35-93fc-bb00def74e2f", postfix);
+		Client c = mhealthClientService.findClientByClientId(clientId, postfix);
 		assertNotNull(c);
 		assertEquals("xobili", c.getFirstName());
 		assertEquals("233864-8", c.getIdentifier("ZEIR_ID"));

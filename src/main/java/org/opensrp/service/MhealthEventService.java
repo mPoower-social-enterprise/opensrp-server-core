@@ -23,7 +23,7 @@ public class MhealthEventService {
 	                                           String branch) {
 		String postfix = "";
 		if (!StringUtils.isBlank(district)) {
-			postfix = "_" + district;
+			//postfix = "_" + district;
 		}
 		Long eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), postfix);
 		
