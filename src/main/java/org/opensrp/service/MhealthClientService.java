@@ -2,7 +2,6 @@ package org.opensrp.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.smartregister.domain.Client;
@@ -19,13 +18,9 @@ public class MhealthClientService {
 		this.mhealthClientsRepository = mhealthClientsRepository;
 	}
 	
-	public Client addOrUpdate(Client client, String district, String division, String branch) {
+	public Client addOrUpdate(Client client, String district, String division, String branch, String postfix) {
 		if (client == null || client.getBaseEntityId() == null) {
 			throw new IllegalArgumentException("Not a valid Client");
-		}
-		String postfix = "";
-		if (!StringUtils.isBlank(district)) {
-			//postfix = "_" + district;
 		}
 		
 		Long clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), postfix);

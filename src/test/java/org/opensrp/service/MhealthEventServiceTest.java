@@ -60,7 +60,7 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String username = "";
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch);
+		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
 		
 		Event savedEvent = mhealthEventService.findByFormSubmissionId("form_submission_id", postfix);
 		
@@ -72,7 +72,7 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		
 		savedEvent.setEventType("Family Registration");
 		savedEvent.setProviderId("testsku");
-		mhealthEventService.addorUpdateEvent(savedEvent, username, district, division, branch);
+		mhealthEventService.addorUpdateEvent(savedEvent, username, district, division, branch, postfix);
 		
 		Event updatedEvent = mhealthEventService.findByFormSubmissionId("form_submission_id", postfix);
 		
@@ -92,7 +92,7 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String username = "";
 		addClient();
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch);
+		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
 		List<Long> villageIds = new ArrayList<>();
 		villageIds.add(2345l);
 		List<Event> events = mhealthEventService.findByVillageIds("", villageIds, 0, 1, postfix);
@@ -111,7 +111,7 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String username = "";
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch);
+		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
 		Event findEvent = mhealthEventService.findByFormSubmissionId("form_submission_id", postfix);
 		assertNotNull(findEvent);
 		assertEquals("435534534543", findEvent.getBaseEntityId());
@@ -128,7 +128,7 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String username = "";
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch);
+		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
 		List<Event> events = mhealthEventService.findByProvider(0l, "testsk", 1, postfix);
 		assertEquals(1, events.size());
 		assertEquals("435534534543", events.get(0).getBaseEntityId());
@@ -181,6 +181,6 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch);
+		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
 	}
 }

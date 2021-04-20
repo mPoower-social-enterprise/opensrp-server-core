@@ -2,7 +2,6 @@ package org.opensrp.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.opensrp.repository.MhealthEventsRepository;
 import org.smartregister.domain.Event;
@@ -19,12 +18,9 @@ public class MhealthEventService {
 		this.mhealthEventsRepository = mhealthEventsRepository;
 	}
 	
-	public synchronized Event addorUpdateEvent(Event event, String username, String district, String division,
-	                                           String branch) {
-		String postfix = "";
-		if (!StringUtils.isBlank(district)) {
-			//postfix = "_" + district;
-		}
+	public synchronized Event addorUpdateEvent(Event event, String username, String district, String division, String branch,
+	                                           String postfix) {
+		
 		Long eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), postfix);
 		
 		if (eventId != null) {

@@ -75,7 +75,7 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch);
+		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
 		
 		Client savedClient = mhealthClientService.findByBaseEntityId("f67823b0-378e-4a35-93fc-bb00def74e2f", postfix);
 		
@@ -86,7 +86,7 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		//test adding existing client is updated
 		DateTime timeBeforeUpdate = new DateTime();
 		savedClient.withMiddleName("Rustus");
-		mhealthClientService.addOrUpdate(savedClient, district, division, branch);
+		mhealthClientService.addOrUpdate(savedClient, district, division, branch, postfix);
 		
 		Client updatedClient = mhealthClientService.findByBaseEntityId("f67823b0-378e-4a35-93fc-bb00def74e2f", postfix);
 		assertEquals("Rustus", updatedClient.getMiddleName());
@@ -97,10 +97,10 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testShouldReturnIllegalArgumentExceptionForNUllClientAddorUpdate() {
 		String district = "234";
-		
+		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(null, district, division, branch);
+		mhealthClientService.addOrUpdate(null, district, division, branch, postfix);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -110,7 +110,8 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		        .withFirstName("xobili").withLastName("mbangwa");
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch);
+		String postfix = "";
+		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -184,7 +185,7 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch);
+		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
 	}
 	
 }
