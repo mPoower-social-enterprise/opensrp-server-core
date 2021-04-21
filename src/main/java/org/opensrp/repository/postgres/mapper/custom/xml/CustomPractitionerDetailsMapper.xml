@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.opensrp.repository.postgres.mapper.custom.CustomPractitionerDetailsMapper">
+    
+    <resultMap id="practitionerLocationMap" type="org.opensrp.domain.PractitionerLocation">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="leaf_loc_id" jdbcType="BIGINT" property="leafLocationId"/>
+		<result column="member_id" jdbcType="BIGINT" property="PractitionerId"/>
+		<result column="first_name" jdbcType="VARCHAR" property="firstName"/>
+		<result column="last_name" jdbcType="VARCHAR" property="lastName"/>
+		<result column="loc_tag_name" jdbcType="VARCHAR" property="locationTagName"/>
+		<result column="username" jdbcType="VARCHAR" property="username"/>
+		<result column="location_name" jdbcType="VARCHAR" property="locationName"/>
+		<result column="code" jdbcType="VARCHAR" property="code"/>
+    </resultMap>
+    <select id="selectPractitionerLocationsByChildGroup" parameterType="map"
+        resultMap="practitionerLocationMap">
+        select * from core.get_location_tree(#{practitionerId}, #{childGroupId}, #{assignedLocationTagId});
+    </select>
+	
+    <select id="selectPractitionerDetailsByUsername" parameterType="map"
+        resultMap="org.opensrp.repository.postgres.mapper.PractitionerDetailsMapper.BaseResultMap">
+        select pd.* from team.practitioner_details as pd join team.practitioner p on
+        pd.practitioner_id = p.id where p.username=#{username}
+    </select>    
+
+</mapper>
