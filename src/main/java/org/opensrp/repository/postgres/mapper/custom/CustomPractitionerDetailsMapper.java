@@ -14,4 +14,11 @@ public interface CustomPractitionerDetailsMapper extends PractitionerDetailsMapp
 	                                                                   @Param("assignedLocationTagId") int assignedLocationTagId);
 	
 	PractitionerDetails selectPractitionerDetailsByUsername(@Param("username") String username);
+	
+	String selectIsResync(String username);
+	
+	void updateAppVersion(@Param("username") String username, @Param("version") String version);
+	
+	Boolean selectUserStatus(@Param("username") String username);
+	
 }

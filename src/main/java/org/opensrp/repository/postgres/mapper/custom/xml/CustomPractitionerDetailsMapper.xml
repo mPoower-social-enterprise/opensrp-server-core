@@ -22,6 +22,16 @@
         resultMap="org.opensrp.repository.postgres.mapper.PractitionerDetailsMapper.BaseResultMap">
         select pd.* from team.practitioner_details as pd join team.practitioner p on
         pd.practitioner_id = p.id where p.username=#{username}
-    </select>    
+    </select>
+    <select id="selectIsResync" parameterType="java.lang.String" resultType="String">
+        select u.is_resync from core.users as u where u.username =#{username,jdbcType=VARCHAR}  limit 1
+    </select>
+    <update id="updateAppVersion" parameterType="map">
+        update core.users set app_version = #{version} where username = #{username}    
+    </update>
+    <select id="selectUserStatus" parameterType="java.lang.String"
+			resultType="BOOLEAN">
+		select u.enabled as enable from core.users as u where u.username =  #{username,jdbcType=VARCHAR}
+	</select>
 
 </mapper>

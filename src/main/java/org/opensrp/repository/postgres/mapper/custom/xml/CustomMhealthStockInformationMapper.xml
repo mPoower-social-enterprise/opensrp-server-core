@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="org.opensrp.repository.postgres.mapper.custom.CustomMhealthStockInformationMapper">
+    <resultMap id="stockInfo" type="org.opensrp.domain.postgres.MhealthStockInformation">
+        <id column="stock_id" jdbcType="BIGINT" property="stockId" />
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="expirey_date" jdbcType="VARCHAR" property="expireyDate"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="quantity" jdbcType="BIGINT" property="quantity"/>		
+        <result column="receive_date" jdbcType="VARCHAR" property="receiveDate"/>		
+        <result column="year_" jdbcType="BIGINT" property="year"/>		
+        <result column="month_" jdbcType="BIGINT" property="month"/>
+        <result column="time_stamp" jdbcType="BIGINT" property="timestamp"/>
+    </resultMap>	
+    <select id="selectStockInformationByUsername"
+		resultMap="stockInfo">
+		select * from core.get_stok_for_mobile(#{username,jdbcType=VARCHAR},#{timestamp,jdbcType=BIGINT})
+    </select>
+</mapper>

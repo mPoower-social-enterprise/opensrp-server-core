@@ -11,4 +11,10 @@ public interface PractitionerDetailsRepository {
 	                                                                 int assignedLocationTagId);
 	
 	PractitionerDetails findPractitionerDetailsByUsername(String username);
+	
+	String getIsResync(String username);
+	
+	void updateAppVersion(String username, String version);
+	
+	Boolean getUserStatus(String username);
 }

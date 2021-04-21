@@ -94,4 +94,16 @@ public class PractionerDetailsService {
 		return locationTree;
 	}
 	
+	public String getIsResync(String username) {
+		return practitionerDetailsRepository.getIsResync(username);
+	}
+	
+	public void updateAppVersion(String username, String version) {
+		practitionerDetailsRepository.updateAppVersion(username, version);
+	}
+	
+	public Boolean getUserStatus(String username) {
+		
+		return practitionerDetailsRepository.getUserStatus(username);
+	}
 }

@@ -29,4 +29,20 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 		return customPractitionerDetailsMapper.selectPractitionerDetailsByUsername(username);
 	}
 	
+	@Override
+	public String getIsResync(String username) {
+		
+		return customPractitionerDetailsMapper.selectIsResync(username);
+	}
+	
+	@Override
+	public void updateAppVersion(String username, String version) {
+		customPractitionerDetailsMapper.updateAppVersion(username, version);
+		
+	}
+	
+	@Override
+	public Boolean getUserStatus(String username) {
+		return customPractitionerDetailsMapper.selectUserStatus(username);
+	}
 }

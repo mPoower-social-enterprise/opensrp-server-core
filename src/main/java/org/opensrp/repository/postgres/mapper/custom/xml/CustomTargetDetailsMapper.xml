@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="org.opensrp.repository.postgres.mapper.custom.CustomTargetDetailsMapper">
+	<resultMap id="targetDetails" type="org.opensrp.domain.postgres.TargetDetails">
+		<id column="username" jdbcType="VARCHAR" property="username" />
+		<result column="targetid" jdbcType="BIGINT" property="targetId"/>
+		<result column="targetname" jdbcType="VARCHAR" property="targetName"/>
+		<result column="targetcount" jdbcType="BIGINT" property="targetCount"/>
+		<result column="year" jdbcType="VARCHAR" property="year"/>
+		<result column="month" jdbcType="VARCHAR" property="month"/>
+		<result column="day" jdbcType="VARCHAR" property="day"/>
+		<result column="timestamp" jdbcType="BIGINT" property="timestamp"/>
+		<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+		<result column="end_date" jdbcType="VARCHAR" property="endDate"/>
+	</resultMap>		
+    <select id="selectTargetDetailsByUsername" parameterType="map" resultMap="targetDetails">
+        select u.username,p.id targetId,
+        case
+        when lower(p."name") = 'household visit' then 'HH visit'
+        when lower(p."name") = 'elco visit' then 'ELCO Registration'
+        when lower(p."name") = 'iycf forum' then 'Child Forum'
+        when lower(p."name") = 'women forum' then 'WOMEN Forum'
+        when lower(p."name") = 'adult forum' then 'ADULT Forum'
+        when lower(p."name") = 'women service' then 'Women package'
+        when lower(p."name") = 'adolescent service' then 'Adolescent package'
+        when lower(p."name") = 'ncd service' then 'NCD package'
+        when lower(p."name") = 'delivery' then 'Pregnancy Outcome'
+        when lower(p."name") = 'iycf service' then 'IYCF package'
+        else p."name"
+        end targetName,
+        td.quantity targetCount,
+        td."month",
+        td."year",
+        td."day",
+        td."timestamp",
+		TO_CHAR(td.start_date, 'DD-MM-YYYY') start_date,
+		TO_CHAR(td.end_date, 'DD-MM-YYYY') end_date
+	from
+		core.target_details td
+		join core.product p on td.product_id = p.id
+		join core.users u on u.id = td.user_id
+	where
+		u.username = #{username}
+		and td."timestamp" > #{targetTimestamp}
+	order by td."timestamp";
+	</select>
+</mapper>

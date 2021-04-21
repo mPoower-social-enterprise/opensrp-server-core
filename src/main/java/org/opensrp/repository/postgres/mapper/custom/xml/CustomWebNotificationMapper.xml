@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="org.opensrp.repository.postgres.mapper.custom.CustomWebNotificationMapper">
+    <resultMap id="webNotification" type="org.opensrp.domain.postgres.WebNotification">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="notification_type" jdbcType="VARCHAR" property="notificationType"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="notification" jdbcType="VARCHAR" property="details"/>
+        <result column="send_date" jdbcType="VARCHAR" property="sendDate"/>		
+        <result column="send_time_hour" jdbcType="BIGINT" property="hour"/>
+        <result column="send_time_minute" jdbcType="BIGINT" property="minute"/>
+        <result column="time_stamp" jdbcType="BIGINT" property="timestamp"/>
+    </resultMap>		
+    <select id="selectWebNotificationsByUsername" resultMap="webNotification">
+        select * from core.get_web_notification_for_mobile(#{username,jdbcType=VARCHAR},#{timestamp,jdbcType=BIGINT})
+    </select>
+</mapper>
