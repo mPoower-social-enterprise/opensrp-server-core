@@ -7,18 +7,29 @@
     <select id="selectMaxHouseholdIdByLocation" parameterType="java.lang.Integer" resultType="Integer">
         select coalesce(max(cast(h_id as integer)), 0) as  max_health_id from core.health_id where location_id = #{locationId};
     </select>
-    <select id="getHouseholdId" parameterType="java.lang.Integer" resultType="java.lang.String">
+    
+    <select id="selectMaxGuestHouseholdIdByLocation" parameterType="java.lang.Integer" resultType="Integer">
+        select coalesce(max(cast(h_id as integer)), 0) as  max_health_id from core.health_id_guest where location_id = #{locationId};
+    </select>
+    <select id="selectSeriesOfHouseholdId" parameterType="java.lang.Integer" resultType="java.lang.String">
 		select LPAD(n::text, (case when length(n::text)>=4 then length(n::text) else 4 end), '0')
 		from generate_series(${maxId}, ${maxIdPlusOne}) as x(n) order by x.n
     </select>
+    
+    <select id="selectSeriesOfGuestHouseholdId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select LPAD(n::text, (case when length(n::text)>=5 then length(n::text) else 5 end), '0')
+        from generate_series(${maxId}, ${maxIdPlusOne}) as x(n) order by x.n
+    </select>
+    
     <insert id="insertHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">
     insert into core.health_id(id,h_id,status,location_id,created_date)values (
-        nextval('health_id_seq'),
-        #{hId,jdbcType=VARCHAR},
-        #{status,jdbcType=BOOLEAN},
-        #{locationId,jdbcType=BIGINT},
+        nextval('health_id_seq'), #{hId,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{locationId,jdbcType=BIGINT},
         #{created,jdbcType=TIMESTAMP}
     )
 	</insert>
+    <insert id="insertGuestHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">		
+        insert into core.health_id_guest (h_id,location_id,created_date) values 
+        (#{hId,jdbcType=VARCHAR},#{locationId,jdbcType=BIGINT},#{created,jdbcType=TIMESTAMP})
+    </insert>
     
 </mapper>

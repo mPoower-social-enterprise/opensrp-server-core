@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HouseholdRepositoryImpl implements HouseholdIdRepository {
 	
+	private Integer SERIES_LIMIT = 200;
+	
 	@Autowired
 	private CustomHouseholdIdMapper customHouseholdIdMapper;
 	
@@ -22,12 +24,30 @@ public class HouseholdRepositoryImpl implements HouseholdIdRepository {
 	
 	@Override
 	public List<String> getSeriesOfHouseholdId(Integer maxId) {
-		return customHouseholdIdMapper.selectSeriesOfHouseholdId(maxId, maxId + 200);
+		return customHouseholdIdMapper.selectSeriesOfHouseholdId(maxId, maxId + SERIES_LIMIT);
 	}
 	
 	@Override
 	public int insertHouseholdId(HouseholdId householdId) {
 		return customHouseholdIdMapper.insertHouseholdId(householdId);
+	}
+	
+	@Override
+	public Integer getMaxGuestHouseholdIdByLocation(Integer locationId) {
+		
+		return customHouseholdIdMapper.selectMaxGuestHouseholdIdByLocation(locationId);
+	}
+	
+	@Override
+	public List<String> getSeriesOfGuestHouseholdId(Integer maxId) {
+		
+		return customHouseholdIdMapper.selectSeriesOfGuestHouseholdId(maxId, maxId + SERIES_LIMIT);
+	}
+	
+	@Override
+	public int insertGuestHouseholdId(HouseholdId householdId) {
+		
+		return customHouseholdIdMapper.insertGuestHouseholdId(householdId);
 	}
 	
 }
