@@ -45,4 +45,11 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 	public Boolean getUserStatus(String username) {
 		return customPractitionerDetailsMapper.selectUserStatus(username);
 	}
+	
+	@Override
+	public List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId) {
+		
+		return customPractitionerDetailsMapper.selectVillageIdsByUserId(userId, childRoleId, locationTagId);
+	}
+	
 }

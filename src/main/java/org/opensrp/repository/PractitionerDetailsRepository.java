@@ -17,4 +17,7 @@ public interface PractitionerDetailsRepository {
 	void updateAppVersion(String username, String version);
 	
 	Boolean getUserStatus(String username);
+	
+	List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId);
+	
 }

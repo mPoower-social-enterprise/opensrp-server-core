@@ -33,5 +33,7 @@
 			resultType="BOOLEAN">
 		select u.enabled as enable from core.users as u where u.username =  #{username,jdbcType=VARCHAR}
 	</select>
-
+    <select id="selectVillageIdsByUserId" parameterType="map" resultType="Integer">
+        select * from core.get_location_tree_id(#{userId}, #{childRoleId}, #{locationTagId});
+    </select>
 </mapper>

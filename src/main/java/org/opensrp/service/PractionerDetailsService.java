@@ -106,4 +106,9 @@ public class PractionerDetailsService {
 		
 		return practitionerDetailsRepository.getUserStatus(username);
 	}
+	
+	public List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId) {
+		return practitionerDetailsRepository.getVillageIdsByUsername(userId, childRoleId, locationTagId);
+	}
+	
 }
