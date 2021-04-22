@@ -52,4 +52,10 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 		return customPractitionerDetailsMapper.selectVillageIdsByUserId(userId, childRoleId, locationTagId);
 	}
 	
+	@Override
+	public Boolean checkUserMobileIMEI(String imeiNumber) {
+		
+		return customPractitionerDetailsMapper.selectkUserMobileIMEI(imeiNumber);
+	}
+	
 }

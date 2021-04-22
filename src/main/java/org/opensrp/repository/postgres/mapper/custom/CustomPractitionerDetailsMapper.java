@@ -28,4 +28,6 @@ public interface CustomPractitionerDetailsMapper extends PractitionerDetailsMapp
 	List<Integer> selectVillageIdsByUserId(@Param("userId") String userId, @Param("childRoleId") int childRoleId,
 	                                       @Param("locationTagId") int locationTagId);
 	
+	Boolean selectkUserMobileIMEI(@Param("imeiNumber") String imeiNumber);
+	
 }

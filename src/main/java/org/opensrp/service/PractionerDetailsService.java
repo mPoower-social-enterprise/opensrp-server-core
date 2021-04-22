@@ -111,4 +111,7 @@ public class PractionerDetailsService {
 		return practitionerDetailsRepository.getVillageIdsByUsername(userId, childRoleId, locationTagId);
 	}
 	
+	public Boolean checkUserMobileIMEI(String imeiNumber) {
+		return practitionerDetailsRepository.checkUserMobileIMEI(imeiNumber);
+	}
 }

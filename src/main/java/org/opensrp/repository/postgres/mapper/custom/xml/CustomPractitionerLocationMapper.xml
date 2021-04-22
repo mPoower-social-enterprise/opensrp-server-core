@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="org.opensrp.repository.postgres.mapper.custom.CustomPractitionerLocationMapper">
+	<resultMap id="mhealthPractitionerLocationMap" type="org.opensrp.domain.postgres.MhealthPractitionerLocation">
+		<id column="id" jdbcType="BIGINT" property="id" />		
+		<result column="parentId" jdbcType="BIGINT" property="parent_id"/>		
+	</resultMap>
+    <select id="selectDistrictAndUpazila" parameterType="java.lang.Integer"
+			resultMap="mhealthPractitionerLocationMap">
+		select district as district, upazilas as upazila from core.get_district_and_upazila(#{locationTag})
+	</select>
+    <select id="selectLocationByTagId" resultMap="mhealthPractitionerLocationMap">
+        SELECT parent_location_id parent_id,l.id id, split_part(l.name, ':', 1) as name from core.location l
+        WHERE l.location_tag_id=#{tagId,jdbcType=BIGINT}		 	
+    </select>
+    <select id="selectLocationByParentId" resultMap="mhealthPractitionerLocationMap">
+        SELECT parent_location_id parent_id,l.id id, split_part(l.name, ':', 1) as name from core.location l 
+        WHERE l.parent_location_id=#{parentId,jdbcType=BIGINT}
+    </select>
+</mapper>

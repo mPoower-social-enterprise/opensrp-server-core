@@ -36,4 +36,8 @@
     <select id="selectVillageIdsByUserId" parameterType="map" resultType="Integer">
         select * from core.get_location_tree_id(#{userId}, #{childRoleId}, #{locationTagId});
     </select>
+    <select id="selectkUserMobileIMEI" parameterType="java.lang.String" resultType="Boolean">
+		select (case when count(*) > 0 then true else false end) is_available from
+        core.imei where imei1 = #{imeiNumber} or imei2 = #{imeiNumber};
+    </select>
 </mapper>

@@ -20,4 +20,6 @@ public interface PractitionerDetailsRepository {
 	
 	List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId);
 	
+	Boolean checkUserMobileIMEI(String imeiNumber);
+	
 }
