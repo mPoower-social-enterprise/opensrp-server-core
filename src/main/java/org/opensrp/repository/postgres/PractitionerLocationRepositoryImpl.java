@@ -15,21 +15,21 @@ public class PractitionerLocationRepositoryImpl implements PractitionerLocationR
 	private CustomPractitionerLocationMapper customPractitionerLocationMapper;
 	
 	@Override
-	public List<MhealthPractitionerLocation> getDistrictAndUpazila(Integer parentLocationTag) {
+	public List<MhealthPractitionerLocation> getDistrictAndUpazila(Integer districtLocationTagId) {
 		
-		return customPractitionerLocationMapper.selectDistrictAndUpazila(parentLocationTag);
+		return customPractitionerLocationMapper.selectDistrictAndUpazila(districtLocationTagId);
 	}
 	
 	@Override
 	public List<MhealthPractitionerLocation> getLocationByTagId(Integer tagId) {
 		
-		return customPractitionerLocationMapper.selectDistrictAndUpazila(tagId);
+		return customPractitionerLocationMapper.selectLocationByTagId(tagId);
 	}
 	
 	@Override
 	public List<MhealthPractitionerLocation> getLocationByParentId(Integer parentId) {
 		
-		return customPractitionerLocationMapper.selectDistrictAndUpazila(parentId);
+		return customPractitionerLocationMapper.selectLocationByParentId(parentId);
 	}
 	
 }

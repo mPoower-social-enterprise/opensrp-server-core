@@ -20,26 +20,26 @@ public class PractitionerLocationService {
 		this.practitionerLocationRepository = practitionerLocationRepository;
 	}
 	
-	public JSONArray getDistrictAndUpazila(Integer parentLocationTag) throws JSONException {
+	public JSONArray getDistrictAndUpazila(Integer districtLocationTagId) throws JSONException {
 		List<MhealthPractitionerLocation> districtAndUpazila = practitionerLocationRepository
-		        .getDistrictAndUpazila(parentLocationTag);
+		        .getDistrictAndUpazila(districtLocationTagId);
 		JSONArray response = new JSONArray();
 		for (MhealthPractitionerLocation o : districtAndUpazila) {
-			JSONObject disAndUpa = new JSONObject();
-			disAndUpa.put("name", o.getDistrict());
+			JSONObject disstrictUpazila = new JSONObject();
+			disstrictUpazila.put("name", o.getDistrict());
 			String[] upazilas = o.getUpazila().split(",");
-			JSONArray upa = new JSONArray();
+			JSONArray upazilaName = new JSONArray();
 			for (String upazila : upazilas) {
-				upa.put(upazila);
+				upazilaName.put(upazila);
 			}
-			disAndUpa.put("upazilas", upa);
-			response.put(disAndUpa);
+			disstrictUpazila.put("upazilas", upazilaName);
+			response.put(disstrictUpazila);
 		}
 		return response;
 	}
 	
 	public List<MhealthPractitionerLocation> getLocationByTagId(Integer tagId) {
-		return practitionerLocationRepository.getDistrictAndUpazila(tagId);
+		return practitionerLocationRepository.getLocationByTagId(tagId);
 	}
 	
 	public List<MhealthPractitionerLocation> getLocationByParentId(Integer parentId) {

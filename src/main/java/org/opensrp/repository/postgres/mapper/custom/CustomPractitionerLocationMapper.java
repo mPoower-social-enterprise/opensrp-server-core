@@ -7,7 +7,7 @@ import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 
 public interface CustomPractitionerLocationMapper {
 	
-	List<MhealthPractitionerLocation> selectDistrictAndUpazila(@Param("locationTag") Integer locationTag);
+	List<MhealthPractitionerLocation> selectDistrictAndUpazila(@Param("districtLocationTagId") Integer districtLocationTagId);
 	
 	List<MhealthPractitionerLocation> selectLocationByTagId(Integer tagId);
 	

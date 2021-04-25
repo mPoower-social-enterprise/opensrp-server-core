@@ -62,4 +62,10 @@ public class MhealthPractitionerLocation {
 		this.upazila = upazila;
 	}
 	
+	@Override
+	public String toString() {
+		return "MhealthPractitionerLocation [id=" + id + ", parentId=" + parentId + ", name=" + name + ", code=" + code
+		        + ", district=" + district + ", upazila=" + upazila + "]";
+	}
+	
 }

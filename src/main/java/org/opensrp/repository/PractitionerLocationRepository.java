@@ -6,7 +6,7 @@ import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 
 public interface PractitionerLocationRepository {
 	
-	public List<MhealthPractitionerLocation> getDistrictAndUpazila(Integer parentLocationTag);
+	public List<MhealthPractitionerLocation> getDistrictAndUpazila(Integer districtLocationTagId);
 	
 	List<MhealthPractitionerLocation> getLocationByTagId(Integer tagId);
 	
