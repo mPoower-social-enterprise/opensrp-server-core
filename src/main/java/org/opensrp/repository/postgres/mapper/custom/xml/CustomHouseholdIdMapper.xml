@@ -22,10 +22,9 @@
     </select>
     
     <insert id="insertHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">
-    insert into core.health_id(id,h_id,status,location_id,created_date)values (
-        nextval('health_id_seq'), #{hId,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{locationId,jdbcType=BIGINT},
-        #{created,jdbcType=TIMESTAMP}
-    )
+    insert into core.health_id(h_id,status,location_id,created_date)values (
+        #{hId,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{locationId,jdbcType=BIGINT},
+        #{created,jdbcType=TIMESTAMP})
 	</insert>
     <insert id="insertGuestHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">		
         insert into core.health_id_guest (h_id,location_id,created_date) values 
