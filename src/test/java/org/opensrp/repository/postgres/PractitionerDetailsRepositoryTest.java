@@ -4,8 +4,10 @@
 package org.opensrp.repository.postgres;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,14 +32,15 @@ public class PractitionerDetailsRepositoryTest extends BaseRepositoryTest {
 	@BeforeClass
 	public static void bootStrap() {
 		tableNames = Arrays.asList("team.practitioner", "team.practitioner_details", "core.location_tag", "core.location",
-		    "core.location_metadata", "core.location_tag_map", "team.practitioner_group",
-		    "team.practitioner_catchment_area");
+		    "core.location_metadata", "core.location_tag_map", "team.practitioner_group", "team.practitioner_catchment_area",
+		    "core.imei");
 	}
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {
 		Set<String> scripts = new HashSet<>();
 		scripts.add("practitioner_details.sql");
+		scripts.add("imei.sql");
 		return scripts;
 	}
 	
@@ -72,4 +75,63 @@ public class PractitionerDetailsRepositoryTest extends BaseRepositoryTest {
 		assertNull(practitionerDetails);
 		
 	}
+	
+	@Test
+	public void testGetForceSyncStatus() {
+		String getForceSyncStatus = practitionerDetailsRepository.getForceSyncStatus("p1");
+		assertNotNull(getForceSyncStatus);
+		assertEquals("yes", getForceSyncStatus);
+		
+	}
+	
+	@Test
+	public void testGetForceSyncStatusEmptyzForNull() {
+		String getForceSyncStatus = practitionerDetailsRepository.getForceSyncStatus("p22");
+		assertEquals("", getForceSyncStatus);
+		
+	}
+	
+	@Test
+	public void testGetForceSyncSEmpty() {
+		String getForceSyncStatus = practitionerDetailsRepository.getForceSyncStatus("p2");
+		assertNotNull(getForceSyncStatus);
+		assertEquals("", getForceSyncStatus);
+	}
+	
+	@Test
+	public void testUpdateAppVersion() {
+		int updateAppVersion = practitionerDetailsRepository.updateAppVersion("p1", "23");
+		assertEquals(1, updateAppVersion);
+		PractitionerDetails practitionerDetails = practitionerDetailsRepository.findPractitionerDetailsByUsername("p1");
+		assertNotNull(practitionerDetails);
+		assertEquals("23", practitionerDetails.getAppVersion());
+	}
+	
+	@Test
+	public void testGetUserStatusTrue() {
+		Boolean getUserStatus = practitionerDetailsRepository.getUserStatus("p1");
+		assertTrue(getUserStatus);
+		
+	}
+	
+	@Test
+	public void testGetUserStatusFalse() {
+		Boolean getUserStatus = practitionerDetailsRepository.getUserStatus("p2");
+		assertFalse(getUserStatus);
+	}
+	
+	@Test
+	public void testCheckUserMobileIMEITrue() {
+		Boolean getUserStatus = practitionerDetailsRepository.checkUserMobileIMEI("imei1");
+		assertTrue(getUserStatus);
+		
+	}
+	
+	@Test
+	public void testCheckUserMobileIMEIFalse() {
+		Boolean getUserStatus = practitionerDetailsRepository.checkUserMobileIMEI("imei3");
+		assertFalse(getUserStatus);
+		
+	}
+	
 }

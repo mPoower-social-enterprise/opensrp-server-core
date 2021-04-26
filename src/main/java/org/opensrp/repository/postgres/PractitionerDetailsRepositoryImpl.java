@@ -32,7 +32,8 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 	@Override
 	public String getForceSyncStatus(String username) {
 		
-		return customPractitionerDetailsMapper.selectForceSyncStatus(username);
+		return customPractitionerDetailsMapper.selectForceSyncStatus(username) == null ? ""
+		        : customPractitionerDetailsMapper.selectForceSyncStatus(username);
 	}
 	
 	@Override

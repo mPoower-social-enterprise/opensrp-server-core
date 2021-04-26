@@ -9,8 +9,8 @@ INSERT INTO team.practitioner (id, identifier, active, name, user_id, username) 
 TRUNCATE TABLE team.practitioner_details CASCADE;
 
 -- insert data
-INSERT INTO team.practitioner_details (id, practitioner_id, created_date, email, enabled, first_name, gender, identifier, last_name, mobile, modified_date, uuid, creator, parent_user_id, enable_sim_print, ss_no, app_version, is_resync, on_maternity_leave) VALUES(1, 1, NULL, '', true, 'test', 'Male', '123456', 'SK', '01912773007', NULL, '1111111111', NULL, NULL, true, NULL, '1.3', '', false),
-(2, 2, NULL, '', true, 'test', 'Male', '123456', 'SS', '01912773007', NULL, '1111111111', NULL, NULL, true, NULL, '1.3', '', false);
+INSERT INTO team.practitioner_details (id, practitioner_id, created_date, email, enabled, first_name, gender, identifier, last_name, mobile, modified_date, uuid, creator, parent_user_id, enable_sim_print, ss_no, app_version, is_resync, on_maternity_leave) VALUES(1, 1, NULL, '', true, 'test', 'Male', '123456', 'SK', '01912773007', NULL, '1111111111', NULL, NULL, false, NULL, '1.3', 'yes', false),
+(2, 2, NULL, '', false, 'test', 'Male', '123456', 'SS', '01912773007', NULL, '1111111111', NULL, NULL, true, NULL, '1.3', '', false);
 
 --clear data
 TRUNCATE TABLE core.location_tag CASCADE;
