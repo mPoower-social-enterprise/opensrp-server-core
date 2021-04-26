@@ -15,6 +15,6 @@
     </resultMap>	
     <select id="selectStockInformationByUsername"
 		resultMap="stockInfo">
-		select * from core.get_stok_for_mobile(#{username,jdbcType=VARCHAR},#{timestamp,jdbcType=BIGINT})
+		select * from core.get_stock_for_mobile(#{username,jdbcType=VARCHAR},#{timestamp,jdbcType=BIGINT})
     </select>
 </mapper>
