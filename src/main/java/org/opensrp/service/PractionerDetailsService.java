@@ -95,7 +95,7 @@ public class PractionerDetailsService {
 	}
 	
 	public String getIsResync(String username) {
-		return practitionerDetailsRepository.getIsResync(username);
+		return practitionerDetailsRepository.getForceSyncStatus(username);
 	}
 	
 	public void updateAppVersion(String username, String version) {

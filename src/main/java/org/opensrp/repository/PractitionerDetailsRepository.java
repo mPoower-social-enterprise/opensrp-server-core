@@ -12,13 +12,11 @@ public interface PractitionerDetailsRepository {
 	
 	PractitionerDetails findPractitionerDetailsByUsername(String username);
 	
-	String getIsResync(String username);
+	String getForceSyncStatus(String username);
 	
-	void updateAppVersion(String username, String version);
+	int updateAppVersion(String username, String version);
 	
 	Boolean getUserStatus(String username);
-	
-	List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId);
 	
 	Boolean checkUserMobileIMEI(String imeiNumber);
 	

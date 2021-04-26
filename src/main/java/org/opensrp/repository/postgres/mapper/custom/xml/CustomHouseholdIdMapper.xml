@@ -22,7 +22,7 @@
     </select>
     
     <insert id="insertHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">
-    insert into core.health_id(h_id,status,location_id,created_date)values (
+        insert into core.health_id(h_id,status,location_id,created_date)values (
         #{hId,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{locationId,jdbcType=BIGINT},
         #{created,jdbcType=TIMESTAMP})
 	</insert>

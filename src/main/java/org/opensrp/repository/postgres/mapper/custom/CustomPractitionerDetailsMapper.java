@@ -15,19 +15,12 @@ public interface CustomPractitionerDetailsMapper extends PractitionerDetailsMapp
 	
 	PractitionerDetails selectPractitionerDetailsByUsername(@Param("username") String username);
 	
-	// query will be changed
-	String selectIsResync(String username);
+	String selectForceSyncStatus(String username);
 	
-	// query will be changed
-	void updateAppVersion(@Param("username") String username, @Param("version") String version);
+	int updateAppVersion(@Param("username") String username, @Param("version") String version);
 	
-	// query will be changed
 	Boolean selectUserStatus(@Param("username") String username);
 	
-	// query will be changed , used one query instead of two query
-	List<Integer> selectVillageIdsByUserId(@Param("userId") String userId, @Param("childRoleId") int childRoleId,
-	                                       @Param("locationTagId") int locationTagId);
-	
-	Boolean selectkUserMobileIMEI(@Param("imeiNumber") String imeiNumber);
+	Boolean selectUserMobileIMEI(@Param("imeiNumber") String imeiNumber);
 	
 }

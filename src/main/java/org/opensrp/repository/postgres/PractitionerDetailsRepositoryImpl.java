@@ -30,14 +30,14 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 	}
 	
 	@Override
-	public String getIsResync(String username) {
+	public String getForceSyncStatus(String username) {
 		
-		return customPractitionerDetailsMapper.selectIsResync(username);
+		return customPractitionerDetailsMapper.selectForceSyncStatus(username);
 	}
 	
 	@Override
-	public void updateAppVersion(String username, String version) {
-		customPractitionerDetailsMapper.updateAppVersion(username, version);
+	public int updateAppVersion(String username, String version) {
+		return customPractitionerDetailsMapper.updateAppVersion(username, version);
 		
 	}
 	
@@ -47,15 +47,9 @@ public class PractitionerDetailsRepositoryImpl implements PractitionerDetailsRep
 	}
 	
 	@Override
-	public List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId) {
-		
-		return customPractitionerDetailsMapper.selectVillageIdsByUserId(userId, childRoleId, locationTagId);
-	}
-	
-	@Override
 	public Boolean checkUserMobileIMEI(String imeiNumber) {
 		
-		return customPractitionerDetailsMapper.selectkUserMobileIMEI(imeiNumber);
+		return customPractitionerDetailsMapper.selectUserMobileIMEI(imeiNumber);
 	}
 	
 }
