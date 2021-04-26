@@ -94,21 +94,16 @@ public class PractionerDetailsService {
 		return locationTree;
 	}
 	
-	public String getIsResync(String username) {
+	public String getForceSyncStatus(String username) {
 		return practitionerDetailsRepository.getForceSyncStatus(username);
 	}
 	
-	public void updateAppVersion(String username, String version) {
-		practitionerDetailsRepository.updateAppVersion(username, version);
+	public int updateAppVersion(String username, String version) {
+		return practitionerDetailsRepository.updateAppVersion(username, version);
 	}
 	
 	public Boolean getUserStatus(String username) {
-		
 		return practitionerDetailsRepository.getUserStatus(username);
-	}
-	
-	public List<Integer> getVillageIdsByUsername(String userId, int childRoleId, int locationTagId) {
-		return practitionerDetailsRepository.getVillageIdsByUsername(userId, childRoleId, locationTagId);
 	}
 	
 	public Boolean checkUserMobileIMEI(String imeiNumber) {

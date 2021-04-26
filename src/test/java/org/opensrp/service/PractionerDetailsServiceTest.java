@@ -1,6 +1,8 @@
 package org.opensrp.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,6 +60,66 @@ public class PractionerDetailsServiceTest {
 		        .convertLocationTreeToJSON(createPractitionerLocationData(), true, "Test SK");
 		assertEquals(2, practitionerLocationjson.length());
 		assertEquals("Test SK", practitionerLocationjson.optJSONObject(0).get("full_name"));
+	}
+	
+	@Test
+	public void testGetForceSyncStatus() {
+		when(practitionerDetailsRepository.getForceSyncStatus("p1")).thenReturn("yes");
+		String forceSyncStatus = practionerDetailsService.getForceSyncStatus("p1");
+		verify(practitionerDetailsRepository).getForceSyncStatus("p1");
+		assertEquals("yes", forceSyncStatus);
+	}
+	
+	@Test
+	public void testGetForceSyncStatusReturnEmpty() {
+		when(practitionerDetailsRepository.getForceSyncStatus("p1")).thenReturn("");
+		String forceSyncStatus = practionerDetailsService.getForceSyncStatus("p1");
+		verify(practitionerDetailsRepository).getForceSyncStatus("p1");
+		assertEquals("", forceSyncStatus);
+	}
+	
+	@Test
+	public void testUpdateAppVersion() {
+		when(practitionerDetailsRepository.updateAppVersion("p1", "23")).thenReturn(1);
+		int updateAppVersion = practionerDetailsService.updateAppVersion("p1", "23");
+		verify(practitionerDetailsRepository).updateAppVersion("p1", "23");
+		assertEquals(1, updateAppVersion);
+	}
+	
+	@Test
+	public void testGetUserStatusTrue() {
+		when(practitionerDetailsRepository.getUserStatus("p1")).thenReturn(true);
+		Boolean getUserStatus = practionerDetailsService.getUserStatus("p1");
+		verify(practitionerDetailsRepository).getUserStatus("p1");
+		assertTrue(getUserStatus);
+		
+	}
+	
+	@Test
+	public void testGetUserStatusFalse() {
+		when(practitionerDetailsRepository.getUserStatus("p1")).thenReturn(false);
+		Boolean getUserStatus = practionerDetailsService.getUserStatus("p1");
+		verify(practitionerDetailsRepository).getUserStatus("p1");
+		assertFalse(getUserStatus);
+		
+	}
+	
+	@Test
+	public void testCheckUserMobileIMEITrue() {
+		when(practitionerDetailsRepository.checkUserMobileIMEI("imei1")).thenReturn(true);
+		Boolean getUserStatus = practionerDetailsService.checkUserMobileIMEI("imei1");
+		verify(practitionerDetailsRepository).checkUserMobileIMEI("imei1");
+		assertTrue(getUserStatus);
+		
+	}
+	
+	@Test
+	public void testCheckUserMobileIMEIFalse() {
+		when(practitionerDetailsRepository.checkUserMobileIMEI("imei1")).thenReturn(false);
+		Boolean getUserStatus = practionerDetailsService.checkUserMobileIMEI("imei1");
+		verify(practitionerDetailsRepository).checkUserMobileIMEI("imei1");
+		assertFalse(getUserStatus);
+		
 	}
 	
 	private PractitionerDetails createPractitionerDetailsData() {
