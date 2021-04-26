@@ -6,6 +6,6 @@ import org.opensrp.domain.postgres.WebNotification;
 
 public interface WebNotificationRepository {
 	
-	List<WebNotification> getWebNotificationsByusername(String username, Long timestamp);
+	List<WebNotification> getWebNotificationsByUsername(String username, Long timestamp);
 	
 }

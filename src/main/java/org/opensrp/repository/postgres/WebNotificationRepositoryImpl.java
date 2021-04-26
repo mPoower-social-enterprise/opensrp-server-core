@@ -15,7 +15,7 @@ public class WebNotificationRepositoryImpl implements WebNotificationRepository 
 	private CustomWebNotificationMapper CustomWebNotificationMapper;
 	
 	@Override
-	public List<WebNotification> getWebNotificationsByusername(String username, Long timestamp) {
+	public List<WebNotification> getWebNotificationsByUsername(String username, Long timestamp) {
 		
 		return CustomWebNotificationMapper.selectWebNotificationsByUsername(username, timestamp);
 	}

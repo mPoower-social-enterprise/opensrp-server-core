@@ -17,7 +17,7 @@ public class WebNotificationService {
 		this.webNotificationRepository = webNotificationRepository;
 	}
 	
-	public List<WebNotification> getWebNotificationsByusername(String username, Long timestamp) {
-		return webNotificationRepository.getWebNotificationsByusername(username, timestamp);
+	public List<WebNotification> getWebNotificationsByUsername(String username, Long timestamp) {
+		return webNotificationRepository.getWebNotificationsByUsername(username, timestamp);
 	}
 }
