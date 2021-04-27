@@ -32,7 +32,7 @@ public class WebNotificationRepositoryTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void testGetWebNotificationsByusernameReturnEmpty() {
+	public void testShouldReturnEmptyGetWebNotificationsByusername() {
 		List<WebNotification> webNotifications = webNotificationRepository.getWebNotificationsByUsername("p122", 0l);
 		assertEquals(0, webNotifications.size());
 		

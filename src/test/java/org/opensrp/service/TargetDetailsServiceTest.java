@@ -43,7 +43,7 @@ public class TargetDetailsServiceTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void testGetTargetDetailsByUsernameReturnEmpty() {
+	public void testShouldReturnEmptyGetTargetDetailsByUsername() {
 		List<TargetDetails> targetDetails = targetDetailsService.getTargetDetailsByUsername("p1234", 0l);
 		assertEquals(0, targetDetails.size());
 		

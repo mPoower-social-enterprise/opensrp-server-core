@@ -20,7 +20,7 @@ import org.opensrp.repository.PractitionerDetailsRepository;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-public class PractionerDetailsServiceTest {
+public class PractitionerDetailsServiceTest {
 	
 	private PractionerDetailsService practionerDetailsService;
 	
@@ -87,7 +87,7 @@ public class PractionerDetailsServiceTest {
 	}
 	
 	@Test
-	public void testGetUserStatusTrue() {
+	public void testShouldReturnTrueGetUserStatus() {
 		when(practitionerDetailsRepository.getUserStatus("p1")).thenReturn(true);
 		Boolean getUserStatus = practionerDetailsService.getUserStatus("p1");
 		verify(practitionerDetailsRepository).getUserStatus("p1");
@@ -96,7 +96,7 @@ public class PractionerDetailsServiceTest {
 	}
 	
 	@Test
-	public void testGetUserStatusFalse() {
+	public void testShouldReturnFalseGetUserStatus() {
 		when(practitionerDetailsRepository.getUserStatus("p1")).thenReturn(false);
 		Boolean getUserStatus = practionerDetailsService.getUserStatus("p1");
 		verify(practitionerDetailsRepository).getUserStatus("p1");
@@ -105,7 +105,7 @@ public class PractionerDetailsServiceTest {
 	}
 	
 	@Test
-	public void testCheckUserMobileIMEITrue() {
+	public void testShouldReturnTrueCheckUserMobileIMEI() {
 		when(practitionerDetailsRepository.checkUserMobileIMEI("imei1")).thenReturn(true);
 		Boolean getUserStatus = practionerDetailsService.checkUserMobileIMEI("imei1");
 		verify(practitionerDetailsRepository).checkUserMobileIMEI("imei1");
@@ -114,7 +114,7 @@ public class PractionerDetailsServiceTest {
 	}
 	
 	@Test
-	public void testCheckUserMobileIMEIFalse() {
+	public void testShouldReturnFalseCheckUserMobileIMEI() {
 		when(practitionerDetailsRepository.checkUserMobileIMEI("imei1")).thenReturn(false);
 		Boolean getUserStatus = practionerDetailsService.checkUserMobileIMEI("imei1");
 		verify(practitionerDetailsRepository).checkUserMobileIMEI("imei1");

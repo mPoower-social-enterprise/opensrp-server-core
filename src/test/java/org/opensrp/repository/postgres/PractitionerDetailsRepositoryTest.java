@@ -85,14 +85,14 @@ public class PractitionerDetailsRepositoryTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void testGetForceSyncStatusEmptyzForNull() {
+	public void testShouldReturnEmptyGetForceSyncStatus() {
 		String getForceSyncStatus = practitionerDetailsRepository.getForceSyncStatus("p22");
 		assertEquals("", getForceSyncStatus);
 		
 	}
 	
 	@Test
-	public void testGetForceSyncSEmpty() {
+	public void testshouldReturnEmptyGetForceSync() {
 		String getForceSyncStatus = practitionerDetailsRepository.getForceSyncStatus("p2");
 		assertNotNull(getForceSyncStatus);
 		assertEquals("", getForceSyncStatus);
@@ -108,27 +108,27 @@ public class PractitionerDetailsRepositoryTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void testGetUserStatusTrue() {
+	public void testShouldReturnTrueGetUserStatus() {
 		Boolean getUserStatus = practitionerDetailsRepository.getUserStatus("p1");
 		assertTrue(getUserStatus);
 		
 	}
 	
 	@Test
-	public void testGetUserStatusFalse() {
+	public void testShouldReturnFalseGetUserStatus() {
 		Boolean getUserStatus = practitionerDetailsRepository.getUserStatus("p2");
 		assertFalse(getUserStatus);
 	}
 	
 	@Test
-	public void testCheckUserMobileIMEITrue() {
+	public void testShouldReturnTrueCheckUserMobileIMEI() {
 		Boolean getUserStatus = practitionerDetailsRepository.checkUserMobileIMEI("imei1");
 		assertTrue(getUserStatus);
 		
 	}
 	
 	@Test
-	public void testCheckUserMobileIMEIFalse() {
+	public void testShouldReturnFalseCheckUserMobileIMEI() {
 		Boolean getUserStatus = practitionerDetailsRepository.checkUserMobileIMEI("imei3");
 		assertFalse(getUserStatus);
 		

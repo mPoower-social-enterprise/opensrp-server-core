@@ -31,7 +31,7 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 	
 	@BeforeClass
 	public static void bootStrap() {
-		tableNames = Arrays.asList("core.event", "core.event_metadata");
+		tableNames = Arrays.asList("core.event", "core.event_metadata", "core.client", "core.client_metadata");
 	}
 	
 	@Override

@@ -33,7 +33,7 @@ public class MhealthStockInformationRepositoryTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void testGetStockInformationByUsernameReturnEmpty() {
+	public void testshouldReturnReturnEmptyGetStockInformationByUsername() {
 		List<MhealthStockInformation> mhealthStockInformations = mhealthStockInformationRepository
 		        .getStockInformationByUsername("p3", 0l);
 		assertEquals(0, mhealthStockInformations.size());
