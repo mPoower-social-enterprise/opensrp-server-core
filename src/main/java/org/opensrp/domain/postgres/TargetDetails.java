@@ -4,7 +4,7 @@ public class TargetDetails {
 	
 	private String username;
 	
-	private int targetId;
+	private Long targetId;
 	
 	private String targetName;
 	
@@ -30,11 +30,11 @@ public class TargetDetails {
 		this.username = username;
 	}
 	
-	public int getTargetId() {
+	public Long getTargetId() {
 		return targetId;
 	}
 	
-	public void setTargetId(int targetId) {
+	public void setTargetId(Long targetId) {
 		this.targetId = targetId;
 	}
 	
@@ -100,5 +100,12 @@ public class TargetDetails {
 	
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	@Override
+	public String toString() {
+		return "TargetDetails [username=" + username + ", targetId=" + targetId + ", targetName=" + targetName
+		        + ", targetCount=" + targetCount + ", year=" + year + ", month=" + month + ", day=" + day + ", startDate="
+		        + startDate + ", endDate=" + endDate + ", timestamp=" + timestamp + "]";
 	}
 }

@@ -8,6 +8,6 @@ import org.opensrp.domain.postgres.TargetDetails;
 public interface CustomTargetDetailsMapper {
 	
 	List<TargetDetails> selectTargetDetailsByUsername(@Param("username") String username,
-	                                                  @Param("targetTimestamp") Long timestamp);
+	                                                  @Param("timestamp") Long timestamp);
 	
 }
