@@ -23,7 +23,7 @@ public class householdIdRepositoryTest extends BaseRepositoryTest {
 	
 	@BeforeClass
 	public static void bootStrap() {
-		tableNames = Arrays.asList("core.health_id", "core.health_id_guest");
+		tableNames = Arrays.asList("core.household_id", "core.household_id_guest");
 	}
 	
 	@Override

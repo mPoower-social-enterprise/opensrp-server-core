@@ -5,11 +5,11 @@
 	
 	
     <select id="selectMaxHouseholdIdByLocation" parameterType="java.lang.Integer" resultType="Integer">
-        select coalesce(max(cast(h_id as integer)), 0) as  max_health_id from core.health_id where location_id = #{locationId};
+        select coalesce(max(cast(h_id as integer)), 0) as  max_health_id from core.household_id where location_id = #{locationId};
     </select>
     
     <select id="selectMaxGuestHouseholdIdByLocation" parameterType="java.lang.Integer" resultType="Integer">
-        select coalesce(max(cast(h_id as integer)), 0) as  max_health_id from core.health_id_guest where location_id = #{locationId};
+        select coalesce(max(cast(h_id as integer)), 0) as  max_health_id from core.household_id_guest where location_id = #{locationId};
     </select>
     <select id="selectSeriesOfHouseholdId" parameterType="java.lang.Integer" resultType="java.lang.String">
 		select LPAD(n::text, (case when length(n::text)>=4 then length(n::text) else 4 end), '0')
@@ -22,12 +22,12 @@
     </select>
     
     <insert id="insertHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">
-        insert into core.health_id(h_id,status,location_id,created_date)values (
+        insert into core.household_id(h_id,status,location_id,created_date)values (
         #{hId,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{locationId,jdbcType=BIGINT},
         #{created,jdbcType=TIMESTAMP})
 	</insert>
     <insert id="insertGuestHouseholdId" parameterType="org.opensrp.domain.postgres.HouseholdId">		
-        insert into core.health_id_guest (h_id,location_id,created_date) values 
+        insert into core.household_id_guest (h_id,location_id,created_date) values 
         (#{hId,jdbcType=VARCHAR},#{locationId,jdbcType=BIGINT},#{created,jdbcType=TIMESTAMP})
     </insert>
     
