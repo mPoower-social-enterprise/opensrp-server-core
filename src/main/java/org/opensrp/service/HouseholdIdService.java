@@ -1,8 +1,10 @@
 package org.opensrp.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opensrp.domain.postgres.HouseholdId;
@@ -53,9 +55,19 @@ public class HouseholdIdService {
 		return householdIdRepository.insertGuestHouseholdId(healthId);
 	}
 	
-	public JSONArray generateHouseholdId(String username) throws Exception {
+	public JSONArray generateHouseholdId(String username, String _villageId) throws Exception {
 		JSONArray villageCodes = new JSONArray();
-		List<Integer> villageIds = practitionerLocationService.getPractitionerVillageIds(username);
+		List<Integer> villageIds = new ArrayList<>();
+		String[] _villageIds = _villageId.split(",");
+		for (String villageId : _villageIds) {
+			
+			if (!StringUtils.isBlank(villageId)) {
+				villageIds.add(Integer.parseInt(villageId));
+			}
+		}
+		if (villageIds.isEmpty()) {
+			villageIds = practitionerLocationService.getPractitionerVillageIds(username);
+		}
 		for (Integer villageId : villageIds) {
 			Integer number = getMaxHouseholdIdByLocation(villageId);
 			List<String> listOfString = getSeriesOfHouseholdId(number + 1);
@@ -69,20 +81,30 @@ public class HouseholdIdService {
 			if (isSaved > 0) {
 				JSONObject villageCode = new JSONObject();
 				villageCode.put("village_id", villageId);
-				JSONArray ids = new JSONArray();
+				JSONArray healthIds = new JSONArray();
 				for (String healthId1 : listOfString) {
-					ids.put(healthId1);
+					healthIds.put(healthId1);
 				}
-				villageCode.put("generated_code", ids);
+				villageCode.put("generated_code", healthIds);
 				villageCodes.put(villageCode);
 			}
 		}
 		return villageCodes;
 	}
 	
-	public JSONArray generateGuestHouseholdId(String username) throws Exception {
+	public JSONArray generateGuestHouseholdId(String username, String _villageId) throws Exception {
 		JSONArray villageCodes = new JSONArray();
-		List<Integer> villageIds = practitionerLocationService.getPractitionerVillageIds(username);
+		List<Integer> villageIds = new ArrayList<>();
+		String[] _villageIds = _villageId.split(",");
+		
+		for (String villageId : _villageIds) {
+			if (!StringUtils.isBlank(villageId)) {
+				villageIds.add(Integer.parseInt(villageId));
+			}
+		}
+		if (villageIds.isEmpty()) {
+			villageIds = practitionerLocationService.getPractitionerVillageIds(username);
+		}
 		for (Integer villageId : villageIds) {
 			Integer number = getMaxGuestHouseholdIdByLocation(villageId);
 			List<String> listOfString = getSeriesOfGuestHouseholdId(number + 1);
@@ -96,11 +118,11 @@ public class HouseholdIdService {
 			if (isSaved > 0) {
 				JSONObject villageCode = new JSONObject();
 				villageCode.put("village_id", villageId);
-				JSONArray ids = new JSONArray();
+				JSONArray healthIds = new JSONArray();
 				for (String healthId1 : listOfString) {
-					ids.put(healthId1);
+					healthIds.put(healthId1);
 				}
-				villageCode.put("generated_code", ids);
+				villageCode.put("generated_code", healthIds);
 				villageCodes.put(villageCode);
 				
 			}

@@ -99,16 +99,31 @@ public class HouseholdIdServiceTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void testGenerateHouseholdId() throws Exception {
-		JSONArray findHouseholdIds = householdIdService.generateHouseholdId("p1");
+	public void testGenerateHouseholdIdByUsername() throws Exception {
+		JSONArray findHouseholdIds = householdIdService.generateHouseholdId("p1", "");
 		assertEquals(householdIds, findHouseholdIds.toString());
 		
 	}
 	
 	@Test
-	public void testGenerateGuestHouseholdId() throws Exception {
+	public void testGenerateHouseholdIdByVillageId() throws Exception {
+		JSONArray findHouseholdIds = householdIdService.generateHouseholdId("p1", "7");
+		assertEquals(householdIds, findHouseholdIds.toString());
 		
-		JSONArray findHouseholdIds = householdIdService.generateGuestHouseholdId("p1");
+	}
+	
+	@Test
+	public void testGenerateGuestHouseholdIdByUsername() throws Exception {
+		
+		JSONArray findHouseholdIds = householdIdService.generateGuestHouseholdId("p1", "");
+		assertEquals(guetshouseholdIds, findHouseholdIds.toString());
+		
+	}
+	
+	@Test
+	public void testGenerateGuestHouseholdIdByVillageId() throws Exception {
+		
+		JSONArray findHouseholdIds = householdIdService.generateGuestHouseholdId("p1", "7");
 		assertEquals(guetshouseholdIds, findHouseholdIds.toString());
 		
 	}
