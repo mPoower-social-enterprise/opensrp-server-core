@@ -18,4 +18,11 @@
         SELECT parent_location_id parent_id,l.id id, split_part(l.name, ':', 1) as name from core.vw_location l 
         WHERE l.parent_location_id=#{parentId,jdbcType=BIGINT}
     </select>
+    
+   
+    <select id="selectPractitionerVillageIds" parameterType="java.lang.String"
+			resultType="Integer">
+        select location_id from team.practitioner_catchment_area as pca join team.practitioner p 
+        on pca.practitioner_id = p.id where p.username=#{username,jdbcType=VARCHAR}
+    </select>
 </mapper>

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.opensrp.domain.PractitionerLocation;
 import org.opensrp.domain.postgres.PractitionerDetails;
 import org.opensrp.repository.PractitionerDetailsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +22,7 @@ public class PractionerDetailsService {
 		return practitionerDetailsRepository;
 	}
 	
+	@Autowired
 	public void setPractitionerDetailsRepository(PractitionerDetailsRepository practitionerDetailsRepository) {
 		this.practitionerDetailsRepository = practitionerDetailsRepository;
 	}

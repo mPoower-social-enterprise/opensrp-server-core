@@ -45,4 +45,9 @@ public class PractitionerLocationService {
 	public List<MhealthPractitionerLocation> getLocationByParentId(Integer parentId) {
 		return practitionerLocationRepository.getLocationByParentId(parentId);
 	}
+	
+	public List<Integer> getPractitionerVillageIds(String username) {
+		
+		return practitionerLocationRepository.getPractitionerVillageIds(username);
+	}
 }

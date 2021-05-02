@@ -9,12 +9,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensrp.domain.PractitionerLocation;
 import org.opensrp.domain.postgres.PractitionerDetails;
@@ -28,13 +26,6 @@ public class PractitionerDetailsRepositoryTest extends BaseRepositoryTest {
 	
 	@Autowired
 	private PractitionerDetailsRepository practitionerDetailsRepository;
-	
-	@BeforeClass
-	public static void bootStrap() {
-		tableNames = Arrays.asList("team.practitioner", "team.practitioner_details", "core.location_tag", "core.location",
-		    "core.location_metadata", "core.location_tag_map", "team.practitioner_group", "team.practitioner_catchment_area",
-		    "core.imei");
-	}
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {

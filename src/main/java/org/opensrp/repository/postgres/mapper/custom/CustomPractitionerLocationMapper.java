@@ -12,4 +12,6 @@ public interface CustomPractitionerLocationMapper {
 	List<MhealthPractitionerLocation> selectLocationByTagId(Integer tagId);
 	
 	List<MhealthPractitionerLocation> selectLocationByParentId(Integer parentId);
+	
+	List<Integer> selectPractitionerVillageIds(String username);
 }

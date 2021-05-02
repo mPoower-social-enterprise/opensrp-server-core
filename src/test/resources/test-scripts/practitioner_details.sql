@@ -50,13 +50,17 @@ INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id
 
 INSERT INTO core.location (id, json) VALUES (6, '{"id": "3739","locationTags":[{"active":true,"name":"Union Ward","description":"5","id":6}], "type": "Feature", "properties": {"uid": "41587456-b7c8-4c4e-b433-23a786f742fca", "code": "3739", "name": "WARD NO. 19 (PART):9269", "type": "Intervention Unit", "status": "Active", "version": 0, "parentId": "3738", "geographicLevel": 4, "effectiveStartDate": "2015-01-01T0000.000+03:00"},"serverVersion": 1542378347104}');
 
-INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id, uuid, status, server_version,name) VALUES (6, 6, '3739', 'Intervention Unit', '3738', '41587456-b7c8-4c4e-b433-23a786f742fca', 'ACTIVE', 1542378347104,'NOT POURASABHA:9268');
+INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id, uuid, status, server_version,name) VALUES (6, 6, '3739', 'Intervention Unit', '3738', '41587456-b7c8-4c4e-b433-23a786f742fca', 'ACTIVE', 1542378347104,'WARD NO. 19 (PART):9269');
 
 
 INSERT INTO core.location (id, json) VALUES (7, '{"id": "3740","locationTags":[{"active":true,"name":"Village","description":"6","id":7}], "type": "Feature", "properties": {"uid": "41587456-b7c8-4c4e-b433-23a786f742fcb", "code": "3740", "name": "T&T COLONY-T&T Mosjid:9270", "type": "Intervention Unit", "status": "Active", "version": 0, "parentId": "3739", "geographicLevel": 4, "effectiveStartDate": "2015-01-01T0000.000+03:00"},"serverVersion": 1542378347104}');
 
-INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id, uuid, status, server_version,name) VALUES (7, 7, '3740', 'Intervention Unit', '3739', '41587456-b7c8-4c4e-b433-23a786f742fcb', 'ACTIVE', 1542378347104,'NOT POURASABHA:9268');
+INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id, uuid, status, server_version,name) VALUES (7, 7, '3740', 'Intervention Unit', '3739', '41587456-b7c8-4c4e-b433-23a786f742fcb', 'ACTIVE', 1542378347104,'T&T COLONY-T&T Mosjid:9270');
 
+
+INSERT INTO core.location (id, json) VALUES (8, '{"id": "3741","locationTags":[{"active":true,"name":"City Corporation Upazila","description":"3","id":4}], "type": "Feature", "properties": {"uid": "41587456-b7c8-4c4e-b433-23a786f742fb", "code": "3741", "name": "DHAKA SOUTH CITY CORPORATION:9268", "type": "Intervention Unit", "status": "Active", "version": 0, "parentId": "3736", "geographicLevel": 4, "effectiveStartDate": "2015-01-01T0000.000+03:00"},"serverVersion": 1542378347104}');
+
+INSERT INTO core.location_metadata (id, location_id, geojson_id, type, parent_id, uuid, status, server_version,name) VALUES (8, 8, '3741', 'Intervention Unit', '3736', '41587456-b7c8-4c4e-b433-23a786f742fL', 'ACTIVE', 1542378347104,'DHAKA NORTH CITY CORPORATION:9267');
 
 --clear data
 TRUNCATE TABLE core.location_tag_map CASCADE;

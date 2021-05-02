@@ -32,4 +32,10 @@ public class PractitionerLocationRepositoryImpl implements PractitionerLocationR
 		return customPractitionerLocationMapper.selectLocationByParentId(parentId);
 	}
 	
+	@Override
+	public List<Integer> getPractitionerVillageIds(String username) {
+		
+		return customPractitionerLocationMapper.selectPractitionerVillageIds(username);
+	}
+	
 }

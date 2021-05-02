@@ -11,4 +11,7 @@ public interface PractitionerLocationRepository {
 	List<MhealthPractitionerLocation> getLocationByTagId(Integer tagId);
 	
 	List<MhealthPractitionerLocation> getLocationByParentId(Integer parentId);
+	
+	List<Integer> getPractitionerVillageIds(String username);
+	
 }
