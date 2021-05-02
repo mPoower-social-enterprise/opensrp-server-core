@@ -15,11 +15,16 @@ public class HouseholdIdService {
 	
 	private HouseholdIdRepository householdIdRepository;
 	
+	private PractitionerLocationService practitionerLocationService;
+	
 	private Integer HOUSEHOLD_ID_LIMIT = 200;
 	
 	@Autowired
-	public HouseholdIdService(HouseholdIdRepository householdIdRepository) {
+	public HouseholdIdService(HouseholdIdRepository householdIdRepository,
+	    PractitionerLocationService practitionerLocationService) {
 		this.householdIdRepository = householdIdRepository;
+		this.practitionerLocationService = practitionerLocationService;
+		
 	}
 	
 	public Integer getMaxHouseholdIdByLocation(Integer locationId) {
@@ -48,8 +53,9 @@ public class HouseholdIdService {
 		return householdIdRepository.insertGuestHouseholdId(healthId);
 	}
 	
-	public JSONArray generateHouseholdId(List<Integer> villageIds) throws Exception {
+	public JSONArray generateHouseholdId(String username) throws Exception {
 		JSONArray villageCodes = new JSONArray();
+		List<Integer> villageIds = practitionerLocationService.getPractitionerVillageIds(username);
 		for (Integer villageId : villageIds) {
 			Integer number = getMaxHouseholdIdByLocation(villageId);
 			List<String> listOfString = getSeriesOfHouseholdId(number + 1);
@@ -74,8 +80,9 @@ public class HouseholdIdService {
 		return villageCodes;
 	}
 	
-	public JSONArray generateGuestHouseholdId(List<Integer> villageIds) throws Exception {
+	public JSONArray generateGuestHouseholdId(String username) throws Exception {
 		JSONArray villageCodes = new JSONArray();
+		List<Integer> villageIds = practitionerLocationService.getPractitionerVillageIds(username);
 		for (Integer villageId : villageIds) {
 			Integer number = getMaxGuestHouseholdIdByLocation(villageId);
 			List<String> listOfString = getSeriesOfGuestHouseholdId(number + 1);
