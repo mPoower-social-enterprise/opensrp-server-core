@@ -14,4 +14,5 @@ public interface PractitionerLocationRepository {
 	
 	List<Integer> getPractitionerVillageIds(String username);
 	
+	MhealthPractitionerLocation getPractitionerDivisionDistrictBranch(String username);
 }

@@ -3,8 +3,9 @@
 <mapper
 	namespace="org.opensrp.repository.postgres.mapper.custom.CustomPractitionerLocationMapper">
 	<resultMap id="mhealthPractitionerLocationMap" type="org.opensrp.domain.postgres.MhealthPractitionerLocation">
-		<id column="id" jdbcType="BIGINT" property="id" />		
-		<result column="parentId" jdbcType="BIGINT" property="parent_id"/>		
+        <id column="id" jdbcType="BIGINT" property="id" />		
+        <result column="parentId" jdbcType="BIGINT" property="parent_id"/>	
+        <result column="post_fix" jdbcType="BIGINT" property="postFix"/>	
 	</resultMap>
     <select id="selectDistrictAndUpazila" parameterType="java.lang.Integer"
 			resultMap="mhealthPractitionerLocationMap">
@@ -17,12 +18,16 @@
     <select id="selectLocationByParentId" resultMap="mhealthPractitionerLocationMap">
         SELECT parent_location_id parent_id,l.id id, split_part(l.name, ':', 1) as name from core.vw_location l 
         WHERE l.parent_location_id=#{parentId,jdbcType=BIGINT}
-    </select>
-    
+    </select>   
    
     <select id="selectPractitionerVillageIds" parameterType="java.lang.String"
 			resultType="Integer">
         select location_id from team.practitioner_catchment_area as pca join team.practitioner p 
         on pca.practitioner_id = p.id where p.username=#{username,jdbcType=VARCHAR}
     </select>
+    
+    <select id="selectPractitionerDivisionDistrictBranch" resultMap="mhealthPractitionerLocationMap">
+        select ulm.branch,ulm.district,ulm.division,CONCAT('_',ulm.district) post_fix from team.practitioner as p join core.user_location_mapping ulm 
+        on p.id=ulm.user_id  where p.username=#{username,jdbcType=VARCHAR} limit 1
+    </select>  
 </mapper>

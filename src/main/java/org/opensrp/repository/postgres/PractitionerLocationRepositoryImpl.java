@@ -38,4 +38,10 @@ public class PractitionerLocationRepositoryImpl implements PractitionerLocationR
 		return customPractitionerLocationMapper.selectPractitionerVillageIds(username);
 	}
 	
+	@Override
+	public MhealthPractitionerLocation getPractitionerDivisionDistrictBranch(String username) {
+		
+		return customPractitionerLocationMapper.selectPractitionerDivisionDistrictBranch(username);
+	}
+	
 }

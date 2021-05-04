@@ -50,4 +50,9 @@ public class PractitionerLocationService {
 		
 		return practitionerLocationRepository.getPractitionerVillageIds(username);
 	}
+	
+	public MhealthPractitionerLocation getPractitionerDivisionDistrictBranch(String username) {
+		
+		return practitionerLocationRepository.getPractitionerDivisionDistrictBranch(username);
+	}
 }

@@ -2,6 +2,7 @@ package org.opensrp.repository.postgres;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -108,6 +109,24 @@ public class PractitionerLocationRepositoryTest extends BaseRepositoryTest {
 	public void testGetPractitionerVillageIdsWithEmpty() {
 		List<Integer> practitionerVillageIds = practitionerLocationRepository.getPractitionerVillageIds("p111");
 		assertEquals(0, practitionerVillageIds.size());
+	}
+	
+	@Test
+	public void testGetPractitionerDivisionDistrictBranch() {
+		MhealthPractitionerLocation mhealthPractitionerLocation = practitionerLocationRepository
+		        .getPractitionerDivisionDistrictBranch("p1");
+		
+		assertNotNull(mhealthPractitionerLocation);
+		assertEquals("_321", mhealthPractitionerLocation.getPostFix());
+		assertEquals("2", mhealthPractitionerLocation.getBranch());
+	}
+	
+	@Test
+	public void testShouldReturnNullGetPractitionerDivisionDistrictBranch() {
+		MhealthPractitionerLocation mhealthPractitionerLocation = practitionerLocationRepository
+		        .getPractitionerDivisionDistrictBranch("p123");
+		assertNull(mhealthPractitionerLocation);
+		
 	}
 	
 }

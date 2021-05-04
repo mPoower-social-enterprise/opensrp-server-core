@@ -82,6 +82,11 @@ TRUNCATE TABLE team.practitioner_catchment_area;
 INSERT INTO team.practitioner_catchment_area (id, created_date, location_id, parent_location_id, modified_date, practitioner_id) VALUES(1, NULL, 7, 6, NULL, 1);
 INSERT INTO team.practitioner_catchment_area (id, created_date, location_id, parent_location_id, modified_date, practitioner_id) VALUES(2, NULL, 7, 6, NULL, 2);
 
+TRUNCATE TABLE  core.user_location_mapping;
+INSERT INTO core.user_location_mapping (username, division, district, user_id, branch) 
+VALUES('p1', '123', '321', 1, 2);
+
+
 
 
 
