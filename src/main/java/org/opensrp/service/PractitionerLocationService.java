@@ -2,6 +2,7 @@ package org.opensrp.service;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,5 +55,28 @@ public class PractitionerLocationService {
 	public MhealthPractitionerLocation getPractitionerDivisionDistrictBranch(String username) {
 		
 		return practitionerLocationRepository.getPractitionerDivisionDistrictBranch(username);
+	}
+	
+	public MhealthPractitionerLocation generatePostfix(String username, String district, String division, String branch) {
+		MhealthPractitionerLocation mhealthPractitionerLocation = new MhealthPractitionerLocation();
+		if (!StringUtils.isBlank(district)) {
+			System.err.println("ok");
+			mhealthPractitionerLocation.setPostFix("_" + district);
+			mhealthPractitionerLocation.setBranch(branch);
+			mhealthPractitionerLocation.setDistrict(district);
+			mhealthPractitionerLocation.setDivision(division);
+		} else {
+			mhealthPractitionerLocation = getPractitionerDivisionDistrictBranch(username);
+			
+			if (mhealthPractitionerLocation == null) {
+				mhealthPractitionerLocation = new MhealthPractitionerLocation();
+				mhealthPractitionerLocation.setPostFix("_NA");
+				mhealthPractitionerLocation.setBranch("");
+				mhealthPractitionerLocation.setDistrict("");
+				mhealthPractitionerLocation.setDivision("");
+				System.err.println("na");
+			}
+		}
+		return mhealthPractitionerLocation;
 	}
 }

@@ -136,4 +136,31 @@ public class PractitionerLocationServiceTest extends BaseRepositoryTest {
 		
 	}
 	
+	@Test
+	public void testGeneratePostfix() {
+		MhealthPractitionerLocation mhealthPractitionerLocation = practitionerLocationService.generatePostfix("p1", null,
+		    null, null);
+		assertNotNull(mhealthPractitionerLocation);
+		assertEquals("_321", mhealthPractitionerLocation.getPostFix());
+		assertEquals("2", mhealthPractitionerLocation.getBranch());
+	}
+	
+	@Test
+	public void testShouldReturnPostfixNAGeneratePostfix() {
+		MhealthPractitionerLocation mhealthPractitionerLocation = practitionerLocationService.generatePostfix("p341", null,
+		    null, null);
+		assertNotNull(mhealthPractitionerLocation);
+		assertEquals("_NA", mhealthPractitionerLocation.getPostFix());
+		
+	}
+	
+	@Test
+	public void testShouldReturnPostfixAsLikeParameterGeneratePostfix() {
+		MhealthPractitionerLocation mhealthPractitionerLocation = practitionerLocationService.generatePostfix("p341", "234",
+		    "4556", "4");
+		assertNotNull(mhealthPractitionerLocation);
+		assertEquals("_234", mhealthPractitionerLocation.getPostFix());
+		assertEquals("234", mhealthPractitionerLocation.getDistrict());
+		
+	}
 }
