@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.opensrp.repository.postgres.BaseRepositoryTest;
 import org.opensrp.repository.postgres.MhealthClientsRepositoryImpl;
@@ -75,7 +76,12 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientService.addOrUpdate(client, location);
 		
 		Client savedClient = mhealthClientService.findByBaseEntityId("f67823b0-378e-4a35-93fc-bb00def74e2f", postfix);
 		
@@ -86,7 +92,7 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		//test adding existing client is updated
 		DateTime timeBeforeUpdate = new DateTime();
 		savedClient.withMiddleName("Rustus");
-		mhealthClientService.addOrUpdate(savedClient, district, division, branch, postfix);
+		mhealthClientService.addOrUpdate(savedClient, location);
 		
 		Client updatedClient = mhealthClientService.findByBaseEntityId("f67823b0-378e-4a35-93fc-bb00def74e2f", postfix);
 		assertEquals("Rustus", updatedClient.getMiddleName());
@@ -100,7 +106,12 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(null, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientService.addOrUpdate(null, location);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -111,7 +122,12 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String division = "233";
 		String branch = "34";
 		String postfix = "";
-		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientService.addOrUpdate(client, location);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -120,7 +136,12 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.add(null, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.add(null, location);
 	}
 	
 	@Test
@@ -185,7 +206,12 @@ public class MhealthClientServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientService.addOrUpdate(client, location);
 	}
 	
 }

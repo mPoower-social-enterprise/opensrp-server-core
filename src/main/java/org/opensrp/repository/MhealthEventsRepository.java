@@ -2,6 +2,7 @@ package org.opensrp.repository;
 
 import java.util.List;
 
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.smartregister.domain.Event;
 
 public interface MhealthEventsRepository {
@@ -18,11 +19,11 @@ public interface MhealthEventsRepository {
 	
 	Event get(String id, String postfix);
 	
-	void add(Event entity, String postfix, String district, String division, String branch);
+	void add(Event entity, MhealthPractitionerLocation location);
 	
-	void update(Event entity, String postfix, String district, String division, String branch);
+	void update(Event entity, MhealthPractitionerLocation location);
 	
-	void update(Event entity, boolean allowArchived, String table, String district, String division, String branch);
+	void update(Event entity, boolean allowArchived, MhealthPractitionerLocation location);
 	
 	List<Event> findByVillageIds(String providerId, List<Long> villageIds, long serverVersion, int limit, String postfix);
 	

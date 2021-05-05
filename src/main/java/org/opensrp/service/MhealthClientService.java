@@ -3,6 +3,7 @@ package org.opensrp.service;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.smartregister.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,14 @@ public class MhealthClientService {
 		this.mhealthClientsRepository = mhealthClientsRepository;
 	}
 	
-	public Client addOrUpdate(Client client, String district, String division, String branch, String postfix) {
+	public Client addOrUpdate(Client client, MhealthPractitionerLocation location) {
 		if (client == null || client.getBaseEntityId() == null) {
 			throw new IllegalArgumentException("Not a valid Client");
 		}
 		
-		Long clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), postfix);
+		Long clientId = findClientIdByBaseEntityId(client.getBaseEntityId(), location.getPostFix());
 		if (clientId != null) {
-			Client c = findClientByClientId(clientId, postfix);
+			Client c = findClientByClientId(clientId, location.getPostFix());
 			if (c != null) {
 				client.setRevision(c.getRevision());
 				client.setId(c.getId());
@@ -33,13 +34,13 @@ public class MhealthClientService {
 				client.setDateCreated(c.getDateCreated());
 				client.setServerVersion(System.currentTimeMillis());
 				client.addIdentifier("OPENMRS_UUID", c.getIdentifier("OPENMRS_UUID"));
-				mhealthClientsRepository.update(client, postfix, district, division, branch);
+				mhealthClientsRepository.update(client, location);
 			}
 			
 		} else {
 			client.setServerVersion(System.currentTimeMillis());
 			client.setDateCreated(DateTime.now());
-			mhealthClientsRepository.add(client, postfix, district, division, branch);
+			mhealthClientsRepository.add(client, location);
 		}
 		
 		return client;

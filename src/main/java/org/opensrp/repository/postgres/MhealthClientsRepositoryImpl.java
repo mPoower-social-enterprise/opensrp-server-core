@@ -14,6 +14,7 @@ import org.opensrp.domain.postgres.ClientMetadata;
 import org.opensrp.domain.postgres.ClientMetadataExample;
 import org.opensrp.domain.postgres.ClientMetadataExample.Criteria;
 import org.opensrp.domain.postgres.MhealthClientMetadata;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthClientMetadataMapper;
@@ -47,11 +48,11 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	
 	@Override
 	@Transactional
-	public void add(Client entity, String postfix, String district, String division, String branch) {
+	public void add(Client entity, MhealthPractitionerLocation location) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			throw new IllegalArgumentException("Not a valid Client");
 		}
-		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), postfix);
+		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), location.getPostFix());
 		if (id != null) { // Client already added			
 			throw new IllegalArgumentException("Client exists");
 		}
@@ -66,9 +67,9 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			throw new IllegalStateException();
 		}
 		
-		pgClient.setDistrict(district);
-		pgClient.setDivision(division);
-		pgClient.setBranch(branch);
+		pgClient.setDistrict(location.getDistrict());
+		pgClient.setDivision(location.getDivision());
+		pgClient.setBranch(location.getBranch());
 		pgClient.setBaseEntityId(entity.getBaseEntityId());
 		Map<String, String> addressFields = entity.getAddresses().get(0).getAddressFields();
 		if (addressFields != null) {
@@ -82,13 +83,13 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			throw new IllegalStateException();
 		}
 		
-		updateServerVersion(pgClient, entity, postfix);
+		updateServerVersion(pgClient, entity, location.getPostFix());
 		
 		MhealthClientMetadata clientMetadata = createMetadata(entity, pgClient.getId());
 		if (clientMetadata != null) {
-			clientMetadata.setDistrict(district);
-			clientMetadata.setDivision(division);
-			clientMetadata.setBranch(branch);
+			clientMetadata.setDistrict(location.getDistrict());
+			clientMetadata.setDivision(location.getDivision());
+			clientMetadata.setBranch(location.getBranch());
 			customMhealthClientMetadataMapper.insertSelective(clientMetadata);
 		}
 	}
@@ -105,19 +106,18 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 	}
 	
 	@Override
-	public void update(Client entity, String postfix, String district, String division, String branch) {
-		update(entity, false, postfix, district, division, branch);
+	public void update(Client entity, MhealthPractitionerLocation location) {
+		update(entity, false, location);
 	}
 	
 	@Transactional
 	@Override
-	public void update(Client entity, boolean allowArchived, String postfix, String district, String division,
-	                   String branch) {
+	public void update(Client entity, boolean allowArchived, MhealthPractitionerLocation location) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			throw new IllegalArgumentException("Not a valid Client");
 		}
 		
-		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), postfix);
+		Long id = findClientIdByBaseEntityId(entity.getBaseEntityId(), location.getPostFix());
 		if (id == null) { // Client not added
 			throw new IllegalStateException();
 		}
@@ -128,9 +128,9 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		if (pgClient == null) {
 			throw new IllegalStateException();
 		}
-		pgClient.setDistrict(district);
-		pgClient.setDivision(division);
-		pgClient.setBranch(branch);
+		pgClient.setDistrict(location.getDistrict());
+		pgClient.setDivision(location.getDivision());
+		pgClient.setBranch(location.getBranch());
 		pgClient.setBaseEntityId(entity.getBaseEntityId());
 		pgClient.setServerVersion(entity.getServerVersion());
 		Map<String, String> addressFields = entity.getAddresses().get(0).getAddressFields();
@@ -144,7 +144,7 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 			throw new IllegalStateException();
 		}
 		
-		updateServerVersion(pgClient, entity, postfix);
+		updateServerVersion(pgClient, entity, location.getPostFix());
 		
 		MhealthClientMetadata clientMetadata = createMetadata(entity, id);
 		if (clientMetadata == null) {
@@ -157,12 +157,12 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		if (!allowArchived) {
 			criteria.andDateDeletedIsNull();
 		}
-		ClientMetadata metadata = findByClientId(id, postfix);
+		ClientMetadata metadata = findByClientId(id, location.getPostFix());
 		clientMetadata.setId(metadata.getId());
 		clientMetadata.setDateCreated(metadata.getDateCreated());
-		clientMetadata.setDistrict(district);
-		clientMetadata.setDivision(division);
-		clientMetadata.setBranch(branch);
+		clientMetadata.setDistrict(location.getDistrict());
+		clientMetadata.setDivision(location.getDivision());
+		clientMetadata.setBranch(location.getBranch());
 		customMhealthClientMetadataMapper.updateByPrimaryKey(clientMetadata);
 	}
 	

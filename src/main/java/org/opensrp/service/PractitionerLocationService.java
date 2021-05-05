@@ -57,10 +57,10 @@ public class PractitionerLocationService {
 		return practitionerLocationRepository.getPractitionerDivisionDistrictBranch(username);
 	}
 	
-	public MhealthPractitionerLocation generatePostfix(String username, String district, String division, String branch) {
+	public MhealthPractitionerLocation generatePostfixAndLocation(String username, String district, String division,
+	                                                              String branch) {
 		MhealthPractitionerLocation mhealthPractitionerLocation = new MhealthPractitionerLocation();
 		if (!StringUtils.isBlank(district)) {
-			System.err.println("ok");
 			mhealthPractitionerLocation.setPostFix("_" + district);
 			mhealthPractitionerLocation.setBranch(branch);
 			mhealthPractitionerLocation.setDistrict(district);
@@ -74,7 +74,6 @@ public class PractitionerLocationService {
 				mhealthPractitionerLocation.setBranch("");
 				mhealthPractitionerLocation.setDistrict("");
 				mhealthPractitionerLocation.setDivision("");
-				System.err.println("na");
 			}
 		}
 		return mhealthPractitionerLocation;

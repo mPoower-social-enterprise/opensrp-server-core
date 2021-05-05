@@ -9,6 +9,7 @@ import org.opensrp.domain.postgres.EventMetadataExample;
 import org.opensrp.domain.postgres.EventMetadataExample.Criteria;
 import org.opensrp.domain.postgres.MhealthEvent;
 import org.opensrp.domain.postgres.MhealthEventMetadata;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthEventsRepository;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthEventMapper;
 import org.opensrp.repository.postgres.mapper.custom.CustomMhealthEventMetadataMapper;
@@ -35,11 +36,11 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	
 	@Transactional
 	@Override
-	public void add(Event entity, String postfix, String district, String division, String branch) {
+	public void add(Event entity, MhealthPractitionerLocation location) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			throw new IllegalArgumentException("Not a valid Event");
 		}
-		Long id = retrievePrimaryKey(entity, false, postfix);
+		Long id = retrievePrimaryKey(entity, false, location.getPostFix());
 		if (id != null) { // Event already added			
 			throw new IllegalArgumentException("Event exists");
 		}
@@ -53,9 +54,9 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 			throw new IllegalStateException();
 		}
 		
-		pgEvent.setDistrict(district);
-		pgEvent.setDivision(division);
-		pgEvent.setBranch(branch);
+		pgEvent.setDistrict(location.getDistrict());
+		pgEvent.setDivision(location.getDivision());
+		pgEvent.setBranch(location.getBranch());
 		pgEvent.setVillage("");
 		pgEvent.setProviderId(entity.getProviderId());
 		pgEvent.setBaseEntityId(entity.getBaseEntityId());
@@ -67,13 +68,13 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 			throw new IllegalStateException();
 		}
 		
-		updateServerVersion(pgEvent, entity, postfix);
+		updateServerVersion(pgEvent, entity, location.getPostFix());
 		
 		MhealthEventMetadata eventMetadata = createMetadata(entity, pgEvent.getId());
 		if (eventMetadata != null) {
-			eventMetadata.setDistrict(district);
-			eventMetadata.setDivision(division);
-			eventMetadata.setBranch(branch);
+			eventMetadata.setDistrict(location.getDistrict());
+			eventMetadata.setDivision(location.getDivision());
+			eventMetadata.setBranch(location.getBranch());
 			eventMetadata.setVillage("");
 			customMhealthEventMetadataMapper.insertSelective(eventMetadata);
 		}
@@ -92,19 +93,18 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 	}
 	
 	@Override
-	public void update(Event entity, String postfix, String district, String division, String branch) {
-		update(entity, false, postfix, district, division, branch);
+	public void update(Event entity, MhealthPractitionerLocation location) {
+		update(entity, false, location);
 	}
 	
 	@Transactional
 	@Override
-	public void update(Event entity, boolean allowArchived, String postfix, String district, String division,
-	                   String branch) {
+	public void update(Event entity, boolean allowArchived, MhealthPractitionerLocation location) {
 		if (entity == null || entity.getBaseEntityId() == null) {
 			throw new IllegalStateException();
 		}
 		
-		Long id = retrievePrimaryKey(entity, allowArchived, postfix);
+		Long id = retrievePrimaryKey(entity, allowArchived, location.getPostFix());
 		if (id == null) { // Event not added
 			throw new IllegalStateException();
 		}
@@ -115,9 +115,9 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		if (pgEvent == null) {
 			throw new IllegalStateException();
 		}
-		pgEvent.setDistrict(district);
-		pgEvent.setDivision(division);
-		pgEvent.setBranch(branch);
+		pgEvent.setDistrict(location.getDistrict());
+		pgEvent.setDivision(location.getDivision());
+		pgEvent.setBranch(location.getBranch());
 		pgEvent.setVillage("");
 		pgEvent.setProviderId(entity.getProviderId());
 		pgEvent.setBaseEntityId(entity.getBaseEntityId());
@@ -128,7 +128,7 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 			throw new IllegalStateException();
 		}
 		
-		updateServerVersion(pgEvent, entity, postfix);
+		updateServerVersion(pgEvent, entity, location.getPostFix());
 		
 		MhealthEventMetadata eventMetadata = createMetadata(entity, id);
 		if (eventMetadata == null) {
@@ -141,10 +141,10 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		if (!allowArchived) {
 			criteria.andDateDeletedIsNull();
 		}
-		eventMetadata.setId(customMhealthEventMetadataMapper.selectEventMetadataIdByEventId(id, postfix));
-		eventMetadata.setDistrict(district);
-		eventMetadata.setDivision(division);
-		eventMetadata.setBranch(branch);
+		eventMetadata.setId(customMhealthEventMetadataMapper.selectEventMetadataIdByEventId(id, location.getPostFix()));
+		eventMetadata.setDistrict(location.getDistrict());
+		eventMetadata.setDivision(location.getDivision());
+		eventMetadata.setBranch(location.getBranch());
 		eventMetadata.setVillage("");
 		customMhealthEventMetadataMapper.updateByPrimaryKey(eventMetadata);
 		

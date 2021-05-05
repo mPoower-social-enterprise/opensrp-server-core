@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.opensrp.repository.MhealthEventsRepository;
 import org.opensrp.repository.postgres.BaseRepositoryTest;
@@ -59,8 +60,13 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String branch = "34";
 		String postfix = "";
 		String username = "";
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
 		
 		Event savedEvent = mhealthEventService.findByFormSubmissionId("form_submission_id", postfix);
 		
@@ -72,7 +78,7 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		
 		savedEvent.setEventType("Family Registration");
 		savedEvent.setProviderId("testsku");
-		mhealthEventService.addorUpdateEvent(savedEvent, username, district, division, branch, postfix);
+		mhealthEventService.addorUpdateEvent(savedEvent, username, location);
 		
 		Event updatedEvent = mhealthEventService.findByFormSubmissionId("form_submission_id", postfix);
 		
@@ -92,7 +98,12 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String username = "";
 		addClient();
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
 		List<Long> villageIds = new ArrayList<>();
 		villageIds.add(2345l);
 		List<Event> events = mhealthEventService.findByVillageIds("", villageIds, 0, 1, postfix);
@@ -111,7 +122,12 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String username = "";
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
 		Event findEvent = mhealthEventService.findByFormSubmissionId("form_submission_id", postfix);
 		assertNotNull(findEvent);
 		assertEquals("435534534543", findEvent.getBaseEntityId());
@@ -128,7 +144,12 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String username = "";
 		Event event = generateEvent();
-		mhealthEventService.addorUpdateEvent(event, username, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
 		List<Event> events = mhealthEventService.findByProvider(0l, "testsk", 1, postfix);
 		assertEquals(1, events.size());
 		assertEquals("435534534543", events.get(0).getBaseEntityId());
@@ -181,6 +202,11 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientService.addOrUpdate(client, district, division, branch, postfix);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientService.addOrUpdate(client, location);
 	}
 }

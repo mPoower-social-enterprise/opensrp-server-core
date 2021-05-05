@@ -3,6 +3,7 @@ package org.opensrp.service;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthEventsRepository;
 import org.smartregister.domain.Event;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +19,21 @@ public class MhealthEventService {
 		this.mhealthEventsRepository = mhealthEventsRepository;
 	}
 	
-	public synchronized Event addorUpdateEvent(Event event, String username, String district, String division, String branch,
-	                                           String postfix) {
+	public synchronized Event addorUpdateEvent(Event event, String username, MhealthPractitionerLocation location) {
 		
-		Long eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), postfix);
+		Long eventId = findEventIdByFormSubmissionId(event.getFormSubmissionId(), location.getPostFix());
 		
 		if (eventId != null) {
-			Event existingEvent = findEventByEventId(eventId, postfix);
+			Event existingEvent = findEventByEventId(eventId, location.getPostFix());
 			event.setId(existingEvent.getId());
 			event.setRevision(existingEvent.getRevision());
 			event.setDateEdited(DateTime.now());
 			event.setRevision(existingEvent.getRevision());
-			mhealthEventsRepository.update(event, postfix, district, division, branch);
+			mhealthEventsRepository.update(event, location);
 			
 		} else {
 			event.setDateCreated(DateTime.now());
-			mhealthEventsRepository.add(event, postfix, district, division, branch);
+			mhealthEventsRepository.add(event, location);
 			
 		}
 		return event;

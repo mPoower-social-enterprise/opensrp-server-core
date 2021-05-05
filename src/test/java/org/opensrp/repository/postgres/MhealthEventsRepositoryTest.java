@@ -13,6 +13,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.opensrp.repository.MhealthEventsRepository;
 import org.smartregister.domain.Address;
@@ -64,7 +65,12 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 		String division = "233";
 		String branch = "34";
 		String postfix = "";
-		mhealthEventsRepository.add(event, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventsRepository.add(event, location);
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -74,7 +80,12 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 		String division = "233";
 		String branch = "34";
 		String postfix = "";
-		mhealthEventsRepository.update(event, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventsRepository.update(event, location);
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -92,7 +103,12 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 		String division = "233";
 		String branch = "34";
 		String postfix = "";
-		mhealthEventsRepository.update(event, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventsRepository.update(event, location);
 	}
 	
 	@Test
@@ -102,10 +118,15 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 		String district = "234";
 		String division = "233";
 		String branch = "34";
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
 		Event e = mhealthEventsRepository.findByBaseEntityId(event.getBaseEntityId(), postfix);
 		e.setEventType("Family Registration");
 		e.setProviderId("testsku");
-		mhealthEventsRepository.update(e, postfix, district, division, branch);
+		mhealthEventsRepository.update(e, location);
 		Event findEvent = mhealthEventsRepository.findByBaseEntityId(event.getBaseEntityId(), postfix);
 		assertEquals("435534534543", findEvent.getBaseEntityId());
 		assertEquals("Family Registration", findEvent.getEventType());
@@ -187,7 +208,12 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 		String division = "233";
 		String branch = "34";
 		String postfix = "";
-		mhealthEventsRepository.add(event, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventsRepository.add(event, location);
 		return event;
 	}
 	
@@ -221,7 +247,12 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.add(client, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.add(client, location);
 		return client;
 	}
 }

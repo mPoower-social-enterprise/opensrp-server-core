@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensrp.domain.postgres.ClientMetadata;
+import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
@@ -57,7 +58,12 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.add(null, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.add(null, location);
 	}
 	
 	@Test
@@ -91,11 +97,16 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.add(client, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.add(client, location);
 		
 		Client c = mhealthClientsRepository.findByBaseEntityId(client.getBaseEntityId(), postfix);
 		c.setFirstName("update");
-		mhealthClientsRepository.update(c, postfix, district, division, branch);
+		mhealthClientsRepository.update(c, location);
 		Client updatedClient = mhealthClientsRepository.findByBaseEntityId(c.getBaseEntityId(), postfix);
 		
 		assertNotNull(updatedClient);
@@ -110,7 +121,12 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.update(null, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.update(null, location);
 	}
 	
 	@Test(expected = IllegalStateException.class)
@@ -144,7 +160,12 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.update(client, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.update(client, location);
 	}
 	
 	@Test
@@ -224,7 +245,12 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		String postfix = "";
 		String division = "233";
 		String branch = "34";
-		mhealthClientsRepository.add(client, postfix, district, division, branch);
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.add(client, location);
 		return client;
 	}
 }
