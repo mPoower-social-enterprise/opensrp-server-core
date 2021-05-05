@@ -60,7 +60,7 @@ public class PractitionerLocationService {
 	public MhealthPractitionerLocation generatePostfixAndLocation(String username, String district, String division,
 	                                                              String branch) {
 		MhealthPractitionerLocation mhealthPractitionerLocation = new MhealthPractitionerLocation();
-		if (!StringUtils.isBlank(district)) {
+		if (!StringUtils.isBlank(district) && !StringUtils.isBlank(division) && !StringUtils.isBlank(branch)) {
 			mhealthPractitionerLocation.setPostFix("_" + district);
 			mhealthPractitionerLocation.setBranch(branch);
 			mhealthPractitionerLocation.setDistrict(district);
