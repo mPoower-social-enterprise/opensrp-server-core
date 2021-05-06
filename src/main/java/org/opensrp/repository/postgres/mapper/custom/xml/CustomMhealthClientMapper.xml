@@ -157,6 +157,12 @@
 		order by c.server_version asc
 		
 
-	</select>	
+	</select>
+	<select id="selectByRelationshipId" 
+			resultMap="org.opensrp.repository.postgres.mapper.ClientMapper.BaseResultMap">
+		select id,json from core.client${postfix} where id=any(select client_id from core.client_metadata${postfix} as cm
+		where relational_id = #{relationshipId,jdbcType=VARCHAR} and base_entity_id!=#{relationshipId,jdbcType=VARCHAR}) 
+	</select>
+		
 
 </mapper>

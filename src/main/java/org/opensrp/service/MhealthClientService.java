@@ -64,4 +64,8 @@ public class MhealthClientService {
 	public Client findByBaseEntityId(String baseEntityId, String postfix) {
 		return mhealthClientsRepository.findByBaseEntityId(baseEntityId, postfix);
 	}
+	
+	public List<Client> findByRelationshipId(String relationshipId, String postfix) {
+		return mhealthClientsRepository.findByRelationshipId(relationshipId, postfix);
+	}
 }

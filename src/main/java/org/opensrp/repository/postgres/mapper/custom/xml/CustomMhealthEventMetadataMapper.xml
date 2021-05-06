@@ -8,6 +8,10 @@
 		<result column="json" jdbcType="OTHER" property="json"
 			typeHandler="org.opensrp.repository.postgres.handler.EventTypeHandler" />
 	</resultMap>
+	
+	<resultMap id="BaseEventMetadataResultMap" type="org.opensrp.domain.postgres.MhealthEventMetadata">
+		<id column="id" jdbcType="BIGINT" property="id" />		
+	</resultMap>
 
 	<sql id="Base_Event_Column_List">
 		e.id, e.json
@@ -187,5 +191,10 @@
 		select event_id
 		from core.event_metadata${postfix} em
 		where em.event_id=#{eventId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectFirstEventMetadata" resultMap="BaseEventMetadataResultMap">
+	    select em.id,em.district,em.division,em.village,em.provider_id,em.branch from core.event_metadata em 
+	    where em.base_entity_id =#{baseEntityId,jdbcType=VARCHAR} order by id asc limit 1
 	</select>
 </mapper>

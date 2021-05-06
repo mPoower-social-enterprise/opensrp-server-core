@@ -345,4 +345,11 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		
 	}
 	
+	@Override
+	public List<Client> findByRelationshipId(String relationshipId, String postfix) {
+		List<org.opensrp.domain.postgres.Client> clients = customMhealthClientMapper.selectByRelationshipId(relationshipId,
+		    postfix);
+		return convert(clients);
+	}
+	
 }

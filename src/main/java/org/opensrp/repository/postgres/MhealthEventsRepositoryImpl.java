@@ -289,4 +289,16 @@ public class MhealthEventsRepositoryImpl extends BaseRepositoryImpl<Event> imple
 		return convert(event);
 	}
 	
+	@Override
+	public List<Event> findEventsByBaseEntityId(String baseEntityId, String postfix) {
+		List<org.opensrp.domain.postgres.Event> events = customMhealthEventMapper.selectEventsByBaseEntityId(baseEntityId,
+		    postfix);
+		return convert(events);
+	}
+	
+	@Override
+	public MhealthEventMetadata findFirstEventMetadata(String baseEntityId, String postfix) {
+		return customMhealthEventMetadataMapper.selectFirstEventMetadata(baseEntityId, postfix);
+	}
+	
 }

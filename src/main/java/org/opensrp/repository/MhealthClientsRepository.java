@@ -27,4 +27,6 @@ public interface MhealthClientsRepository {
 	void update(Client entity, boolean allowArchived, MhealthPractitionerLocation location);
 	
 	ClientMetadata findByClientId(Long clientId, String postfix);
+	
+	List<Client> findByRelationshipId(String relationshipId, String table);
 }

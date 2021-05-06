@@ -2,6 +2,7 @@ package org.opensrp.repository;
 
 import java.util.List;
 
+import org.opensrp.domain.postgres.MhealthEventMetadata;
 import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.smartregister.domain.Event;
 
@@ -12,6 +13,8 @@ public interface MhealthEventsRepository {
 	Event findEventByEventId(Long eventId, String postfix);
 	
 	Event findByBaseEntityId(String baseEntityId, String postfix);
+	
+	List<Event> findEventsByBaseEntityId(String baseEntityId, String postfix);
 	
 	Event findByFormSubmissionId(String formSubmissionId, String postfix);
 	
@@ -28,5 +31,7 @@ public interface MhealthEventsRepository {
 	List<Event> findByVillageIds(String providerId, List<Long> villageIds, long serverVersion, int limit, String postfix);
 	
 	List<Event> findByProvider(long serverVersion, String providerId, int limit, String postfix);
+	
+	MhealthEventMetadata findFirstEventMetadata(String baseEntityId, String postfix);
 	
 }

@@ -11,4 +11,7 @@ public interface CustomMhealthEventMetadataMapper {
 	
 	int updateByPrimaryKey(MhealthEventMetadata record);
 	
+	MhealthEventMetadata selectFirstEventMetadata(@Param("baseEntityId") String baseEntityId,
+	                                              @Param("postfix") String postfix);
+	
 }
