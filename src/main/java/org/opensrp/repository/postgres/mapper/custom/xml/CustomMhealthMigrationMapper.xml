@@ -2,6 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper
 	namespace="org.opensrp.repository.postgres.mapper.custom.CustomMhealthMigrationMapper">
+    <resultMap id="migrationMap" type="org.opensrp.domain.postgres.MhealthMigration">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="migration_date" jdbcType="DATE" property="migrationDate"/>
+        <result column="member_name" jdbcType="VARCHAR" property="memberName"/>
+        <result column="member_contact" jdbcType="VARCHAR" property="memberContact"/>
+        <result column="member_id_in" jdbcType="VARCHAR" property="memberIDIn"/>
+        <result column="member_id_out" jdbcType="VARCHAR" property="memberIDOut"/>
+        <result column="hh_name_in" jdbcType="VARCHAR" property="HHNameIn"/>
+        <result column="hh_name_out" jdbcType="VARCHAR" property="HHNameOut"/>
+        <result column="hh_contact_out" jdbcType="VARCHAR" property="HHContactOut"/>
+        <result column="hh_contact_in" jdbcType="VARCHAR" property="HHContactIn"/>
+        <result column="division_out" jdbcType="VARCHAR" property="divisionOut"/>
+        <result column="division_in" jdbcType="VARCHAR" property="divisionIn"/>
+        <result column="district_out" jdbcType="VARCHAR" property="districtOut"/>
+        <result column="district_in" jdbcType="VARCHAR" property="districtIn"/>
+        <result column="upazila_out" jdbcType="VARCHAR" property="upazilaOut"/>
+        <result column="upazila_in" jdbcType="VARCHAR" property="upazilaIn"/>
+        <result column="pourasava_out" jdbcType="VARCHAR" property="pourasavaOut"/>
+        <result column="pourasava_in" jdbcType="VARCHAR" property="pourasavaIn"/>
+        <result column="union_out" jdbcType="VARCHAR" property="unionOut"/>
+        <result column="union_in" jdbcType="VARCHAR" property="unionIn"/>
+        <result column="village_out" jdbcType="VARCHAR" property="villageOut"/>
+        <result column="village_in" jdbcType="VARCHAR" property="villageIn"/>
+        <result column="village_id_out" jdbcType="VARCHAR" property="villageIDOut"/>
+        <result column="village_id_in" jdbcType="VARCHAR" property="villageIDIn"/>
+        <result column="branch_id_out" jdbcType="VARCHAR" property="BranchIDOut"/>
+        <result column="branch_id_in" jdbcType="VARCHAR" property="branchIDIn"/>
+        <result column="sk_out" jdbcType="VARCHAR" property="SKOut"/>
+        <result column="sk_in" jdbcType="VARCHAR" property="SKIn"/>
+        <result column="ss_out" jdbcType="VARCHAR" property="SSOut"/>
+        <result column="ss_in" jdbcType="VARCHAR" property="SSIn"/>
+        <result column="number_of_member_out" jdbcType="VARCHAR" property="numberOfMemberOut"/>
+        <result column="number_of_member_in" jdbcType="VARCHAR" property="numberOfMemberIn"/>
+        <result column="relation_with_hh_out" jdbcType="VARCHAR" property="relationWithHHOut"/>
+        <result column="relation_with_hh_in" jdbcType="VARCHAR" property="relationWithHHIn"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="is_member" jdbcType="VARCHAR" property="isMember"/>
+        <result column="relational_id_in" jdbcType="VARCHAR" property="relationalIdIn"/>
+        <result column="relational_id_out" jdbcType="VARCHAR" property="relationalIdOut"/>
+        <result column="member_type" jdbcType="VARCHAR" property="memberType"/>
+        <result column="dob" jdbcType="DATE" property="dob"/>
+        <result column="base_entity_id" jdbcType="VARCHAR" property="baseEntityId"/>
+        <result column="district_id_out" jdbcType="VARCHAR" property="districtIdOut"/>
+        <result column="district_id_in" jdbcType="VARCHAR" property="districtIdIn"/>
+        <result column="mother_id" jdbcType="VARCHAR" property="motherId"/>
+        <result column="division_id_out" jdbcType="VARCHAR" property="divisionIdOut"/>
+        <result column="division_id_in" jdbcType="VARCHAR" property="divisionIdIn"/>
+        <result column="timestamp" jdbcType="BIGINT" property="timestamp"/>
+    </resultMap>
     		
     <insert id="insertMigration" parameterType="org.opensrp.domain.postgres.MhealthMigration" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into core.migration
@@ -312,10 +361,10 @@
         </where>
     </update>
   	
-    <update id="updateMigration" parameterType="org.opensrp.domain.Migration">
+    <update id="updateMigration" parameterType="org.opensrp.domain.postgres.MhealthMigration">
         update core.migration
         <set>
-            <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <trim>
                 <if test="migrationDate != null">
                     migration_date = #{migrationDate,jdbcType=DATE},
                 </if>
@@ -449,7 +498,7 @@
                     division_id_in = #{divisionIdIn,jdbcType=VARCHAR},
                 </if>
                 <if test="timestamp != null">
-                    timestamp = #{timestamp,jdbcType=BIGINT},
+                    timestamp = #{timestamp,jdbcType=BIGINT}
                 </if>
             </trim>
         </set>

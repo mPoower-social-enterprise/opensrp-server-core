@@ -2,8 +2,8 @@ package org.opensrp.repository.postgres.mapper.custom;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.opensrp.domain.postgres.MhealthMigration;
-import org.springframework.data.repository.query.Param;
 
 public interface CustomMhealthMigrationMapper {
 	
