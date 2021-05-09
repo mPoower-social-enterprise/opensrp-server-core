@@ -215,6 +215,22 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		mhealthClientsRepository.get("");
 	}
 	
+	@Test
+	public void shouldTesFindByRelationshipId() {
+		addClient();
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.findByRelationshipId("23333", postfix);
+		assertEquals(1, clients.size());
+		assertEquals("233864-8", clients.get(0).getIdentifier("ZEIR_ID"));
+	}
+	
+	@Test
+	public void shouldReturnEmptyTesFindByRelationshipId() {
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.findByRelationshipId("2333f3", postfix);
+		assertEquals(0, clients.size());
+	}
+	
 	private Client addClient() {
 		Client client = new Client("f67823b0-378e-4a35-93fc-bb00def74e2f").withBirthdate(new DateTime("2017-03-31"), true)
 		        .withGender("Male").withFirstName("xobili").withLastName("mbangwa");

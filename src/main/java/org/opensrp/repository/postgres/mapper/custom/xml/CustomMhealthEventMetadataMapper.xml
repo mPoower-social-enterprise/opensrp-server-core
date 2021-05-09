@@ -194,7 +194,7 @@
 	</select>
 	
 	<select id="selectFirstEventMetadata" resultMap="BaseEventMetadataResultMap">
-	    select em.id,em.district,em.division,em.village,em.provider_id,em.branch from core.event_metadata em 
+	    select em.id,em.district,em.division,em.village,em.provider_id providerId,em.branch from core.event_metadata em 
 	    where em.base_entity_id =#{baseEntityId,jdbcType=VARCHAR} order by id asc limit 1
 	</select>
 </mapper>
