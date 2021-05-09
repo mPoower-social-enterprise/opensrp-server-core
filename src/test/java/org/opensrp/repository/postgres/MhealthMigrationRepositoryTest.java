@@ -115,6 +115,35 @@ public class MhealthMigrationRepositoryTest extends BaseRepositoryTest {
 		assertEquals("REJECT", getMigrationByBaseEntityId.getStatus());
 	}
 	
+	@Test
+	public void testUpdateMigrationStatusById() {
+		MhealthMigration addFamilyMigration = addFamilyMigration();
+		mhealthMigrationRepository.addMigration(addFamilyMigration);
+		assertEquals("PENDING", addFamilyMigration.getStatus());
+		MhealthMigration getMigrationByBaseEntityId = mhealthMigrationRepository
+		        .findFirstMigrationBybaseEntityId("8a661876-111a-4976-9a39-2ba0e1e4d776");
+		int update = mhealthMigrationRepository.updateMigrationStatusById(getMigrationByBaseEntityId.getId(), "REJECT");
+		assertEquals(1, update);
+		MhealthMigration afterUpdated = mhealthMigrationRepository
+		        .findFirstMigrationBybaseEntityId("8a661876-111a-4976-9a39-2ba0e1e4d776");
+		assertEquals("REJECT", afterUpdated.getStatus());
+	}
+	
+	@Test
+	public void testUpdateMigrationStatusByRelationalId() {
+		MhealthMigration addMemberMigration = addMemberMigration();
+		MhealthMigration addFamilyMigration = addFamilyMigration();
+		mhealthMigrationRepository.addMigration(addMemberMigration);
+		mhealthMigrationRepository.addMigration(addFamilyMigration);
+		
+		int update = mhealthMigrationRepository.updateMigrationStatusByRelationalId("8a661876-111a-4976-9a39-2ba0e1e4d776",
+		    "ACCEPT");
+		MhealthMigration afterUpdated = mhealthMigrationRepository
+		        .findFirstMigrationBybaseEntityId("f3f3c8b3-3566-4509-b5dc-b058d4313380");
+		assertEquals(1, update);
+		assertEquals("ACCEPT", afterUpdated.getStatus());
+	}
+	
 	public MhealthMigration addMemberMigration() {
 		MhealthMigration mhealthMigration = new MhealthMigration();
 		mhealthMigration.setTimestamp(1612686348398l);
