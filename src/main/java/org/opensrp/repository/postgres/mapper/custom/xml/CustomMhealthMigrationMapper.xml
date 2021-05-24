@@ -517,7 +517,7 @@
         </where>
     </update>
     <select id="selectFirstMigrationBybaseEntityId" resultMap="migrationMap">
-        select * from core.migration as m where m.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} order by id desc limit 1 ;
+        select * from core.migration as m where m.base_entity_id = #{baseEntityId,jdbcType=VARCHAR} order by id asc limit 1 ;
     </select>
     
 </mapper>

@@ -1,6 +1,7 @@
 package org.opensrp.repository.postgres;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,6 +143,34 @@ public class MhealthMigrationRepositoryTest extends BaseRepositoryTest {
 		        .findFirstMigrationBybaseEntityId("f3f3c8b3-3566-4509-b5dc-b058d4313380");
 		assertEquals(1, update);
 		assertEquals("ACCEPT", afterUpdated.getStatus());
+	}
+	
+	@Test
+	public void testFindFirstMigrationBybaseEntityId() {
+		MhealthMigration addMemberMigration = addMemberMigration();
+		MhealthMigration addMemberMigration1 = addMemberMigration();
+		addMemberMigration1.setSKOut("01313047272");
+		addMemberMigration1.setSKIn("01313047104");
+		mhealthMigrationRepository.addMigration(addMemberMigration);
+		mhealthMigrationRepository.addMigration(addMemberMigration1);
+		
+		MhealthMigration firstMigration = mhealthMigrationRepository
+		        .findFirstMigrationBybaseEntityId("f3f3c8b3-3566-4509-b5dc-b058d4313380");
+		assertEquals("01313047271", firstMigration.getSKOut());
+	}
+	
+	@Test
+	public void testShouldReturnNUllFindFirstMigrationBybaseEntityId() {
+		MhealthMigration addMemberMigration = addMemberMigration();
+		MhealthMigration addMemberMigration1 = addMemberMigration();
+		addMemberMigration1.setSKOut("01313047272");
+		addMemberMigration1.setSKIn("01313047104");
+		mhealthMigrationRepository.addMigration(addMemberMigration);
+		mhealthMigrationRepository.addMigration(addMemberMigration1);
+		
+		MhealthMigration firstMigration = mhealthMigrationRepository
+		        .findFirstMigrationBybaseEntityId("f3f3c8b3-3566-4509-b5dc-b058d4313381");
+		assertNull(firstMigration);
 	}
 	
 	public MhealthMigration addMemberMigration() {

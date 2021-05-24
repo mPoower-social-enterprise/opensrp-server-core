@@ -199,7 +199,7 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void shouldTestFindByBaseEntityIdss() {
+	public void shouldTestFindByBaseEntityIds() {
 		addClient();
 		String postfix = "";
 		List<String> baseEntitiIds = new ArrayList<>();
