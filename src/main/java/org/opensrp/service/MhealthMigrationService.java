@@ -1,6 +1,7 @@
 package org.opensrp.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -305,6 +306,102 @@ public class MhealthMigrationService {
 		}
 		migration.setMotherId(motherId);
 		return migration;
+	}
+	
+	@Transactional
+	public void acceptRejectMigration(Long id, String relationalId, String type, String status) throws JSONException {
 		
+		if (status.equalsIgnoreCase(MigrationStatus.ACCEPT.name())) {
+			mhealthMigrationRepository.updateMigrationStatusById(id, MigrationStatus.ACCEPT.name());
+			mhealthMigrationRepository.updateMigrationStatusByRelationalId(relationalId, MigrationStatus.ACCEPT.name());
+		} else if (status.equalsIgnoreCase(MigrationStatus.REJECT.name())) {
+			MhealthMigration migration = mhealthMigrationRepository.findMigrationById(id);
+			
+			if (type.equalsIgnoreCase("HH")) {
+				
+				Client household = clientService.findByBaseEntityId(migration.getBaseEntityId(),
+				    migration.getDistrictIdIn());
+				household.getAddresses().clear();
+				
+				household.addAddress(clientService.setAddress(household, migration));
+				household.addIdentifier("opensrp_id", migration.getMemberIDOut());
+				Map<String, Object> att = household.getAttributes();
+				att.put("SS_Name", migration.getSSOut());
+				att.put("village_id", migration.getVillageIDOut());
+				household.getRelationships().clear();
+				List<String> family = new ArrayList<>();
+				family.add(migration.getRelationalIdOut());
+				Map<String, List<String>> relationships = new HashMap<>();
+				relationships.put("family_head", family);
+				relationships.put("primary_caregiver", family);
+				household.setRelationships(relationships);
+				
+				rejectEvent(household, migration);
+				List<MhealthMigration> migrations = mhealthMigrationRepository.findMigrationByIdRelationId(relationalId,
+				    MigrationStatus.PENDING.name());
+				String districtId = migration.getDistrictIdOut().replace("_", "");
+				MhealthPractitionerLocation userLocation = new MhealthPractitionerLocation();
+				userLocation.setBranch(migration.getBranchIDOut());
+				userLocation.setDistrict(districtId);
+				userLocation.setDivision(migration.getDivisionIdOut());
+				userLocation.setPostFix(migration.getDistrictIdIn());
+				clientService.addOrUpdate(household, userLocation);
+				
+				mhealthMigrationRepository.updateMigrationStatusById(id, MigrationStatus.REJECT.name());
+				for (MhealthMigration migration2 : migrations) {
+					Client c = clientService.findByBaseEntityId(migration2.getBaseEntityId(), migration2.getDistrictIdIn());
+					rejectClient(c, migration2);
+				}
+				
+			} else if (type.equalsIgnoreCase("Member")) {
+				
+				Client member = clientService.findByBaseEntityId(migration.getBaseEntityId(), migration.getDistrictIdIn());
+				rejectClient(member, migration);
+			}
+		}
+		
+	}
+	
+	private void rejectClient(Client c, MhealthMigration migration) {
+		c.getAddresses().clear();
+		c.addAddress(clientService.setAddress(c, migration));
+		Map<String, Object> att = c.getAttributes();
+		att.put("Relation_with_HOH", migration.getRelationWithHHOut());
+		c.addIdentifier("opensrp_id", migration.getMemberIDOut());
+		c.getRelationships().clear();
+		List<String> family = new ArrayList<>();
+		family.add(migration.getRelationalIdOut());
+		List<String> mother = new ArrayList<>();
+		mother.add(migration.getMotherId());
+		Map<String, List<String>> relationships = new HashMap<>();
+		relationships.put("family", family);
+		relationships.put("mother", mother);
+		c.setRelationships(relationships);
+		
+		String districtId = migration.getDistrictIdOut().replace("_", "");
+		MhealthPractitionerLocation userLocation = new MhealthPractitionerLocation();
+		userLocation.setBranch(migration.getBranchIDOut());
+		userLocation.setDistrict(districtId);
+		userLocation.setDivision(migration.getDivisionIdOut());
+		userLocation.setPostFix(migration.getDistrictIdIn());
+		clientService.addOrUpdate(c, userLocation);
+		
+		rejectEvent(c, migration);
+		mhealthMigrationRepository.updateMigrationStatusById(migration.getId(), MigrationStatus.REJECT.name());
+		
+	}
+	
+	private void rejectEvent(Client c, MhealthMigration migration) {
+		List<Event> events = eventService.findEventsByBaseEntityId(c.getBaseEntityId(), migration.getDistrictIdIn());
+		String districtId = migration.getDistrictIdOut().replace("_", "");
+		MhealthPractitionerLocation userLocation = new MhealthPractitionerLocation();
+		userLocation.setBranch(migration.getBranchIDOut());
+		userLocation.setDistrict(districtId);
+		userLocation.setDivision(migration.getDivisionIdOut());
+		userLocation.setPostFix(migration.getDistrictIdIn());
+		
+		for (Event event : events) {
+			eventService.addorUpdateEvent(event, "", userLocation);
+		}
 	}
 }
