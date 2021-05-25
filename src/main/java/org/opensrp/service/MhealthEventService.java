@@ -52,28 +52,22 @@ public class MhealthEventService {
 	
 	public List<Event> findByVillageIds(String providerId, List<Long> villageIds, long serverVersion, int limit,
 	                                    String postfix) {
-		System.err.println("findByVillageIds");
 		return mhealthEventsRepository.findByVillageIds(providerId, villageIds, serverVersion, limit, postfix);
 	}
 	
 	public List<Event> findByProvider(long serverVersion, String providerId, int limit, String postfix) {
-		System.err.println("findByProvider");
-		
 		return mhealthEventsRepository.findByProvider(serverVersion, providerId, limit, postfix);
 	}
 	
 	public Event findByFormSubmissionId(String formSubmissionId, String postfix) {
-		System.err.println("findByFormSubmissionId");
 		return mhealthEventsRepository.findByFormSubmissionId(formSubmissionId, postfix);
 	}
 	
 	public List<Event> findEventsByBaseEntityId(String baseEntityId, String postfix) {
-		System.err.println("findEventsByBaseEntityId");
 		return mhealthEventsRepository.findEventsByBaseEntityId(baseEntityId, postfix);
 	}
 	
 	public MhealthEventMetadata findFirstEventMetadata(String baseEntityId, String postfix) {
-		System.err.println("findFirstEventMetadata");
 		return mhealthEventsRepository.findFirstEventMetadata(baseEntityId, postfix);
 	}
 }

@@ -65,6 +65,7 @@ public class PractitionerLocationService {
 			mhealthPractitionerLocation.setBranch(branch);
 			mhealthPractitionerLocation.setDistrict(district);
 			mhealthPractitionerLocation.setDivision(division);
+			
 		} else {
 			mhealthPractitionerLocation = getPractitionerDivisionDistrictBranch(username);
 			
@@ -74,8 +75,10 @@ public class PractitionerLocationService {
 				mhealthPractitionerLocation.setBranch("");
 				mhealthPractitionerLocation.setDistrict("");
 				mhealthPractitionerLocation.setDivision("");
+				
 			}
 		}
+		mhealthPractitionerLocation.setUsername(username);
 		return mhealthPractitionerLocation;
 	}
 }

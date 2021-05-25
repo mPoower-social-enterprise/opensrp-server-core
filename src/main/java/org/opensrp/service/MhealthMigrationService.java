@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opensrp.domain.postgres.MhealthEventMetadata;
 import org.opensrp.domain.postgres.MhealthMigration;
 import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthMigrationRepository;
@@ -27,19 +29,17 @@ public class MhealthMigrationService {
 	
 	private MhealthClientService clientService;
 	
-	private PractitionerLocationService PractionerDetailsService;
-	
 	public enum MigrationStatus {
 		PENDING, REJECT, ACCEPT
 	}
 	
 	@Autowired
 	public MhealthMigrationService(MhealthMigrationRepository mhealthMigrationRepository, MhealthClientService clientService,
-	    MhealthEventService eventService, PractitionerLocationService PractionerDetailsService) {
+	    MhealthEventService eventService) {
 		this.mhealthMigrationRepository = mhealthMigrationRepository;
 		this.clientService = clientService;
 		this.eventService = eventService;
-		this.PractionerDetailsService = PractionerDetailsService;
+		
 	}
 	
 	public Integer addMigration(MhealthMigration migration) {
@@ -78,176 +78,133 @@ public class MhealthMigrationService {
 		return mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
 	}
 	
-	public boolean migrate(ArrayList<Client> clients, JSONObject syncData, String district, String inProvider,
-	                       String division, String branch, String type)
+	@Transactional
+	public void migrate(Client inClient, JSONObject syncData, MhealthPractitionerLocation inUserLocation,
+	                    MhealthPractitionerLocation outUserLocation, String type)
 	    throws JSONException {
 		
-		MhealthPractitionerLocation newUserLocation = PractionerDetailsService.generatePostfixAndLocation(inProvider, "", "",
-		    "");
-		
-		Client client = clients.get(0);
-		Map<String, List<String>> inHHrelationShips = client.getRelationships();
-		String inHHrelationalId = "";
-		if (inHHrelationShips.containsKey("family")) {
-			inHHrelationalId = inHHrelationShips.get("family").get(0);
-		} else if (inHHrelationShips.containsKey("family_head")) {
-			inHHrelationalId = inHHrelationShips.get("family_head").get(0);
+		Map<String, List<String>> inClientrelationships = inClient.getRelationships();
+		String inClientRelationalId = "";
+		if (inClientrelationships.containsKey("family")) {
+			inClientRelationalId = inClientrelationships.get("family").get(0);
+		} else if (inClientrelationships.containsKey("family_head")) {
+			inClientRelationalId = inClientrelationships.get("family_head").get(0);
 		}
 		
-		JSONArray cls = new JSONArray(syncData.getString("clients"));
-		JSONObject json = cls.getJSONObject(0);
-		String baseEntityId = client.getBaseEntityId();
-		JSONObject attributes = json.getJSONObject("attributes");
-		JSONObject identifiers = json.getJSONObject("identifiers");
-		String ssIn = "";
-		if (attributes.has("SS_Name")) {
-			ssIn = attributes.getString("SS_Name");
-		}
-		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId, "_" + district);
-		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		JSONArray clients = new JSONArray(syncData.getString("clients"));
+		JSONObject firstClient = clients.getJSONObject(0);
+		String baseEntityId = inClient.getBaseEntityId();
+		JSONObject attributes = firstClient.getJSONObject("attributes");
+		JSONObject identifiers = firstClient.getJSONObject("identifiers");
+		String outPostfix = outUserLocation.getPostFix();
+		Client getClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
 		
-		String outProvider = "";
-		if (existingMigration != null) {
-			outProvider = existingMigration.getSKIn();
-		} else {
-			outProvider = mhealthEventMetadata.getProviderId();
-		}
-		MhealthPractitionerLocation oldUserLocation = PractionerDetailsService.generatePostfixAndLocation(outProvider,
-		    district, division, "");
-		oldUserLocation.setBranch(mhealthEventMetadata.getBranch());
-		
-		String oldTable = oldUserLocation.getPostFix();
-		Client c = clientService.findByBaseEntityId(baseEntityId, oldTable);
-		
-		Address otuClientAddres = c.getAddress("usual_residence");
-		
-		Map<String, Object> otuClientAtt = c.getAttributes();
-		String outMemberId = c.getIdentifier("opensrp_id");
-		String ssOut = c.getAttribute("SS_Name") + "";
-		Map<String, List<String>> outrelationShips = c.getRelationships();
-		String outHHrelationalId = "";
-		if (outrelationShips.containsKey("family")) {
-			outHHrelationalId = outrelationShips.get("family").get(0);
-		} else if (outrelationShips.containsKey("family_head")) {
-			outHHrelationalId = outrelationShips.get("family_head").get(0);
+		Map<String, List<String>> outClientRelationships = getClient.getRelationships();
+		String outClientRelationalId = "";
+		if (outClientRelationships.containsKey("family")) {
+			outClientRelationalId = outClientRelationships.get("family").get(0);
+		} else if (outClientRelationships.containsKey("family_head")) {
+			outClientRelationalId = outClientRelationships.get("family_head").get(0);
 		}
 		
-		c.getAddresses().remove(0);
-		Address clientAddres = client.getAddress("usual_residence");
+		getClient.getAddresses().remove(0);
+		Address clientAddres = inClient.getAddress("usual_residence");
 		List<Address> clientNewAddres = new ArrayList<>();
-		c.getAddresses().clear();
+		getClient.getAddresses().clear();
 		clientNewAddres.add(clientAddres);
-		c.setAddresses(clientNewAddres);
-		Map<String, Object> att = c.getAttributes();
-		
+		getClient.setAddresses(clientNewAddres);
+		Map<String, Object> att = getClient.getAttributes();
 		for (int i = 0; i < attributes.names().length(); i++) {
 			att.put(attributes.names().getString(i), attributes.get(attributes.names().getString(i)));
 			
 		}
-		
-		c.withAttributes(att);
+		getClient.withAttributes(att);
 		for (int i = 0; i < identifiers.names().length(); i++) {
-			c.addIdentifier(identifiers.names().getString(i), identifiers.get(identifiers.names().getString(i)) + "");
+			getClient.addIdentifier(identifiers.names().getString(i),
+			    identifiers.get(identifiers.names().getString(i)) + "");
 		}
 		
-		c.withRelationships(client.getRelationships());
-		newUserLocation.setPostFix(oldTable);
-		clientService.addOrUpdate(c, newUserLocation);
-		String branchIdIn = newUserLocation.getBranch();
-		String branchIdOut = oldUserLocation.getBranch();
+		getClient.withRelationships(inClient.getRelationships());
+		inUserLocation.setPostFix(outPostfix);
+		Client outClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
+		clientService.addOrUpdate(getClient, inUserLocation);
 		if (type.equalsIgnoreCase("HH")) {
-			migrateHHEventsClients(c, client, otuClientAddres, otuClientAtt, outMemberId, outrelationShips, inProvider,
-			    outProvider, outHHrelationalId, branchIdIn, branchIdOut, newUserLocation, oldUserLocation);
-			MhealthMigration migration = setMigration(ssOut, ssIn, c, otuClientAddres, otuClientAtt, outMemberId,
-			    outrelationShips, c, c, inProvider, outProvider, inHHrelationalId, outHHrelationalId, branchIdIn,
-			    branchIdOut, type, oldUserLocation, newUserLocation, "no");
+			migrateHHEventsClients(inClient, outClient, outClientRelationalId, inUserLocation, outUserLocation);
+			MhealthMigration migration = setMigration(inClient, outClient, inClient, outClient, type, outUserLocation,
+			    inUserLocation, "no");
 			mhealthMigrationRepository.addMigration(migration);
 			
 		} else if (type.equalsIgnoreCase("Member")) {
-			
-			Client inHhousehold = clientService.findByBaseEntityId(inHHrelationalId, newUserLocation.getPostFix());
-			
-			Client outHhousehold = clientService.findByBaseEntityId(outHHrelationalId, oldUserLocation.getPostFix());
-			
-			MhealthMigration migration = setMigration("", "", c, otuClientAddres, otuClientAtt, outMemberId,
-			    outrelationShips, inHhousehold, outHhousehold, inProvider, outProvider, inHHrelationalId, outHHrelationalId,
-			    branchIdIn, branchIdOut, type, oldUserLocation, newUserLocation, "yes");
+			Client inHhousehold = clientService.findByBaseEntityId(inClientRelationalId, inUserLocation.getPostFix());
+			Client outHhousehold = clientService.findByBaseEntityId(outClientRelationalId, outUserLocation.getPostFix());
+			MhealthMigration migration = setMigration(inClient, outClient, inHhousehold, outHhousehold, type,
+			    outUserLocation, inUserLocation, "yes");
 			mhealthMigrationRepository.addMigration(migration);
-			
-			migrateMemberEvents(client, newUserLocation, oldUserLocation);
+			migrateMemberEvents(inClient, inUserLocation, outUserLocation);
 			
 		} else {
 			
 		}
 		
-		return true;
-		
 	}
 	
-	public boolean migrateHHEventsClients(Client outClient, Client inClient, Address outAddressa,
-	                                      Map<String, Object> otuClientAtt, String outClientIdentifier,
-	                                      Map<String, List<String>> outrelationShips, String inProvider, String outProvider,
-	                                      String HHrelationalId, String branchIdIn, String branchIdOut,
-	                                      MhealthPractitionerLocation newUserLocation,
-	                                      MhealthPractitionerLocation oldUserLocation) {
+	public void migrateHHEventsClients(Client inClient, Client outClient, String HHrelationalId,
+	                                   MhealthPractitionerLocation inUserLocation,
+	                                   MhealthPractitionerLocation outUserLocation) {
 		
-		List<Event> events = eventService.findEventsByBaseEntityId(inClient.getBaseEntityId(), oldUserLocation.getPostFix());
+		List<Event> events = eventService.findEventsByBaseEntityId(inClient.getBaseEntityId(), outUserLocation.getPostFix());
 		
 		for (Event event : events) {
-			newUserLocation.setPostFix(oldUserLocation.getPostFix());
-			eventService.addorUpdateEvent(event, "", newUserLocation);
-			
+			inUserLocation.setPostFix(outUserLocation.getPostFix());
+			eventService.addorUpdateEvent(event, "", inUserLocation);
 		}
-		List<Client> householdmembers = clientService.findByRelationshipId(inClient.getBaseEntityId(),
-		    oldUserLocation.getPostFix());
+		List<Client> clients = clientService.findByRelationshipId(inClient.getBaseEntityId(), outUserLocation.getPostFix());
 		
-		for (Client client : householdmembers) {
-			
-			String outMemberId = client.getIdentifier("opensrp_id");
+		for (Client client : clients) {
 			client.getAddresses().remove(0);
 			Address memberAddress = inClient.getAddress("usual_residence");
 			List<Address> memberNewAddress = new ArrayList<>();
 			client.getAddresses().clear();
 			memberNewAddress.add(memberAddress);
 			client.setAddresses(memberNewAddress);
-			clientService.addOrUpdate(client, newUserLocation);
-			List<Event> clinetsEvents = eventService.findEventsByBaseEntityId(client.getBaseEntityId(),
-			    oldUserLocation.getPostFix());
+			Client outMember = clientService.findByBaseEntityId(client.getBaseEntityId(), outUserLocation.getPostFix());
 			
-			MhealthMigration migration = setMigration("", "", client, outAddressa, otuClientAtt, outMemberId,
-			    outrelationShips, outClient, outClient, inProvider, outProvider, HHrelationalId, HHrelationalId, branchIdIn,
-			    branchIdOut, "Member", oldUserLocation, newUserLocation, "no");
+			clientService.addOrUpdate(client, inUserLocation);
+			System.err.println("outMember;" + outMember);
+			List<Event> clinetsEvents = eventService.findEventsByBaseEntityId(client.getBaseEntityId(),
+			    outUserLocation.getPostFix());
+			
+			MhealthMigration migration = setMigration(outMember, outMember, inClient, inClient, "Member", outUserLocation,
+			    inUserLocation, "no");
 			mhealthMigrationRepository.addMigration(migration);
 			for (Event event : clinetsEvents) {
-				eventService.addorUpdateEvent(event, "", newUserLocation);
+				eventService.addorUpdateEvent(event, "", inUserLocation);
 			}
 			
 		}
-		return false;
 		
 	}
 	
-	public boolean migrateMemberEvents(Client c, MhealthPractitionerLocation newUserLocation,
-	                                   MhealthPractitionerLocation oldUserLocation) {
+	public void migrateMemberEvents(Client c, MhealthPractitionerLocation newUserLocation,
+	                                MhealthPractitionerLocation oldUserLocation) {
 		newUserLocation.setPostFix(oldUserLocation.getPostFix());
 		List<Event> events = eventService.findEventsByBaseEntityId(c.getBaseEntityId(), oldUserLocation.getPostFix());
 		for (Event event : events) {
 			eventService.addorUpdateEvent(event, "", newUserLocation);
 		}
 		
-		return false;
-		
 	}
 	
-	public MhealthMigration setMigration(String ssOut, String ssIn, Client inClient, Address outAddress,
-	                                     Map<String, Object> outClientAttributes, String outMemberId,
-	                                     Map<String, List<String>> outClientRelationship, Client inHHousehold,
-	                                     Client outHHousehold, String inProvider, String outProvider,
-	                                     String inHHRelationalId, String outHHRelationalId, String branchIdIn,
-	                                     String branchIdOut, String type, MhealthPractitionerLocation oldUserLocation,
-	                                     MhealthPractitionerLocation newUserLocation, String isMember) {
-		
-		Address inAddressa = inClient.getAddress("usual_residence");
+	public MhealthMigration setMigration(Client inClient, Client outClient, Client inHHousehold, Client outHHousehold,
+	                                     String type, MhealthPractitionerLocation outUserLocation,
+	                                     
+	                                     MhealthPractitionerLocation inUserLocation, String isMember) {
+		Address inAddressa;
+		if (isMember.equalsIgnoreCase("Yes")) {
+			inAddressa = inClient.getAddress("usual_residence");
+		} else {
+			inAddressa = inHHousehold.getAddress("usual_residence");
+		}
 		MhealthMigration migration = new MhealthMigration();
 		migration.setDistrictIn(inAddressa.getCountyDistrict());
 		migration.setDivisionIn(inAddressa.getStateProvince());
@@ -256,7 +213,7 @@ public class MhealthMigrationService {
 		migration.setPourasavaIn(inAddressa.getAddressField("address3"));
 		migration.setUnionIn(inAddressa.getAddressField("address1"));
 		migration.setVillageIDIn(inAddressa.getAddressField("address8"));
-		
+		Address outAddress = outClient.getAddress("usual_residence");
 		migration.setDistrictOut(outAddress.getCountyDistrict());
 		migration.setDivisionOut(outAddress.getStateProvince());
 		migration.setVillageOut(outAddress.getCityVillage());
@@ -264,41 +221,65 @@ public class MhealthMigrationService {
 		migration.setPourasavaOut(outAddress.getAddressField("address3"));
 		migration.setUnionOut(outAddress.getAddressField("address1"));
 		migration.setVillageIDOut(outAddress.getAddressField("address8"));
-		
 		migration.setMemberName(inClient.getFirstName());
-		
 		migration.setMemberContact(inClient.getAttribute("Mobile_Number") + "");
-		
 		migration.setMemberIDIn(inClient.getIdentifier("opensrp_id"));
-		migration.setMemberIDOut(outMemberId);
-		migration.setSKIn(inProvider);
-		migration.setSKOut(outProvider);
+		
+		migration.setMemberIDOut(outClient.getIdentifier("opensrp_id"));
+		migration.setSKIn(inUserLocation.getUsername());
+		migration.setSKOut(outUserLocation.getUsername());
+		String ssOut = outClient.getAttribute("SS_Name") + "";
+		String ssIn = inClient.getAttribute("SS_Name") + "";
+		if (StringUtils.isBlank(ssOut) || ssOut.equalsIgnoreCase("null")) {
+			ssOut = "";
+		}
+		if (StringUtils.isBlank(ssIn) || ssIn.equalsIgnoreCase("null")) {
+			ssIn = "";
+		}
 		migration.setSSIn(ssIn);
 		migration.setSSOut(ssOut);
-		migration.setRelationalIdIn(inHHRelationalId);
-		migration.setRelationalIdOut(outHHRelationalId);
+		
+		Map<String, List<String>> inClientRelationships = inClient.getRelationships();
+		String inClientRelationalId = "";
+		if (inClientRelationships.containsKey("family")) {
+			inClientRelationalId = inClientRelationships.get("family").get(0);
+		} else if (inClientRelationships.containsKey("family_head")) {
+			inClientRelationalId = inClientRelationships.get("family_head").get(0);
+		}
+		
+		migration.setRelationalIdIn(inClientRelationalId);
+		
+		Map<String, List<String>> outClientRelationships = outClient.getRelationships();
+		String outClientRelationalId = "";
+		if (outClientRelationships.containsKey("family")) {
+			outClientRelationalId = outClientRelationships.get("family").get(0);
+		} else if (outClientRelationships.containsKey("family_head")) {
+			outClientRelationalId = outClientRelationships.get("family_head").get(0);
+		}
+		
+		migration.setRelationalIdOut(outClientRelationalId);
 		
 		if (outHHousehold != null) {
 			migration.setHHNameOut(outHHousehold.getFirstName());
 			migration.setHHContactOut(outHHousehold.getAttribute("HOH_Phone_Number") + "");
 			migration.setNumberOfMemberOut(outHHousehold.getAttribute("Number_of_HH_Member") + "");
-			
 		}
 		if (inHHousehold != null) {
 			migration.setHHNameIn(inHHousehold.getFirstName());
 			migration.setHHContactIn(inHHousehold.getAttribute("HOH_Phone_Number") + "");
 			migration.setNumberOfMemberIn(inHHousehold.getAttribute("Number_of_HH_Member") + "");
-			
 		}
-		System.err.println("inClient.getAttribute" + inClient.getAttribute("Relation_with_HOH"));
+		
+		Map<String, Object> outClientAttributes = outClient.getAttributes();
+		
 		if (isMember.equalsIgnoreCase("no")) {
 			migration.setRelationWithHHOut(inClient.getAttribute("Relation_with_HOH") + "");
 		} else {
 			migration.setRelationWithHHOut(outClientAttributes.get("Relation_with_HOH") + "");
 		}
 		migration.setRelationWithHHIn(inClient.getAttribute("Relation_with_HOH") + "");
-		migration.setBranchIDIn(branchIdIn);
-		migration.setBranchIDOut(branchIdOut);
+		migration.setBranchIDIn(inUserLocation.getBranch());
+		migration.setBranchIDOut(outUserLocation.getBranch());
 		
 		migration.setStatus(MigrationStatus.PENDING.name());
 		
@@ -311,13 +292,13 @@ public class MhealthMigrationService {
 		migration.setIsMember(isMember);
 		
 		migration.setBaseEntityId(inClient.getBaseEntityId());
-		migration.setDistrictIdOut(oldUserLocation.getPostFix());
-		migration.setDistrictIdIn(newUserLocation.getPostFix());
+		migration.setDistrictIdOut(outUserLocation.getPostFix());
+		migration.setDistrictIdIn(inUserLocation.getPostFix());
 		
-		migration.setDivisionIdOut(oldUserLocation.getDivision());
-		migration.setDivisionIdIn(newUserLocation.getDivision());
+		migration.setDivisionIdOut(outUserLocation.getDivision());
+		migration.setDivisionIdIn(inUserLocation.getDivision());
 		migration.setTimestamp(System.currentTimeMillis());
-		
+		Map<String, List<String>> outClientRelationship = outClient.getRelationships();
 		String motherId = "";
 		if (outClientRelationship.containsKey("mother")) {
 			motherId = outClientRelationship.get("mother").get(0);

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensrp.domain.postgres.MhealthEventMetadata;
 import org.opensrp.domain.postgres.MhealthMigration;
 import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthMigrationRepository;
@@ -41,12 +42,11 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 	@Autowired
 	private MhealthClientService clientService;
 	
-	@Autowired
-	private PractitionerLocationService PractionerDetailsService;
-	
 	private MhealthMigrationService mhealthMigrationService;
 	
-	private String familyPayload = "{\"clients\":\"[{\"type\":\"Client\",\"gender\":\"Male\",\"lastName\":\"Family\",\"addresses\":[{\"country\":\"BANGLADESH\",\"addressType\":\"usual_residence\",\"cityVillage\":\"TORAIL\",\"addressFields\":{\"address1\":\"BALLA\",\"address2\":\"HARIRAMPUR\",\"address3\":\"NOT POURASABHA\",\"address8\":\"136962\"},\"stateProvince\":\"DHAKA\",\"countyDistrict\":\"MANIKGANJ\"}],\"birthdate\":\"1970-01-01T11:30:00.000+05:30\",\"firstName\":\"Rashed\",\"attributes\":{\"Cluster\":\"1st_Cluster\",\"HH_Type\":\"BRAC VO\",\"SS_Name\":\"Maloti(SS-3)\",\"module_id\":\"TRAINING\",\"serial_no\":\"H369\",\"village_id\":\"136962\",\"Has_Latrine\":\"No\",\"HOH_Phone_Number\":\"01471221551\",\"Number_of_HH_Member\":\"5\"},\"dateCreated\":\"2020-07-01T11:21:17.286+05:30\",\"identifiers\":{\"opensrp_id\":\"50884400673070001601\"},\"baseEntityId\":\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\",\"relationships\":{\"family_head\":[\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\"],\"primary_caregiver\":[\"7571aad7-ebef-40c6-99e9-20af26134ef7\"]},\"serverVersion\":1593582677286,\"birthdateApprox\":false,\"deathdateApprox\":false,\"isSendToOpenMRS\":\"yes\",\"clientDatabaseVersion\":8,\"clientApplicationVersion\":21}]\"}";
+	private final static String memberPayload = "{\"clients\": \"[{\\\"birthdate\\\":\\\"1970-01-01T06:00:00.000Z\\\",\\\"birthdateApprox\\\":false,\\\"deathdateApprox\\\":false,\\\"firstName\\\":\\\"Rasheda\\\",\\\"gender\\\":\\\"M\\\",\\\"baseEntityId\\\":\\\"a6c836ea-800d-49ea-8565-0d7c58fdcb8c\\\",\\\"identifiers\\\":{\\\"opensrp_id\\\":\\\"608844006730700016010001\\\"},\\\"addresses\\\":[{\\\"addressType\\\":\\\"usual_residence\\\",\\\"addressFields\\\":{\\\"address1\\\":\\\"BHOLABAA\\\",\\\"address2\\\":\\\"RUPGANJA\\\",\\\"address3\\\":\\\"NOT POURASABHAA\\\",\\\"address8\\\":\\\"136961\\\"},\\\"countyDistrict\\\":\\\"NARAYANGANJA\\\",\\\"cityVillage\\\":\\\"TORAILA\\\",\\\"stateProvince\\\":\\\"DHAKAA\\\",\\\"country\\\":\\\"BANGLADESHA\\\"}],\\\"attributes\\\":{\\\"age\\\":\\\"35\\\",\\\"DOB_known\\\":\\\"no\\\",\\\"Blood_Group\\\":\\\"A+\\\",\\\"Mobile_Number\\\":\\\"0\\\",\\\"Marital_Status\\\":\\\"Married\\\",\\\"Relation_with_HOH\\\":\\\"Guest\\\",\\\"difficulty_seeing_hearing\\\":\\\"yes_little_difficulties\\\",\\\"difficulty_walking_up_down\\\":\\\"yes_little_difficulties\\\",\\\"trouble_remembering_concentrating\\\":\\\"no_difficulties\\\"},\\\"clientApplicationVersion\\\":31,\\\"clientApplicationVersionName\\\":\\\"1.3.6_DEV\\\",\\\"clientDatabaseVersion\\\":31,\\\"dateCreated\\\":\\\"2021-01-04T16:35:04.023Z\\\",\\\"type\\\":\\\"Client\\\",\\\"relationships\\\":{\\\"mother\\\":[\\\"\\\"],\\\"family\\\":[\\\"05b5acd9-d375-4892-aae3-2cefa17c7538\\\",\\\"05b5acd9-d375-4892-aae3-2cefa17c7538\\\"]}}]\"}";
+	
+	private final static String familyPayload = "{\"clients\": \"[{\\\"birthdate\\\":\\\"1970-01-01T06:00:00.000Z\\\",\\\"birthdateApprox\\\":false,\\\"deathdateApprox\\\":false,\\\"firstName\\\":\\\"Rashed\\\",\\\"lastName\\\":\\\"Family\\\",\\\"gender\\\":\\\"M\\\",\\\"baseEntityId\\\":\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"identifiers\\\":{\\\"opensrp_id\\\":\\\"50884400673070001601\\\"},\\\"addresses\\\":[{\\\"addressType\\\":\\\"usual_residence\\\",\\\"addressFields\\\":{\\\"address1\\\":\\\"BHOLABAQ\\\",\\\"address2\\\":\\\"RUPGANJq\\\",\\\"address3\\\":\\\"NOT POURASABHAq\\\",\\\"address8\\\":\\\"136961\\\"},\\\"countyDistrict\\\":\\\"NARAYANGANJq\\\",\\\"cityVillage\\\":\\\"Migrated Village\\\",\\\"stateProvince\\\":\\\"DHAKAq\\\",\\\"country\\\":\\\"BANGLADESHq\\\"}],\\\"attributes\\\":{\\\"Cluster\\\":\\\"1st_Cluster\\\",\\\"HH_Type\\\":\\\"BRAC VO\\\",\\\"SS_Name\\\":\\\"Forida(SS-1)\\\",\\\"module_id\\\":\\\"TRAINING\\\",\\\"serial_no\\\":\\\"H369\\\",\\\"village_id\\\":\\\"136962\\\",\\\"Has_Latrine\\\":\\\"No\\\",\\\"HOH_Phone_Number\\\":\\\"01471221551\\\",\\\"Number_of_HH_Member\\\":\\\"5\\\"},\\\"clientApplicationVersion\\\":31,\\\"clientApplicationVersionName\\\":\\\"1.3.6_DEV\\\",\\\"clientDatabaseVersion\\\":31,\\\"dateCreated\\\":\\\"2021-01-04T16:35:04.023Z\\\",\\\"type\\\":\\\"Client\\\",\\\"relationships\\\":{\\\"mother\\\":[\\\"\\\"],\\\"family_head\\\":[\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\"]}}]\"}";
 	
 	Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 	        .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
@@ -58,8 +58,7 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 	
 	@Before
 	public void setUpPostgresRepository() {
-		mhealthMigrationService = new MhealthMigrationService(mhealthMigrationRepository, clientService, eventService,
-		        PractionerDetailsService);
+		mhealthMigrationService = new MhealthMigrationService(mhealthMigrationRepository, clientService, eventService);
 		
 	}
 	
@@ -214,25 +213,130 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMigrateMember() {
-		/*addMember();
+		addMember();
 		addMemberEvent();
 		addFamily1();
 		addFamilyEvent1();
 		addFamily2();
-		addFamilyEvent2();*/
-		String memberPayload = "{\"clients\": \"[{\\\"birthdate\\\":\\\"1970-01-01T06:00:00.000Z\\\",\\\"birthdateApprox\\\":false,\\\"deathdateApprox\\\":false,\\\"firstName\\\":\\\"Rasheda\\\",\\\"gender\\\":\\\"M\\\",\\\"baseEntityId\\\":\\\"05b5acd9-d375-4892-aae3-2cefa17c7538\\\",\\\"identifiers\\\":{\\\"opensrp_id\\\":\\\"508844006730700016010001\\\"},\\\"addresses\\\":[{\\\"addressType\\\":\\\"usual_residence\\\",\\\"addressFields\\\":{\\\"address1\\\":\\\"BHOLABA\\\",\\\"address2\\\":\\\"RUPGANJ\\\",\\\"address3\\\":\\\"NOT POURASABHA\\\",\\\"address8\\\":\\\"136962\\\"},\\\"countyDistrict\\\":\\\"NARAYANGANJ\\\",\\\"cityVillage\\\":\\\"TORAIL\\\",\\\"stateProvince\\\":\\\"DHAKA\\\",\\\"country\\\":\\\"BANGLADESH\\\"}],\\\"attributes\\\":{\\\"age\\\":\\\"35\\\",\\\"DOB_known\\\":\\\"no\\\",\\\"Blood_Group\\\":\\\"A+\\\",\\\"Mobile_Number\\\":\\\"0\\\",\\\"Marital_Status\\\":\\\"Married\\\",\\\"Relation_with_HOH\\\":\\\"Son\\\",\\\"difficulty_seeing_hearing\\\":\\\"yes_little_difficulties\\\",\\\"difficulty_walking_up_down\\\":\\\"yes_little_difficulties\\\",\\\"trouble_remembering_concentrating\\\":\\\"no_difficulties\\\"},\\\"clientApplicationVersion\\\":31,\\\"clientApplicationVersionName\\\":\\\"1.3.6_DEV\\\",\\\"clientDatabaseVersion\\\":31,\\\"dateCreated\\\":\\\"2021-01-04T16:35:04.023Z\\\",\\\"type\\\":\\\"Client\\\",\\\"relationships\\\":{\\\"mother\\\":[\\\"\\\"],\\\"family\\\":[\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\"]}}]\"}";
+		addFamilyEvent2();
+		JSONObject syncData = new JSONObject(memberPayload);
 		
-		String familyPayload = "{\"clients\": \"[{\\\"birthdate\\\":\\\"1970-01-01T06:00:00.000Z\\\",\\\"birthdateApprox\\\":false,\\\"deathdateApprox\\\":false,\\\"firstName\\\":\\\"Rashed\\\",\\\"lastName\\\":\\\"Family\\\",\\\"gender\\\":\\\"M\\\",\\\"baseEntityId\\\":\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"identifiers\\\":{\\\"opensrp_id\\\":\\\"50884400673070001601\\\"},\\\"addresses\\\":[{\\\"addressType\\\":\\\"usual_residence\\\",\\\"addressFields\\\":{\\\"address1\\\":\\\"BHOLABA\\\",\\\"address2\\\":\\\"RUPGANJ\\\",\\\"address3\\\":\\\"NOT POURASABHA\\\",\\\"address8\\\":\\\"136962\\\"},\\\"countyDistrict\\\":\\\"NARAYANGANJ\\\",\\\"cityVillage\\\":\\\"Migrated Village\\\",\\\"stateProvince\\\":\\\"DHAKA\\\",\\\"country\\\":\\\"BANGLADESH\\\"}],\\\"attributes\\\":{\\\"Cluster\\\":\\\"1st_Cluster\\\",\\\"HH_Type\\\":\\\"BRAC VO\\\",\\\"SS_Name\\\":\\\"Forida(SS-1)\\\",\\\"module_id\\\":\\\"TRAINING\\\",\\\"serial_no\\\":\\\"H369\\\",\\\"village_id\\\":\\\"136962\\\",\\\"Has_Latrine\\\":\\\"No\\\",\\\"HOH_Phone_Number\\\":\\\"01471221551\\\",\\\"Number_of_HH_Member\\\":\\\"5\\\"},\\\"clientApplicationVersion\\\":31,\\\"clientApplicationVersionName\\\":\\\"1.3.6_DEV\\\",\\\"clientDatabaseVersion\\\":31,\\\"dateCreated\\\":\\\"2021-01-04T16:35:04.023Z\\\",\\\"type\\\":\\\"Client\\\",\\\"relationships\\\":{\\\"mother\\\":[\\\"\\\"],\\\"family\\\":[\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\"]}}]\"}";
-		JSONObject syncData = new JSONObject(familyPayload);
-		System.err.println("Data:" + syncData.getString("clients"));
 		ArrayList<Client> clients = new ArrayList<Client>();
 		if (syncData.has("clients")) {
 			
 			clients = (ArrayList<Client>) gson.fromJson(syncData.getString("clients"),
 			    new TypeToken<ArrayList<Client>>() {}.getType());
-			System.err.println("clients" + clients.size());
+			
 		}
-		System.err.println(syncData);
+		
+		MhealthPractitionerLocation inUserLocation = new MhealthPractitionerLocation();
+		inUserLocation.setBranch("122");
+		inUserLocation.setDistrict("10425");
+		inUserLocation.setDivision("2345");
+		inUserLocation.setPostFix("");
+		inUserLocation.setUsername("testsk1");
+		MhealthPractitionerLocation outUserLocation = new MhealthPractitionerLocation();
+		outUserLocation.setBranch("34");
+		outUserLocation.setDistrict("10432");
+		outUserLocation.setDivision("23455");
+		outUserLocation.setPostFix("");
+		
+		Client inclient = clients.get(0);
+		String baseEntityId = inclient.getBaseEntityId();
+		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId,
+		    outUserLocation.getPostFix());
+		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		String outProvider = "";
+		if (existingMigration != null) {
+			outProvider = existingMigration.getSKIn();
+		} else {
+			outProvider = mhealthEventMetadata.getProviderId();
+		}
+		
+		outUserLocation.setUsername(outProvider);
+		mhealthMigrationService.migrate(inclient, syncData, inUserLocation, outUserLocation, "Member");
+		
+		MhealthMigration migration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		
+		assertEquals("testsk1", migration.getSKIn());
+		assertEquals("testsk", migration.getSKOut());
+		
+		assertEquals("NARAYANGANJA", migration.getDistrictIn());
+		assertEquals("NARAYANGANJ", migration.getDistrictOut());
+		
+		assertEquals("608844006730700016010001", migration.getMemberIDIn());
+		assertEquals("508844006730700016010001", migration.getMemberIDOut());
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testMigrateFamily() {
+		addMember();
+		addMemberEvent();
+		addFamily1();
+		addFamilyEvent1();
+		addFamily2();
+		addFamilyEvent2();
+		JSONObject syncData = new JSONObject(familyPayload);
+		
+		ArrayList<Client> clients = new ArrayList<Client>();
+		if (syncData.has("clients")) {
+			
+			clients = (ArrayList<Client>) gson.fromJson(syncData.getString("clients"),
+			    new TypeToken<ArrayList<Client>>() {}.getType());
+			
+		}
+		
+		MhealthPractitionerLocation inUserLocation = new MhealthPractitionerLocation();
+		inUserLocation.setBranch("56");
+		inUserLocation.setDistrict("10432");
+		inUserLocation.setDivision("2345");
+		inUserLocation.setPostFix("");
+		inUserLocation.setUsername("testsk1");
+		MhealthPractitionerLocation outUserLocation = new MhealthPractitionerLocation();
+		outUserLocation.setBranch("34");
+		outUserLocation.setDistrict("10425");
+		outUserLocation.setDivision("234555");
+		outUserLocation.setPostFix("");
+		
+		Client inclient = clients.get(0);
+		String baseEntityId = inclient.getBaseEntityId();
+		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId,
+		    outUserLocation.getPostFix());
+		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		String outProvider = "";
+		if (existingMigration != null) {
+			outProvider = existingMigration.getSKIn();
+		} else {
+			outProvider = mhealthEventMetadata.getProviderId();
+		}
+		
+		outUserLocation.setUsername(outProvider);
+		mhealthMigrationService.migrate(inclient, syncData, inUserLocation, outUserLocation, "HH");
+		MhealthMigration migratedFamily = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb");
+		
+		assertEquals("testsk1", migratedFamily.getSKIn());
+		assertEquals("testsk", migratedFamily.getSKOut());
+		assertEquals("NARAYANGANJq", migratedFamily.getDistrictIn());
+		assertEquals("NARAYANGANJ", migratedFamily.getDistrictOut());
+		assertEquals("50884400673070001601", migratedFamily.getMemberIDIn());
+		assertEquals("50884400673070001601", migratedFamily.getMemberIDOut());
+		assertEquals("56", migratedFamily.getBranchIDIn());
+		assertEquals("34", migratedFamily.getBranchIDOut());
+		
+		MhealthMigration migratedMember = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		
+		assertEquals("testsk1", migratedMember.getSKIn());
+		assertEquals("testsk", migratedMember.getSKOut());
+		assertEquals("NARAYANGANJq", migratedMember.getDistrictIn());
+		assertEquals("NARAYANGANJ", migratedMember.getDistrictOut());
+		assertEquals("508844006730700016010001", migratedMember.getMemberIDIn());
+		assertEquals("508844006730700016010001", migratedMember.getMemberIDOut());
+		
 	}
 	
 	public MhealthMigration addMemberMigration() {
@@ -352,7 +456,10 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 		Map<String, List<String>> relationships = new HashMap<>();
 		List<String> relationalIds = new ArrayList<>();
 		relationalIds.add("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb");
+		List<String> mother = new ArrayList<>();
+		mother.add("0511acf9-6be8-4a98-b4f9-f8a5cfa704bC");
 		relationships.put("family", relationalIds);
+		relationships.put("mother", mother);
 		client.setAddresses(addresses);
 		client.setRelationships(relationships);
 		client.setServerVersion(0);
@@ -492,11 +599,11 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 		client.withIdentifier("opensrp_id", "50884400673070001602").withAttribute("Home_Facility", "Linda")
 		        .withAttribute("Cluster", "2nd_Cluster").withAttribute("SS_Name", "Forida(SS-1)")
 		        .withAttribute("serial_no", "H369").withAttribute("hh_occupation", "technician")
-		        .withAttribute("HOH_Phone_Number", "01471221551").withAttribute("hh_roof_material", "tin");
+		        .withAttribute("HOH_Phone_Number", "01771221551").withAttribute("hh_roof_material", "tin");
 		String district = "10425";
 		String postfix = "";
 		String division = "1";
-		String branch = "34";
+		String branch = "36";
 		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
 		location.setBranch(branch);
 		location.setDistrict(district);
@@ -521,7 +628,7 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 		String district = "10425";
 		String postfix = "";
 		String division = "1";
-		String branch = "34";
+		String branch = "36";
 		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
 		location.setBranch(branch);
 		location.setDistrict(district);
