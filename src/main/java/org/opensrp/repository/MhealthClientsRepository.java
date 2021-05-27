@@ -30,6 +30,7 @@ public interface MhealthClientsRepository {
 	
 	List<Client> findByRelationshipId(String relationshipId, String table);
 	
-	List<Client> searchClientForMigration(Integer vilageId, String gender, Integer startAge, Integer endAge, String type);
+	List<Client> searchClientForMigration(int villageId, String gender, Integer startAge, Integer endAge, String type,
+	                                      String postfix);
 	
 }

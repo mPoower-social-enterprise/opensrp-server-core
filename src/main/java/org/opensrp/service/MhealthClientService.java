@@ -74,8 +74,8 @@ public class MhealthClientService {
 	}
 	
 	public List<Client> searchClientForMigration(Integer vilageId, String gender, Integer startAge, Integer endAge,
-	                                             String type) {
-		return mhealthClientsRepository.searchClientForMigration(vilageId, gender, startAge, endAge, type);
+	                                             String type, String postfix) {
+		return mhealthClientsRepository.searchClientForMigration(vilageId, gender, startAge, endAge, type, postfix);
 	}
 	
 	public Address setAddress(Client c, MhealthMigration migration) {
