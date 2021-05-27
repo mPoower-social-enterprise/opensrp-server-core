@@ -352,4 +352,12 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		return convert(clients);
 	}
 	
+	@Override
+	public List<Client> searchClientForMigration(Integer vilageId, String gender, Integer startAge, Integer endAge,
+	                                             String type) {
+		List<org.opensrp.domain.postgres.Client> clients = customMhealthClientMapper.selectClientForMigration(vilageId,
+		    gender, startAge, endAge, type);
+		return convert(clients);
+	}
+	
 }

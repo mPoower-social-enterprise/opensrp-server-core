@@ -30,6 +30,10 @@ public class MhealthMigrationService {
 	
 	private MhealthClientService clientService;
 	
+	private final static String HOUSEHOLD = "HH";
+	
+	private final static String MEMBER = "Member";
+	
 	public enum MigrationStatus {
 		PENDING, REJECT, ACCEPT
 	}
@@ -129,13 +133,13 @@ public class MhealthMigrationService {
 		inUserLocation.setPostFix(outPostfix);
 		Client outClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
 		clientService.addOrUpdate(getClient, inUserLocation);
-		if (type.equalsIgnoreCase("HH")) {
+		if (type.equalsIgnoreCase(HOUSEHOLD)) {
 			migrateHHEventsClients(inClient, outClient, outClientRelationalId, inUserLocation, outUserLocation);
 			MhealthMigration migration = setMigration(inClient, outClient, inClient, outClient, type, outUserLocation,
 			    inUserLocation, "no");
 			mhealthMigrationRepository.addMigration(migration);
 			
-		} else if (type.equalsIgnoreCase("Member")) {
+		} else if (type.equalsIgnoreCase(MEMBER)) {
 			Client inHhousehold = clientService.findByBaseEntityId(inClientRelationalId, inUserLocation.getPostFix());
 			Client outHhousehold = clientService.findByBaseEntityId(outClientRelationalId, outUserLocation.getPostFix());
 			MhealthMigration migration = setMigration(inClient, outClient, inHhousehold, outHhousehold, type,
@@ -171,7 +175,6 @@ public class MhealthMigrationService {
 			Client outMember = clientService.findByBaseEntityId(client.getBaseEntityId(), outUserLocation.getPostFix());
 			
 			clientService.addOrUpdate(client, inUserLocation);
-			System.err.println("outMember;" + outMember);
 			List<Event> clinetsEvents = eventService.findEventsByBaseEntityId(client.getBaseEntityId(),
 			    outUserLocation.getPostFix());
 			
@@ -309,20 +312,23 @@ public class MhealthMigrationService {
 	}
 	
 	@Transactional
-	public void acceptRejectMigration(Long id, String relationalId, String type, String status) throws JSONException {
+	public void acceptOrRejectMigration(Long id, String relationalId, String type, String status) throws JSONException {
 		
 		if (status.equalsIgnoreCase(MigrationStatus.ACCEPT.name())) {
-			mhealthMigrationRepository.updateMigrationStatusById(id, MigrationStatus.ACCEPT.name());
-			mhealthMigrationRepository.updateMigrationStatusByRelationalId(relationalId, MigrationStatus.ACCEPT.name());
+			if (type.equalsIgnoreCase(HOUSEHOLD)) {
+				mhealthMigrationRepository.updateMigrationStatusById(id, MigrationStatus.ACCEPT.name());
+				mhealthMigrationRepository.updateMigrationStatusByRelationalId(relationalId, MigrationStatus.ACCEPT.name());
+			} else if (type.equalsIgnoreCase(MEMBER)) {
+				mhealthMigrationRepository.updateMigrationStatusById(id, MigrationStatus.ACCEPT.name());
+			}
+			
 		} else if (status.equalsIgnoreCase(MigrationStatus.REJECT.name())) {
 			MhealthMigration migration = mhealthMigrationRepository.findMigrationById(id);
 			
-			if (type.equalsIgnoreCase("HH")) {
-				
+			if (type.equalsIgnoreCase(HOUSEHOLD)) {
 				Client household = clientService.findByBaseEntityId(migration.getBaseEntityId(),
 				    migration.getDistrictIdIn());
 				household.getAddresses().clear();
-				
 				household.addAddress(clientService.setAddress(household, migration));
 				household.addIdentifier("opensrp_id", migration.getMemberIDOut());
 				Map<String, Object> att = household.getAttributes();
@@ -353,7 +359,7 @@ public class MhealthMigrationService {
 					rejectClient(c, migration2);
 				}
 				
-			} else if (type.equalsIgnoreCase("Member")) {
+			} else if (type.equalsIgnoreCase(MEMBER)) {
 				
 				Client member = clientService.findByBaseEntityId(migration.getBaseEntityId(), migration.getDistrictIdIn());
 				rejectClient(member, migration);

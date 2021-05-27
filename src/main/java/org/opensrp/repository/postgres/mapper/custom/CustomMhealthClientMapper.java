@@ -35,4 +35,7 @@ public interface CustomMhealthClientMapper {
 	
 	List<Client> selectByRelationshipId(@Param("relationshipId") String relationshipId, @Param("postfix") String postfix);
 	
+	List<Client> selectClientForMigration(@Param("vilageId") Integer vilageId, @Param("gender") String gender,
+	                                      @Param("startAge") Integer startAge, @Param("endAge") Integer endAge,
+	                                      @Param("type") String type);
 }

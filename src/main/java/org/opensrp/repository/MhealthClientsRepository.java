@@ -29,4 +29,7 @@ public interface MhealthClientsRepository {
 	ClientMetadata findByClientId(Long clientId, String postfix);
 	
 	List<Client> findByRelationshipId(String relationshipId, String table);
+	
+	List<Client> searchClientForMigration(Integer vilageId, String gender, Integer startAge, Integer endAge, String type);
+	
 }

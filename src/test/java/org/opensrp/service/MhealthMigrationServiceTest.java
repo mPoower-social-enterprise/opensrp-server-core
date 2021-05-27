@@ -339,6 +339,288 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testRejectMemberMigration() {
+		addMember();
+		addMemberEvent();
+		addFamily1();
+		addFamilyEvent1();
+		addFamily2();
+		addFamilyEvent2();
+		JSONObject syncData = new JSONObject(memberPayload);
+		
+		ArrayList<Client> clients = new ArrayList<Client>();
+		if (syncData.has("clients")) {
+			
+			clients = (ArrayList<Client>) gson.fromJson(syncData.getString("clients"),
+			    new TypeToken<ArrayList<Client>>() {}.getType());
+			
+		}
+		
+		MhealthPractitionerLocation inUserLocation = new MhealthPractitionerLocation();
+		inUserLocation.setBranch("122");
+		inUserLocation.setDistrict("10425");
+		inUserLocation.setDivision("2345");
+		inUserLocation.setPostFix("");
+		inUserLocation.setUsername("testsk1");
+		MhealthPractitionerLocation outUserLocation = new MhealthPractitionerLocation();
+		outUserLocation.setBranch("34");
+		outUserLocation.setDistrict("10432");
+		outUserLocation.setDivision("23455");
+		outUserLocation.setPostFix("");
+		
+		Client inclient = clients.get(0);
+		String baseEntityId = inclient.getBaseEntityId();
+		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId,
+		    outUserLocation.getPostFix());
+		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		String outProvider = "";
+		if (existingMigration != null) {
+			outProvider = existingMigration.getSKIn();
+		} else {
+			outProvider = mhealthEventMetadata.getProviderId();
+		}
+		
+		outUserLocation.setUsername(outProvider);
+		mhealthMigrationService.migrate(inclient, syncData, inUserLocation, outUserLocation, "Member");
+		
+		MhealthMigration migration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		
+		mhealthMigrationService.acceptOrRejectMigration(migration.getId(), "", "Member", "REJECT");
+		MhealthMigration rejectedMigration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		assertEquals("REJECT", rejectedMigration.getStatus());
+		Client c = clientService.findByBaseEntityId(baseEntityId, "");
+		Map<String, List<String>> relationships = c.getRelationships();
+		String relationalId = "";
+		if (relationships.containsKey("family")) {
+			relationalId = relationships.get("family").get(0);
+		} else if (relationships.containsKey("family_head")) {
+			relationalId = relationships.get("family_head").get(0);
+		}
+		Address address = c.getAddress("usual_residence");
+		assertEquals("NARAYANGANJ", address.getCountyDistrict());
+		assertEquals("DHAKA", address.getStateProvince());
+		assertEquals("TORAIL", address.getCityVillage());
+		assertEquals("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb", relationalId);
+		assertEquals("Rasheda", c.getFirstName());
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAcceptMemberMigration() {
+		addMember();
+		addMemberEvent();
+		addFamily1();
+		addFamilyEvent1();
+		addFamily2();
+		addFamilyEvent2();
+		JSONObject syncData = new JSONObject(memberPayload);
+		
+		ArrayList<Client> clients = new ArrayList<Client>();
+		if (syncData.has("clients")) {
+			
+			clients = (ArrayList<Client>) gson.fromJson(syncData.getString("clients"),
+			    new TypeToken<ArrayList<Client>>() {}.getType());
+			
+		}
+		
+		MhealthPractitionerLocation inUserLocation = new MhealthPractitionerLocation();
+		inUserLocation.setBranch("122");
+		inUserLocation.setDistrict("10425");
+		inUserLocation.setDivision("2345");
+		inUserLocation.setPostFix("");
+		inUserLocation.setUsername("testsk1");
+		MhealthPractitionerLocation outUserLocation = new MhealthPractitionerLocation();
+		outUserLocation.setBranch("34");
+		outUserLocation.setDistrict("10432");
+		outUserLocation.setDivision("23455");
+		outUserLocation.setPostFix("");
+		
+		Client inclient = clients.get(0);
+		String baseEntityId = inclient.getBaseEntityId();
+		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId,
+		    outUserLocation.getPostFix());
+		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		String outProvider = "";
+		if (existingMigration != null) {
+			outProvider = existingMigration.getSKIn();
+		} else {
+			outProvider = mhealthEventMetadata.getProviderId();
+		}
+		
+		outUserLocation.setUsername(outProvider);
+		mhealthMigrationService.migrate(inclient, syncData, inUserLocation, outUserLocation, "Member");
+		
+		MhealthMigration migration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		
+		mhealthMigrationService.acceptOrRejectMigration(migration.getId(), "", "Member", "ACCEPT");
+		MhealthMigration rejectedMigration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		assertEquals("ACCEPT", rejectedMigration.getStatus());
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testRejectFamilyMigration() {
+		addMember();
+		addMemberEvent();
+		addFamily1();
+		addFamilyEvent1();
+		addFamily2();
+		addFamilyEvent2();
+		JSONObject syncData = new JSONObject(familyPayload);
+		
+		ArrayList<Client> clients = new ArrayList<Client>();
+		if (syncData.has("clients")) {
+			
+			clients = (ArrayList<Client>) gson.fromJson(syncData.getString("clients"),
+			    new TypeToken<ArrayList<Client>>() {}.getType());
+			
+		}
+		
+		MhealthPractitionerLocation inUserLocation = new MhealthPractitionerLocation();
+		inUserLocation.setBranch("56");
+		inUserLocation.setDistrict("10432");
+		inUserLocation.setDivision("2345");
+		inUserLocation.setPostFix("");
+		inUserLocation.setUsername("testsk1");
+		MhealthPractitionerLocation outUserLocation = new MhealthPractitionerLocation();
+		outUserLocation.setBranch("34");
+		outUserLocation.setDistrict("10425");
+		outUserLocation.setDivision("234555");
+		outUserLocation.setPostFix("");
+		
+		Client inclient = clients.get(0);
+		String baseEntityId = inclient.getBaseEntityId();
+		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId,
+		    outUserLocation.getPostFix());
+		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		String outProvider = "";
+		if (existingMigration != null) {
+			outProvider = existingMigration.getSKIn();
+		} else {
+			outProvider = mhealthEventMetadata.getProviderId();
+		}
+		
+		outUserLocation.setUsername(outProvider);
+		mhealthMigrationService.migrate(inclient, syncData, inUserLocation, outUserLocation, "HH");
+		MhealthMigration migratedFamily = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb");
+		
+		mhealthMigrationService.acceptOrRejectMigration(migratedFamily.getId(), migratedFamily.getBaseEntityId(), "HH",
+		    "REJECT");
+		// for household
+		Client household = clientService.findByBaseEntityId(baseEntityId, "");
+		Map<String, List<String>> householdRelationships = household.getRelationships();
+		String householdRelationalId = "";
+		if (householdRelationships.containsKey("family")) {
+			householdRelationalId = householdRelationships.get("family").get(0);
+		} else if (householdRelationships.containsKey("family_head")) {
+			householdRelationalId = householdRelationships.get("family_head").get(0);
+		}
+		MhealthMigration rejectedHouseholdMigration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId(household.getBaseEntityId());
+		assertEquals("REJECT", rejectedHouseholdMigration.getStatus());
+		Address address = household.getAddress("usual_residence");
+		assertEquals("NARAYANGANJ", address.getCountyDistrict());
+		assertEquals("DHAKA", address.getStateProvince());
+		assertEquals("TORAIL", address.getCityVillage());
+		assertEquals("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb", householdRelationalId);
+		assertEquals("Rashed", household.getFirstName());
+		
+		//for household member 
+		List<Client> members = clientService.findByRelationshipId(baseEntityId, "");
+		Client member = members.get(0);
+		MhealthMigration rejectedMigration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		assertEquals("REJECT", rejectedMigration.getStatus());
+		
+		Map<String, List<String>> relationships = member.getRelationships();
+		String relationalId = "";
+		if (relationships.containsKey("family")) {
+			relationalId = relationships.get("family").get(0);
+		} else if (relationships.containsKey("family_head")) {
+			relationalId = relationships.get("family_head").get(0);
+		}
+		Address householdAddress = member.getAddress("usual_residence");
+		assertEquals("NARAYANGANJ", householdAddress.getCountyDistrict());
+		assertEquals("DHAKA", householdAddress.getStateProvince());
+		assertEquals("TORAIL", householdAddress.getCityVillage());
+		assertEquals("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb", relationalId);
+		assertEquals("Rasheda", member.getFirstName());
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAcceptFamilyMigration() {
+		addMember();
+		addMemberEvent();
+		addFamily1();
+		addFamilyEvent1();
+		addFamily2();
+		addFamilyEvent2();
+		JSONObject syncData = new JSONObject(familyPayload);
+		
+		ArrayList<Client> clients = new ArrayList<Client>();
+		if (syncData.has("clients")) {
+			
+			clients = (ArrayList<Client>) gson.fromJson(syncData.getString("clients"),
+			    new TypeToken<ArrayList<Client>>() {}.getType());
+			
+		}
+		
+		MhealthPractitionerLocation inUserLocation = new MhealthPractitionerLocation();
+		inUserLocation.setBranch("56");
+		inUserLocation.setDistrict("10432");
+		inUserLocation.setDivision("2345");
+		inUserLocation.setPostFix("");
+		inUserLocation.setUsername("testsk1");
+		MhealthPractitionerLocation outUserLocation = new MhealthPractitionerLocation();
+		outUserLocation.setBranch("34");
+		outUserLocation.setDistrict("10425");
+		outUserLocation.setDivision("234555");
+		outUserLocation.setPostFix("");
+		
+		Client inclient = clients.get(0);
+		String baseEntityId = inclient.getBaseEntityId();
+		MhealthEventMetadata mhealthEventMetadata = eventService.findFirstEventMetadata(baseEntityId,
+		    outUserLocation.getPostFix());
+		MhealthMigration existingMigration = mhealthMigrationRepository.findFirstMigrationBybaseEntityId(baseEntityId);
+		String outProvider = "";
+		if (existingMigration != null) {
+			outProvider = existingMigration.getSKIn();
+		} else {
+			outProvider = mhealthEventMetadata.getProviderId();
+		}
+		
+		outUserLocation.setUsername(outProvider);
+		mhealthMigrationService.migrate(inclient, syncData, inUserLocation, outUserLocation, "HH");
+		MhealthMigration migratedFamily = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("0511acf9-6be8-4a98-b4f9-f8a5cfa704bb");
+		
+		mhealthMigrationService.acceptOrRejectMigration(migratedFamily.getId(), migratedFamily.getBaseEntityId(), "HH",
+		    "ACCEPT");
+		// for household
+		
+		MhealthMigration rejectedHouseholdMigration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId(migratedFamily.getBaseEntityId());
+		assertEquals("ACCEPT", rejectedHouseholdMigration.getStatus());
+		
+		//for household member 
+		
+		MhealthMigration rejectedMigration = mhealthMigrationService
+		        .findFirstMigrationBybaseEntityId("a6c836ea-800d-49ea-8565-0d7c58fdcb8c");
+		assertEquals("ACCEPT", rejectedMigration.getStatus());
+		
+	}
+	
 	public MhealthMigration addMemberMigration() {
 		MhealthMigration mhealthMigration = new MhealthMigration();
 		mhealthMigration.setTimestamp(1612686348398l);

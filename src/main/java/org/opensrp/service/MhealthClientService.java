@@ -73,6 +73,11 @@ public class MhealthClientService {
 		return mhealthClientsRepository.findByRelationshipId(relationshipId, postfix);
 	}
 	
+	public List<Client> searchClientForMigration(Integer vilageId, String gender, Integer startAge, Integer endAge,
+	                                             String type) {
+		return mhealthClientsRepository.searchClientForMigration(vilageId, gender, startAge, endAge, type);
+	}
+	
 	public Address setAddress(Client c, MhealthMigration migration) {
 		Map<String, String> addressFields = new HashMap<String, String>();
 		addressFields.put("address1", migration.getUnionOut());
