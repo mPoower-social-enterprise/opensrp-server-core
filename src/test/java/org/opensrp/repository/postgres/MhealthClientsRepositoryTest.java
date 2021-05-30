@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,9 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {
-		return null;
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("alter_table.sql");
+		return scripts;
 	}
 	
 	@Test
