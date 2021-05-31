@@ -22,6 +22,8 @@ public class MhealthPractitionerLocation {
 	
 	private String postFix;
 	
+	private String username;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -100,6 +102,14 @@ public class MhealthPractitionerLocation {
 	
 	public void setDivision(String division) {
 		this.division = division;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	@Override

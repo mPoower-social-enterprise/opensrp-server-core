@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,10 +21,12 @@ import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
+public class MhealthClientsRepositoryTest extends MhealthBaseRepositoryTest {
 	
 	@Autowired
 	private MhealthClientsRepository mhealthClientsRepository;
+	
+	private static int increment = 1;
 	
 	@BeforeClass
 	public static void bootStrap() {
@@ -32,7 +35,22 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {
-		return null;
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("add_column.sql");
+		return scripts;
+	}
+	
+	@Override
+	protected Set<String> getDatabaseScriptsAfterExecute() {
+		Set<String> scripts = new HashSet<String>();
+		increment = increment + 1;
+		if (increment == 37) {
+			System.err.println("v:" + increment);
+			scripts.add("drop_column.sql");
+			return scripts;
+		}
+		
+		return scripts;
 	}
 	
 	@Test
@@ -199,7 +217,7 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 	}
 	
 	@Test
-	public void shouldTestFindByBaseEntityIdss() {
+	public void shouldTestFindByBaseEntityIds() {
 		addClient();
 		String postfix = "";
 		List<String> baseEntitiIds = new ArrayList<>();
@@ -215,9 +233,109 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 		mhealthClientsRepository.get("");
 	}
 	
+	@Test
+	public void shouldTesFindByRelationshipId() {
+		addClient();
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.findByRelationshipId("23333", postfix);
+		assertEquals(1, clients.size());
+		assertEquals("233864-8", clients.get(0).getIdentifier("ZEIR_ID"));
+	}
+	
+	@Test
+	public void shouldReturnEmptyTesFindByRelationshipId() {
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.findByRelationshipId("2333f3", postfix);
+		assertEquals(0, clients.size());
+	}
+	
+	@Test
+	public void shouldGetMemberSearchClientForMigration() {
+		addClient();
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.searchClientForMigration(2345, "Male", 1, 7, "Member", postfix);
+		Client client = clients.get(0);
+		assertEquals(1, clients.size());
+		assertEquals("xobili", client.getFirstName());
+	}
+	
+	@Test
+	public void shouldReturnEmptyGetMemberSearchClientForMigration() {
+		addClient();
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.searchClientForMigration(2345, "Male", 22, 34, "Member", postfix);
+		assertEquals(0, clients.size());
+	}
+	
+	@Test
+	public void shouldGetHouseholdSearchClientForMigration() {
+		addFamily();
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.searchClientForMigration(2345, "", -1, -1, "HH", postfix);
+		Client client = clients.get(0);
+		assertEquals(1, clients.size());
+		assertEquals("Max family", client.getFirstName());
+		assertEquals("Family", client.getLastName());
+	}
+	
+	@Test
+	public void shouldReturnEmptyGetHouseholdSearchClientForMigration() {
+		addFamily();
+		String postfix = "";
+		List<Client> clients = mhealthClientsRepository.searchClientForMigration(22220, "", -1, -1, "HH", postfix);
+		assertEquals(0, clients.size());
+		
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldReturnIllegalArgumentExceptionForGetHouseholdSearchClientForMigration() {
+		addFamily();
+		String postfix = "";
+		mhealthClientsRepository.searchClientForMigration(0, "", -1, -1, "HH", postfix);
+	}
+	
 	private Client addClient() {
 		Client client = new Client("f67823b0-378e-4a35-93fc-bb00def74e2f").withBirthdate(new DateTime("2017-03-31"), true)
-		        .withGender("Male").withFirstName("xobili").withLastName("mbangwa");
+		        .withGender("Male").withFirstName("xobili").withLastName(null);
+		List<Address> addresses = new ArrayList<Address>();
+		Address address = new Address();
+		address.setCountry("BBANGLADESH");
+		address.setAddressType("usual_residence");
+		address.setCityVillage("VILLAGE");
+		address.setStateProvince("DIVISION");
+		address.setCountyDistrict("DISTRICT");
+		
+		Map<String, String> addressFields = new HashMap<>();
+		addressFields.put("address1", "wARD");
+		addressFields.put("address2", "UPAZILA");
+		addressFields.put("address3", "POURASAVA");
+		addressFields.put("address8", "2345");
+		address.setAddressFields(addressFields);
+		addresses.add(address);
+		Map<String, List<String>> relationships = new HashMap<>();
+		List<String> relationalIds = new ArrayList<>();
+		relationalIds.add("23333");
+		relationships.put("family", relationalIds);
+		client.setAddresses(addresses);
+		client.setRelationships(relationships);
+		client.setServerVersion(0);
+		client.withIdentifier("ZEIR_ID", "233864-8").withAttribute("Home_Facility", "Linda");
+		String district = "234";
+		String postfix = "";
+		String division = "233";
+		String branch = "34";
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthClientsRepository.add(client, location);
+		return client;
+	}
+	
+	private Client addFamily() {
+		Client client = new Client("f67823b0-378e-4a35-93fc-bb00def74e2f").withBirthdate(new DateTime("2017-03-31"), true)
+		        .withGender("Male").withFirstName("Max family").withLastName("Family");
 		List<Address> addresses = new ArrayList<Address>();
 		Address address = new Address();
 		address.setCountry("BBANGLADESH");

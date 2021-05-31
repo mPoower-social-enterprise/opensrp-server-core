@@ -27,4 +27,10 @@ public interface MhealthClientsRepository {
 	void update(Client entity, boolean allowArchived, MhealthPractitionerLocation location);
 	
 	ClientMetadata findByClientId(Long clientId, String postfix);
+	
+	List<Client> findByRelationshipId(String relationshipId, String table);
+	
+	List<Client> searchClientForMigration(int villageId, String gender, Integer startAge, Integer endAge, String type,
+	                                      String postfix);
+	
 }

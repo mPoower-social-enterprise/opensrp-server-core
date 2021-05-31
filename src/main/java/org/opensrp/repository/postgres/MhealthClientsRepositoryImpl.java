@@ -345,4 +345,22 @@ public class MhealthClientsRepositoryImpl extends BaseRepositoryImpl<Client> imp
 		
 	}
 	
+	@Override
+	public List<Client> findByRelationshipId(String relationshipId, String postfix) {
+		List<org.opensrp.domain.postgres.Client> clients = customMhealthClientMapper.selectByRelationshipId(relationshipId,
+		    postfix);
+		return convert(clients);
+	}
+	
+	@Override
+	public List<Client> searchClientForMigration(int villageId, String gender, Integer startAge, Integer endAge, String type,
+	                                             String postfix) {
+		if (villageId == 0) {
+			throw new IllegalArgumentException();
+		}
+		List<org.opensrp.domain.postgres.Client> clients = customMhealthClientMapper.selectClientForMigration(villageId,
+		    gender, startAge, endAge, type, postfix);
+		return convert(clients);
+	}
+	
 }

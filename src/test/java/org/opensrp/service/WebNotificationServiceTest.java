@@ -29,7 +29,7 @@ public class WebNotificationServiceTest extends BaseRepositoryTest {
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUp() {
 		webNotificationService = new WebNotificationService(webNotificationRepository);
 	}
 	

@@ -2,10 +2,12 @@ package org.opensrp.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,17 +16,18 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensrp.domain.postgres.MhealthEventMetadata;
 import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthClientsRepository;
 import org.opensrp.repository.MhealthEventsRepository;
-import org.opensrp.repository.postgres.BaseRepositoryTest;
+import org.opensrp.repository.postgres.MhealthBaseRepositoryTest;
 import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Obs;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MhealthEventServiceTest extends BaseRepositoryTest {
+public class MhealthEventServiceTest extends MhealthBaseRepositoryTest {
 	
 	private MhealthEventService mhealthEventService;
 	
@@ -36,20 +39,37 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 	@Autowired
 	private MhealthClientsRepository mhealthClientsRepository;
 	
+	private static int increment = 1;
+	
 	@BeforeClass
 	public static void bootStrap() {
 		tableNames = Arrays.asList("core.event", "core.event_metadata", "core.client", "core.client_metadata");
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUpPostgresService() {
 		mhealthEventService = new MhealthEventService(mhealthEventsRepository);
 		mhealthClientService = new MhealthClientService(mhealthClientsRepository);
 	}
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {
-		return null;
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("add_column.sql");
+		return scripts;
+	}
+	
+	@Override
+	protected Set<String> getDatabaseScriptsAfterExecute() {
+		Set<String> scripts = new HashSet<String>();
+		increment = increment + 1;
+		if (increment == 21) {
+			System.err.println("v:" + increment);
+			scripts.add("drop_column.sql");
+			return scripts;
+		}
+		
+		return scripts;
 	}
 	
 	@Test
@@ -156,6 +176,88 @@ public class MhealthEventServiceTest extends BaseRepositoryTest {
 		assertEquals("Growth Monitoring", events.get(0).getEventType());
 		assertEquals(1, events.get(0).getObs().size());
 		
+	}
+	
+	@Test
+	public void shouldTestFindByVillageIds() {
+		addClient();
+		String district = "234";
+		String division = "233";
+		String branch = "34";
+		String postfix = "";
+		String username = "";
+		Event event = generateEvent();
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
+		
+		List<Long> villageIds = new ArrayList<>();
+		villageIds.add(2345l);
+		List<Event> events = mhealthEventService.findByVillageIds("testsk", villageIds, 0, 1, postfix);
+		assertEquals(1, events.size());
+	}
+	
+	@Test(expected = UnsupportedOperationException.class)
+	public void shouldTestGet() {
+		mhealthEventsRepository.get("", "");
+	}
+	
+	@Test
+	public void shouldTestFindEventsByBaseEntityId() {
+		String district = "234";
+		String division = "233";
+		String branch = "34";
+		String postfix = "";
+		String username = "";
+		Event event = generateEvent();
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
+		
+		List<Event> events = mhealthEventService.findEventsByBaseEntityId(event.getBaseEntityId(), postfix);
+		assertEquals("435534534543", events.get(0).getBaseEntityId());
+		assertEquals("Growth Monitoring", events.get(0).getEventType());
+		assertEquals(1, events.get(0).getObs().size());
+	}
+	
+	@Test
+	public void shouldReturnEmptyTestFindEventsByBaseEntityId() {
+		String postfix = "";
+		List<Event> events = mhealthEventService.findEventsByBaseEntityId("dff", postfix);
+		assertEquals(0, events.size());
+	}
+	
+	@Test
+	public void shouldTestFindFirstEventMetadata() {
+		String district = "234";
+		String division = "233";
+		String branch = "34";
+		String postfix = "";
+		String username = "";
+		Event event = generateEvent();
+		MhealthPractitionerLocation location = new MhealthPractitionerLocation();
+		location.setBranch(branch);
+		location.setDistrict(district);
+		location.setDivision(division);
+		location.setPostFix(postfix);
+		mhealthEventService.addorUpdateEvent(event, username, location);
+		MhealthEventMetadata metadata = mhealthEventService.findFirstEventMetadata(event.getBaseEntityId(), postfix);
+		assertEquals("234", metadata.getDistrict());
+		assertEquals("233", metadata.getDivision());
+		assertEquals("testsk", metadata.getProviderId());
+	}
+	
+	@Test
+	public void shouldReturnNullTestFindFirstEventMetadata() {
+		String postfix = "";
+		MhealthEventMetadata metadata = mhealthEventService.findFirstEventMetadata("rtrtrtr", postfix);
+		assertNull(metadata);
 	}
 	
 	private Event generateEvent() {

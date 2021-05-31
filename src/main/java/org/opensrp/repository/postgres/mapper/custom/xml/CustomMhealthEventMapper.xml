@@ -197,5 +197,11 @@
 		from core.event${postfix} e
 		where e.form_submission_id = #{formSubmissionId,jdbcType=VARCHAR} limit 1
 	</select>
+	<select id="selectEventsByBaseEntityId" resultMap="org.opensrp.repository.postgres.mapper.EventMapper.BaseResultMap">
+        select
+		<include refid="Base_Column_List" />
+		from core.event${postfix} e
+		where e.base_entity_id = #{baseEntityId,jdbcType=VARCHAR}
+	</select>
 
 </mapper>

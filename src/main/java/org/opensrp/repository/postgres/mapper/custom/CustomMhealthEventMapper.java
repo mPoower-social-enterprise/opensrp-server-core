@@ -34,4 +34,7 @@ public interface CustomMhealthEventMapper {
 	Event selectByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfix);
 	
 	Event selectByFormSubmissionId(@Param("formSubmissionId") String formSubmissionId, @Param("postfix") String postfix);
+	
+	List<Event> selectEventsByBaseEntityId(@Param("baseEntityId") String baseEntityId, @Param("postfix") String postfix);
+	
 }

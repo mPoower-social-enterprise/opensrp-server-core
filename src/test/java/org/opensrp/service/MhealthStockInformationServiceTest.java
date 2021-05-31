@@ -30,7 +30,7 @@ public class MhealthStockInformationServiceTest extends BaseRepositoryTest {
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUp() {
 		mhealthStockInformationService = new MhealthStockInformationService(mhealthStockInformationRepository);
 	}
 	
