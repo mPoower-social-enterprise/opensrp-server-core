@@ -49,12 +49,14 @@ public class MhealthMigrationServiceTest extends MhealthBaseRepositoryTest {
 	
 	private final static String familyPayload = "{\"clients\": \"[{\\\"birthdate\\\":\\\"1970-01-01T06:00:00.000Z\\\",\\\"birthdateApprox\\\":false,\\\"deathdateApprox\\\":false,\\\"firstName\\\":\\\"Rashed\\\",\\\"lastName\\\":\\\"Family\\\",\\\"gender\\\":\\\"M\\\",\\\"baseEntityId\\\":\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"identifiers\\\":{\\\"opensrp_id\\\":\\\"50884400673070001601\\\"},\\\"addresses\\\":[{\\\"addressType\\\":\\\"usual_residence\\\",\\\"addressFields\\\":{\\\"address1\\\":\\\"BHOLABAQ\\\",\\\"address2\\\":\\\"RUPGANJq\\\",\\\"address3\\\":\\\"NOT POURASABHAq\\\",\\\"address8\\\":\\\"136961\\\"},\\\"countyDistrict\\\":\\\"NARAYANGANJq\\\",\\\"cityVillage\\\":\\\"Migrated Village\\\",\\\"stateProvince\\\":\\\"DHAKAq\\\",\\\"country\\\":\\\"BANGLADESHq\\\"}],\\\"attributes\\\":{\\\"Cluster\\\":\\\"1st_Cluster\\\",\\\"HH_Type\\\":\\\"BRAC VO\\\",\\\"SS_Name\\\":\\\"Forida(SS-1)\\\",\\\"module_id\\\":\\\"TRAINING\\\",\\\"serial_no\\\":\\\"H369\\\",\\\"village_id\\\":\\\"136962\\\",\\\"Has_Latrine\\\":\\\"No\\\",\\\"HOH_Phone_Number\\\":\\\"01471221551\\\",\\\"Number_of_HH_Member\\\":\\\"5\\\"},\\\"clientApplicationVersion\\\":31,\\\"clientApplicationVersionName\\\":\\\"1.3.6_DEV\\\",\\\"clientDatabaseVersion\\\":31,\\\"dateCreated\\\":\\\"2021-01-04T16:35:04.023Z\\\",\\\"type\\\":\\\"Client\\\",\\\"relationships\\\":{\\\"mother\\\":[\\\"\\\"],\\\"family_head\\\":[\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\",\\\"0511acf9-6be8-4a98-b4f9-f8a5cfa704bb\\\"]}}]\"}";
 	
+	private static int increment = 1;
+	
 	Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 	        .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 	
 	@BeforeClass
 	public static void bootStrap() {
-		tableNames = Arrays.asList("core.migration,core.event", "core.event_metadata", "core.client",
+		tableNames = Arrays.asList("core.migration", "core.event", "core.event_metadata", "core.client",
 		    "core.client_metadata");
 	}
 	
@@ -73,7 +75,13 @@ public class MhealthMigrationServiceTest extends MhealthBaseRepositoryTest {
 	@Override
 	protected Set<String> getDatabaseScriptsAfterExecute() {
 		Set<String> scripts = new HashSet<String>();
-		scripts.add("drop_column.sql");
+		increment = increment + 1;
+		
+		if (increment == 37) {
+			scripts.add("drop_column.sql");
+			return scripts;
+		}
+		
 		return scripts;
 	}
 	

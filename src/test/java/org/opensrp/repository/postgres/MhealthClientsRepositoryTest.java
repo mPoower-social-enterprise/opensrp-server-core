@@ -26,6 +26,8 @@ public class MhealthClientsRepositoryTest extends MhealthBaseRepositoryTest {
 	@Autowired
 	private MhealthClientsRepository mhealthClientsRepository;
 	
+	private static int increment = 1;
+	
 	@BeforeClass
 	public static void bootStrap() {
 		tableNames = Arrays.asList("core.client", "core.client_metadata");
@@ -41,7 +43,13 @@ public class MhealthClientsRepositoryTest extends MhealthBaseRepositoryTest {
 	@Override
 	protected Set<String> getDatabaseScriptsAfterExecute() {
 		Set<String> scripts = new HashSet<String>();
-		scripts.add("drop_column.sql");
+		increment = increment + 1;
+		if (increment == 37) {
+			System.err.println("v:" + increment);
+			scripts.add("drop_column.sql");
+			return scripts;
+		}
+		
 		return scripts;
 	}
 	

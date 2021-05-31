@@ -59,5 +59,4 @@ public class MhealthMigrationRepositoryImpl implements MhealthMigrationRepositor
 		return customMhealthMigrationMapper.selectFirstMigrationBybaseEntityId(baseEntityId);
 	}
 	
-	
 }

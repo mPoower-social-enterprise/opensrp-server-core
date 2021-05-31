@@ -21,7 +21,7 @@ import org.utils.DbAccessUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:test-applicationContext-opensrp.xml")
-public abstract class MhealthBaseRepositoryTest extends BaseRepositoryTest {
+public abstract class MhealthBaseRepositoryTest {
 	
 	private static String TEST_SCRIPTS_ROOT_DIRECTORY = "test-scripts/";
 	
@@ -61,7 +61,7 @@ public abstract class MhealthBaseRepositoryTest extends BaseRepositoryTest {
 	
 	@After
 	public void populateScript() throws SQLException {
-		truncateTables();
+		
 		if (getDatabaseScriptsAfterExecute() == null || getDatabaseScriptsAfterExecute().isEmpty())
 			return;
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();

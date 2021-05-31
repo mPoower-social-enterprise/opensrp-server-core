@@ -28,6 +28,8 @@ public class MhealthClientServiceTest extends MhealthBaseRepositoryTest {
 	
 	private MhealthClientService mhealthClientService;
 	
+	private static int increment = 1;
+	
 	@Autowired
 	private MhealthClientsRepository mhealthClientsRepository;
 	
@@ -51,7 +53,12 @@ public class MhealthClientServiceTest extends MhealthBaseRepositoryTest {
 	@Override
 	protected Set<String> getDatabaseScriptsAfterExecute() {
 		Set<String> scripts = new HashSet<String>();
-		scripts.add("drop_column.sql");
+		increment = increment + 1;
+		if (increment == 27) {
+			scripts.add("drop_column.sql");
+			return scripts;
+		}
+		
 		return scripts;
 	}
 	
