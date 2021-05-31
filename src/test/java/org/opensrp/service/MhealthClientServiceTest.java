@@ -37,7 +37,7 @@ public class MhealthClientServiceTest extends MhealthBaseRepositoryTest {
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUp() {
 		mhealthClientService = new MhealthClientService(mhealthClientsRepository);
 	}
 	

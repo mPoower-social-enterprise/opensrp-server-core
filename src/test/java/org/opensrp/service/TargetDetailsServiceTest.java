@@ -29,7 +29,7 @@ public class TargetDetailsServiceTest extends BaseRepositoryTest {
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUp() {
 		targetDetailsService = new TargetDetailsService(targetDetailsRepository);
 	}
 	

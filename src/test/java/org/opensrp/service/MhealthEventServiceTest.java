@@ -45,7 +45,7 @@ public class MhealthEventServiceTest extends MhealthBaseRepositoryTest {
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUpPostgresService() {
 		mhealthEventService = new MhealthEventService(mhealthEventsRepository);
 		mhealthClientService = new MhealthClientService(mhealthClientsRepository);
 	}
