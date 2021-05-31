@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="org.opensrp.repository.postgres.mapper.custom.CustomTargetDetailsMapper">
+	<resultMap id="targetDetails" type="org.opensrp.domain.postgres.TargetDetails">
+		<id column="username" jdbcType="VARCHAR" property="username" />
+		<result column="target_id" jdbcType="BIGINT" property="targetId"/>
+		<result column="target_name" jdbcType="VARCHAR" property="targetName"/>
+		<result column="target_count" jdbcType="BIGINT" property="targetCount"/>
+		<result column="year" jdbcType="VARCHAR" property="year"/>
+		<result column="month" jdbcType="VARCHAR" property="month"/>
+		<result column="day" jdbcType="VARCHAR" property="day"/>
+		<result column="timestamp" jdbcType="BIGINT" property="timestamp"/>
+		<result column="start_date" jdbcType="VARCHAR" property="startDate"/>
+		<result column="end_date" jdbcType="VARCHAR" property="endDate"/>
+	</resultMap>		
+    <select id="selectTargetDetailsByUsername" parameterType="map" resultMap="targetDetails">
+        select * from core.get_target_details_for_mobile(#{username,jdbcType=VARCHAR},#{timestamp,jdbcType=BIGINT})
+    </select>
+</mapper>

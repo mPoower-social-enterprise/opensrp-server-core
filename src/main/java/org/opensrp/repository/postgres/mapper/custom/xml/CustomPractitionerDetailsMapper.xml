@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.opensrp.repository.postgres.mapper.custom.CustomPractitionerDetailsMapper">
+    
+    <resultMap id="practitionerLocationMap" type="org.opensrp.domain.PractitionerLocation">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="leaf_loc_id" jdbcType="BIGINT" property="leafLocationId"/>
+		<result column="member_id" jdbcType="BIGINT" property="PractitionerId"/>
+		<result column="first_name" jdbcType="VARCHAR" property="firstName"/>
+		<result column="last_name" jdbcType="VARCHAR" property="lastName"/>
+		<result column="loc_tag_name" jdbcType="VARCHAR" property="locationTagName"/>
+		<result column="username" jdbcType="VARCHAR" property="username"/>
+		<result column="location_name" jdbcType="VARCHAR" property="locationName"/>
+		<result column="code" jdbcType="VARCHAR" property="code"/>
+    </resultMap>
+    <select id="selectPractitionerLocationsByChildGroup" parameterType="map"
+        resultMap="practitionerLocationMap">
+        select * from core.get_location_tree(#{practitionerId}, #{childGroupId}, #{assignedLocationTagId});
+    </select>
+	
+    <select id="selectPractitionerDetailsByUsername" parameterType="map"
+        resultMap="org.opensrp.repository.postgres.mapper.PractitionerDetailsMapper.BaseResultMap">
+        select pd.* from team.practitioner_details as pd join team.practitioner p on
+        pd.practitioner_id = p.id where p.username=#{username}
+    </select>
+    <select id="selectForceSyncStatus" parameterType="java.lang.String" resultType="String">
+        select pd.is_resync from team.practitioner_details as pd join team.practitioner p on
+        pd.practitioner_id = p.id where p.username =#{username,jdbcType=VARCHAR}  limit 1
+    </select>
+    <update id="updateAppVersion" parameterType="map">
+        update team.practitioner_details set app_version=#{version} where practitioner_id=
+        (select id from team.practitioner as p where p.username=#{username})          
+    </update>
+    <select id="selectUserStatus" parameterType="java.lang.String"
+			resultType="BOOLEAN">
+        select pd.enabled as enable from team.practitioner_details as pd join team.practitioner p on
+        pd.practitioner_id = p.id where p.username = #{username,jdbcType=VARCHAR}
+	</select>   
+    <select id="selectUserMobileIMEI" parameterType="java.lang.String" resultType="Boolean">
+		select (case when count(*) > 0 then true else false end) is_available from
+        core.imei where imei1 = #{imeiNumber} or imei2 = #{imeiNumber};
+    </select>
+</mapper>
