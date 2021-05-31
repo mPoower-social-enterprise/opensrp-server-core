@@ -25,7 +25,7 @@ import org.smartregister.domain.Event;
 import org.smartregister.domain.Obs;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
+public class MhealthEventsRepositoryTest extends MhealthBaseRepositoryTest {
 	
 	@Autowired
 	private MhealthEventsRepository mhealthEventsRepository;
@@ -41,7 +41,14 @@ public class MhealthEventsRepositoryTest extends BaseRepositoryTest {
 	@Override
 	protected Set<String> getDatabaseScripts() {
 		Set<String> scripts = new HashSet<String>();
-		scripts.add("alter_table.sql");
+		scripts.add("add_column.sql");
+		return scripts;
+	}
+	
+	@Override
+	protected Set<String> getDatabaseScriptsAfterExecute() {
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("drop_column.sql");
 		return scripts;
 	}
 	

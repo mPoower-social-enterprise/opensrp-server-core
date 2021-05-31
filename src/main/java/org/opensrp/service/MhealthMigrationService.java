@@ -84,73 +84,78 @@ public class MhealthMigrationService {
 	}
 	
 	@Transactional
-	public void migrate(Client inClient, JSONObject syncData, MhealthPractitionerLocation inUserLocation,
-	                    MhealthPractitionerLocation outUserLocation, String type)
+	public boolean migrate(Client inClient, JSONObject syncData, MhealthPractitionerLocation inUserLocation,
+	                       MhealthPractitionerLocation outUserLocation, String type)
 	    throws JSONException {
-		
-		Map<String, List<String>> inClientrelationships = inClient.getRelationships();
-		String inClientRelationalId = "";
-		if (inClientrelationships.containsKey("family")) {
-			inClientRelationalId = inClientrelationships.get("family").get(0);
-		} else if (inClientrelationships.containsKey("family_head")) {
-			inClientRelationalId = inClientrelationships.get("family_head").get(0);
-		}
-		
-		JSONArray clients = new JSONArray(syncData.getString("clients"));
-		JSONObject firstClient = clients.getJSONObject(0);
-		String baseEntityId = inClient.getBaseEntityId();
-		JSONObject attributes = firstClient.getJSONObject("attributes");
-		JSONObject identifiers = firstClient.getJSONObject("identifiers");
-		String outPostfix = outUserLocation.getPostFix();
-		Client getClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
-		
-		Map<String, List<String>> outClientRelationships = getClient.getRelationships();
-		String outClientRelationalId = "";
-		if (outClientRelationships.containsKey("family")) {
-			outClientRelationalId = outClientRelationships.get("family").get(0);
-		} else if (outClientRelationships.containsKey("family_head")) {
-			outClientRelationalId = outClientRelationships.get("family_head").get(0);
-		}
-		
-		getClient.getAddresses().remove(0);
-		Address clientAddres = inClient.getAddress("usual_residence");
-		List<Address> clientNewAddres = new ArrayList<>();
-		getClient.getAddresses().clear();
-		clientNewAddres.add(clientAddres);
-		getClient.setAddresses(clientNewAddres);
-		Map<String, Object> att = getClient.getAttributes();
-		for (int i = 0; i < attributes.names().length(); i++) {
-			att.put(attributes.names().getString(i), attributes.get(attributes.names().getString(i)));
+		boolean returnValue = true;
+		try {
+			Map<String, List<String>> inClientrelationships = inClient.getRelationships();
+			String inClientRelationalId = "";
+			if (inClientrelationships.containsKey("family")) {
+				inClientRelationalId = inClientrelationships.get("family").get(0);
+			} else if (inClientrelationships.containsKey("family_head")) {
+				inClientRelationalId = inClientrelationships.get("family_head").get(0);
+			}
 			
-		}
-		getClient.withAttributes(att);
-		for (int i = 0; i < identifiers.names().length(); i++) {
-			getClient.addIdentifier(identifiers.names().getString(i),
-			    identifiers.get(identifiers.names().getString(i)) + "");
-		}
-		
-		getClient.withRelationships(inClient.getRelationships());
-		inUserLocation.setPostFix(outPostfix);
-		Client outClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
-		clientService.addOrUpdate(getClient, inUserLocation);
-		if (type.equalsIgnoreCase(HOUSEHOLD)) {
-			migrateHHEventsClients(inClient, outClient, outClientRelationalId, inUserLocation, outUserLocation);
-			MhealthMigration migration = setMigration(inClient, outClient, inClient, outClient, type, outUserLocation,
-			    inUserLocation, "no");
-			mhealthMigrationRepository.addMigration(migration);
+			JSONArray clients = new JSONArray(syncData.getString("clients"));
+			JSONObject firstClient = clients.getJSONObject(0);
+			String baseEntityId = inClient.getBaseEntityId();
+			JSONObject attributes = firstClient.getJSONObject("attributes");
+			JSONObject identifiers = firstClient.getJSONObject("identifiers");
+			String outPostfix = outUserLocation.getPostFix();
+			Client getClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
 			
-		} else if (type.equalsIgnoreCase(MEMBER)) {
-			Client inHhousehold = clientService.findByBaseEntityId(inClientRelationalId, inUserLocation.getPostFix());
-			Client outHhousehold = clientService.findByBaseEntityId(outClientRelationalId, outUserLocation.getPostFix());
-			MhealthMigration migration = setMigration(inClient, outClient, inHhousehold, outHhousehold, type,
-			    outUserLocation, inUserLocation, "yes");
-			mhealthMigrationRepository.addMigration(migration);
-			migrateMemberEvents(inClient, inUserLocation, outUserLocation);
+			Map<String, List<String>> outClientRelationships = getClient.getRelationships();
+			String outClientRelationalId = "";
+			if (outClientRelationships.containsKey("family")) {
+				outClientRelationalId = outClientRelationships.get("family").get(0);
+			} else if (outClientRelationships.containsKey("family_head")) {
+				outClientRelationalId = outClientRelationships.get("family_head").get(0);
+			}
 			
-		} else {
+			getClient.getAddresses().remove(0);
+			Address clientAddres = inClient.getAddress("usual_residence");
+			List<Address> clientNewAddres = new ArrayList<>();
+			getClient.getAddresses().clear();
+			clientNewAddres.add(clientAddres);
+			getClient.setAddresses(clientNewAddres);
+			Map<String, Object> att = getClient.getAttributes();
+			for (int i = 0; i < attributes.names().length(); i++) {
+				att.put(attributes.names().getString(i), attributes.get(attributes.names().getString(i)));
+				
+			}
+			getClient.withAttributes(att);
+			for (int i = 0; i < identifiers.names().length(); i++) {
+				getClient.addIdentifier(identifiers.names().getString(i),
+				    identifiers.get(identifiers.names().getString(i)) + "");
+			}
 			
+			getClient.withRelationships(inClient.getRelationships());
+			inUserLocation.setPostFix(outPostfix);
+			Client outClient = clientService.findByBaseEntityId(baseEntityId, outPostfix);
+			clientService.addOrUpdate(getClient, inUserLocation);
+			if (type.equalsIgnoreCase(HOUSEHOLD)) {
+				migrateHHEventsClients(inClient, outClient, outClientRelationalId, inUserLocation, outUserLocation);
+				MhealthMigration migration = setMigration(inClient, outClient, inClient, outClient, type, outUserLocation,
+				    inUserLocation, "no");
+				mhealthMigrationRepository.addMigration(migration);
+				
+			} else if (type.equalsIgnoreCase(MEMBER)) {
+				Client inHhousehold = clientService.findByBaseEntityId(inClientRelationalId, inUserLocation.getPostFix());
+				Client outHhousehold = clientService.findByBaseEntityId(outClientRelationalId, outUserLocation.getPostFix());
+				MhealthMigration migration = setMigration(inClient, outClient, inHhousehold, outHhousehold, type,
+				    outUserLocation, inUserLocation, "yes");
+				mhealthMigrationRepository.addMigration(migration);
+				migrateMemberEvents(inClient, inUserLocation, outUserLocation);
+				
+			} else {
+				
+			}
 		}
-		
+		catch (Exception e) {
+			returnValue = false;
+		}
+		return returnValue;
 	}
 	
 	public void migrateHHEventsClients(Client inClient, Client outClient, String HHrelationalId,
@@ -312,8 +317,9 @@ public class MhealthMigrationService {
 	}
 	
 	@Transactional
-	public void acceptOrRejectMigration(Long id, String relationalId, String type, String status) throws JSONException {
-		
+	public boolean acceptOrRejectMigration(Long id, String relationalId, String type, String status) throws JSONException {
+		boolean returnValue = true;
+		try {
 		if (status.equalsIgnoreCase(MigrationStatus.ACCEPT.name())) {
 			if (type.equalsIgnoreCase(HOUSEHOLD)) {
 				mhealthMigrationRepository.updateMigrationStatusById(id, MigrationStatus.ACCEPT.name());
@@ -365,7 +371,10 @@ public class MhealthMigrationService {
 				rejectClient(member, migration);
 			}
 		}
-		
+		}catch(Exception e) {
+			 returnValue = false;
+		}
+		return returnValue;
 	}
 	
 	private void rejectClient(Client c, MhealthMigration migration) {

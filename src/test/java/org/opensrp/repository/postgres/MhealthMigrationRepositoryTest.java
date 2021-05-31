@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,19 +16,29 @@ import org.opensrp.domain.postgres.MhealthMigration;
 import org.opensrp.repository.MhealthMigrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MhealthMigrationRepositoryTest extends BaseRepositoryTest {
+public class MhealthMigrationRepositoryTest extends MhealthBaseRepositoryTest {
 	
 	@Autowired
 	private MhealthMigrationRepository mhealthMigrationRepository;
 	
 	@BeforeClass
 	public static void bootStrap() {
-		tableNames = Arrays.asList("core.migration");
+		tableNames = Arrays.asList("core.migration,core.event", "core.event_metadata", "core.client",
+		    "core.client_metadata");
 	}
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {
-		return null;
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("add_column.sql");
+		return scripts;
+	}
+	
+	@Override
+	protected Set<String> getDatabaseScriptsAfterExecute() {
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("drop_column.sql");
+		return scripts;
 	}
 	
 	@Test

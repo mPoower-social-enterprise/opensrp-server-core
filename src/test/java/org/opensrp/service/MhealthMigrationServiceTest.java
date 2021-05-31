@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,7 @@ import org.opensrp.domain.postgres.MhealthEventMetadata;
 import org.opensrp.domain.postgres.MhealthMigration;
 import org.opensrp.domain.postgres.MhealthPractitionerLocation;
 import org.opensrp.repository.MhealthMigrationRepository;
-import org.opensrp.repository.postgres.BaseRepositoryTest;
+import org.opensrp.repository.postgres.MhealthBaseRepositoryTest;
 import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Event;
@@ -31,7 +32,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-public class MhealthMigrationServiceTest extends BaseRepositoryTest {
+public class MhealthMigrationServiceTest extends MhealthBaseRepositoryTest {
 	
 	@Autowired
 	private MhealthMigrationRepository mhealthMigrationRepository;
@@ -53,18 +54,27 @@ public class MhealthMigrationServiceTest extends BaseRepositoryTest {
 	
 	@BeforeClass
 	public static void bootStrap() {
-		tableNames = Arrays.asList("core.migration");
+		tableNames = Arrays.asList("core.migration,core.event", "core.event_metadata", "core.client",
+		    "core.client_metadata");
 	}
 	
 	@Before
-	public void setUpPostgresRepository() {
+	public void setUpPostgresService() {
 		mhealthMigrationService = new MhealthMigrationService(mhealthMigrationRepository, clientService, eventService);
-		
 	}
 	
 	@Override
 	protected Set<String> getDatabaseScripts() {
-		return null;
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("add_column.sql");
+		return scripts;
+	}
+	
+	@Override
+	protected Set<String> getDatabaseScriptsAfterExecute() {
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("drop_column.sql");
+		return scripts;
 	}
 	
 	@Test

@@ -21,7 +21,7 @@ import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
+public class MhealthClientsRepositoryTest extends MhealthBaseRepositoryTest {
 	
 	@Autowired
 	private MhealthClientsRepository mhealthClientsRepository;
@@ -34,7 +34,14 @@ public class MhealthClientsRepositoryTest extends BaseRepositoryTest {
 	@Override
 	protected Set<String> getDatabaseScripts() {
 		Set<String> scripts = new HashSet<String>();
-		scripts.add("alter_table.sql");
+		scripts.add("add_column.sql");
+		return scripts;
+	}
+	
+	@Override
+	protected Set<String> getDatabaseScriptsAfterExecute() {
+		Set<String> scripts = new HashSet<String>();
+		scripts.add("drop_column.sql");
 		return scripts;
 	}
 	
